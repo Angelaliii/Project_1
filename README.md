@@ -2,9 +2,12 @@
 
 ### My name is Angela.
 
-### 📖 Major : Department of Information Management 
+### 📖 Major : 
+#### Department of Information Management 
 
-### 💪 Strengths : HTML,CSS
+### 💪 Currently learning : 
+#### Java 
+#### React
 <!--
 **Angelaliii/Angelaliii** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
