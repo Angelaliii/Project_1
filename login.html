@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>教室租借系統 - 登入</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-container">
+        <div class="form-container sign-in-container">
+          <form action="login_process.php" method="post">
+            <h1>登入系統</h1>
+            <div class="social-container">
+              <a href="#" class="social"><i class="fas fa-university"></i></a>
+            </div>
+            <span>使用您的帳號密碼登入</span>
+            <?php if (isset($_GET['error'])): ?>
+            <div class="error-message">
+              <?php echo htmlspecialchars($_GET['error']); ?>
+            </div>
+            <?php endif; ?>
+            <input type="text" name="username" placeholder="用戶名" required />
+            <input
+              type="password"
+              name="password"
+              placeholder="密碼"
+              required
+            />
+            <div class="role-selector">
+              <input type="radio" id="user" name="role" value="user" checked />
+              <label for="user">一般用戶</label>
+              <input type="radio" id="admin" name="role" value="admin" />
+              <label for="admin">管理員</label>
+            </div>
+            <button type="submit">登入</button>
+            <a href="#" class="forgot-password">忘記密碼？</a>
+          </form>
+        </div>
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-right">
+              <h1>歡迎來到教室租借系統！</h1>
+              <p>如果您還沒有帳號，請點擊下方按鈕進行註冊</p>
+              <button
+                class="ghost"
+                id="signUp"
+                onclick="location.href='register.php';"
+              >
+                註冊
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/scripts.js"></script>
+  </body>
+</html>

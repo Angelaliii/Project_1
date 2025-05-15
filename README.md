@@ -2,4 +2,4 @@
 
 ### My name is Angela.
 
-- 📖 Major : Department of Information Management 
+- 📖 Major : Department of Information Management
