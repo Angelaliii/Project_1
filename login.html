@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>教室租借系統 - 登入</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="main.css" />
   </head>
   <body>
     <div class="container">
@@ -21,21 +21,38 @@
               <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
             <?php endif; ?>
-            <input type="text" name="username" placeholder="用戶名" required />
+            <?php if (isset($_GET['success'])): ?>
+            <div class="success-message">
+              <?php echo htmlspecialchars($_GET['success']); ?>
+            </div>
+            <?php endif; ?>
+            <input
+              type="text"
+              name="username"
+              placeholder="用戶名"
+              required
+              autocomplete="username"
+            />
             <input
               type="password"
               name="password"
               placeholder="密碼"
               required
+              autocomplete="current-password"
             />
-            <div class="role-selector">
-              <input type="radio" id="user" name="role" value="user" checked />
-              <label for="user">一般用戶</label>
-              <input type="radio" id="admin" name="role" value="admin" />
-              <label for="admin">管理員</label>
+            <div class="options-container">
+              <div class="remember-me">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  name="remember"
+                  value="1"
+                />
+                <label for="remember">記住我</label>
+              </div>
+              <a href="#" class="forgot-password">忘記密碼？</a>
             </div>
             <button type="submit">登入</button>
-            <a href="#" class="forgot-password">忘記密碼？</a>
           </form>
         </div>
         <div class="overlay-container">
@@ -46,7 +63,7 @@
               <button
                 class="ghost"
                 id="signUp"
-                onclick="location.href='register.php';"
+                onclick="location.href='register.html';"
               >
                 註冊
               </button>

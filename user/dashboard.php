@@ -3,13 +3,21 @@
 require_once '../config.php';
 
 // 檢查用戶是否已登入
-if (!isset($_SESSION['user_id']) || $_SESSION['is_admin']) {
-    header('Location: ../index.php');
+if (!isset($_SESSION['user_id']) || isAdmin()) {
+    header('Location: ../login.html');
     exit;
 }
 
 $userId = $_SESSION['user_id'];
 $user = getUserById($userId);
+
+// 如果無法獲取用戶信息，重定向到登入頁面
+if (!$user) {
+    $_SESSION = array();
+    session_destroy();
+    header('Location: ../login.html?error=' . urlencode('無效的會話，請重新登入'));
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -24,7 +32,7 @@ $user = getUserById($userId);
         <header class="admin-header">
             <h1 class="admin-title">教室租借系統</h1>
             <div class="admin-user-info">
-                <span class="admin-user-name">歡迎, <?php echo htmlspecialchars($user['full_name']); ?></span>
+                <span class="admin-user-name">歡迎, <?php echo htmlspecialchars($user['user_name']); ?></span>
                 <a href="../logout.php" class="admin-btn admin-btn-danger">登出</a>
             </div>
         </header>
@@ -115,13 +123,12 @@ $user = getUserById($userId);
                             <?php
                             try {
                                 $pdo = connectDB();
-                                
-                                $stmt = $pdo->prepare("
-                                    SELECT b.*, r.room_name 
+                                  $stmt = $pdo->prepare("
+                                    SELECT b.*, c.classroom_name 
                                     FROM bookings b
-                                    JOIN rooms r ON b.room_id = r.id
-                                    WHERE b.user_id = ?
-                                    ORDER BY b.booking_date DESC, b.start_time DESC
+                                    JOIN classrooms c ON b.classroom_ID = c.classroom_ID
+                                    WHERE b.user_ID = ?
+                                    ORDER BY b.start_datetime DESC
                                     LIMIT 5
                                 ");
                                 $stmt->execute([$userId]);
@@ -129,19 +136,24 @@ $user = getUserById($userId);
                                 
                                 if (count($bookings) > 0) {
                                     foreach ($bookings as $booking) {
-                                        $statusClass = '';
-                                        switch ($booking['status']) {
-                                            case 'approved':
-                                                $statusClass = 'text-success';
+                                        $statusClass = '';                                        switch ($booking['status']) {
+                                            case 'available':
+                                                $statusClass = 'text-secondary';
                                                 break;
-                                            case 'pending':
+                                            case 'booked':
                                                 $statusClass = 'text-warning';
                                                 break;
-                                            case 'rejected':
-                                                $statusClass = 'text-danger';
+                                            case 'in_use':
+                                                $statusClass = 'text-primary';
+                                                break;
+                                            case 'completed':
+                                                $statusClass = 'text-success';
                                                 break;
                                             case 'cancelled':
-                                                $statusClass = 'text-secondary';
+                                                $statusClass = 'text-danger';
+                                                break;
+                                            default:
+                                                $statusClass = 'text-dark';
                                                 break;
                                         }
                                         

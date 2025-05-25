@@ -3,13 +3,21 @@
 require_once '../config.php';
 
 // 檢查管理員是否已登入
-if (!isset($_SESSION['user_id']) || !$_SESSION['is_admin']) {
-    header('Location: ../index.php');
+if (!isset($_SESSION['user_id']) || !isAdmin()) {
+    header('Location: ../login.html');
     exit;
 }
 
 $adminId = $_SESSION['user_id'];
-$admin = getAdminById($adminId);
+$admin = getUserById($adminId);
+
+// 如果無法獲取管理員信息，重定向到登入頁面
+if (!$admin) {
+    $_SESSION = array();
+    session_destroy();
+    header('Location: ../login.html?error=' . urlencode('無效的會話，請重新登入'));
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -24,7 +32,7 @@ $admin = getAdminById($adminId);
         <header class="admin-header">
             <h1 class="admin-title">教室租借系統管理後台</h1>
             <div class="admin-user-info">
-                <span class="admin-user-name">管理員: <?php echo htmlspecialchars($admin['full_name']); ?></span>
+                <span class="admin-user-name">管理員: <?php echo htmlspecialchars($admin['user_name']); ?></span>
                 <a href="../logout.php" class="admin-btn admin-btn-danger">登出</a>
             </div>
         </header>
@@ -58,7 +66,7 @@ $admin = getAdminById($adminId);
                         $userCount = $stmt->fetch()['count'];
                         
                         // 教室總數
-                        $stmt = $pdo->query("SELECT COUNT(*) as count FROM rooms");
+                        $stmt = $pdo->query("SELECT COUNT(*) as count FROM classrooms");
                         $roomCount = $stmt->fetch()['count'];
                         
                         // 待審核預約
@@ -113,14 +121,13 @@ $admin = getAdminById($adminId);
                             <?php
                             try {
                                 $pdo = connectDB();
-                                
-                                $stmt = $pdo->query("
-                                    SELECT b.*, r.room_name, u.full_name, u.username
+                                  $stmt = $pdo->query("
+                                    SELECT b.*, c.classroom_name, u.user_name
                                     FROM bookings b
-                                    JOIN rooms r ON b.room_id = r.id
-                                    JOIN users u ON b.user_id = u.id
-                                    WHERE b.status = 'pending'
-                                    ORDER BY b.booking_date ASC, b.start_time ASC
+                                    JOIN classrooms c ON b.classroom_ID = c.classroom_ID
+                                    JOIN users u ON b.user_ID = u.user_id
+                                    WHERE b.status = 'booked'
+                                    ORDER BY b.start_datetime ASC
                                     LIMIT 10
                                 ");
                                 $pendingBookings = $stmt->fetchAll();
@@ -171,34 +178,38 @@ $admin = getAdminById($adminId);
                             <?php
                             try {
                                 $pdo = connectDB();
-                                
-                                $stmt = $pdo->prepare("
-                                    SELECT b.*, r.room_name, u.full_name, u.username
+                                  $stmt = $pdo->prepare("
+                                    SELECT b.*, c.classroom_name, u.user_name
                                     FROM bookings b
-                                    JOIN rooms r ON b.room_id = r.id
-                                    JOIN users u ON b.user_id = u.id
-                                    WHERE b.booking_date = CURDATE()
-                                    ORDER BY b.start_time ASC
+                                    JOIN classrooms c ON b.classroom_ID = c.classroom_ID
+                                    JOIN users u ON b.user_ID = u.user_id
+                                    WHERE DATE(b.start_datetime) = CURDATE()
+                                    ORDER BY b.start_datetime ASC
                                     LIMIT 10
                                 ");
                                 $stmt->execute();
                                 $todayBookings = $stmt->fetchAll();
                                 
                                 if (count($todayBookings) > 0) {
-                                    foreach ($todayBookings as $booking) {
-                                        $statusClass = '';
+                                    foreach ($todayBookings as $booking) {                                        $statusClass = '';
                                         switch ($booking['status']) {
-                                            case 'approved':
-                                                $statusClass = 'text-success';
+                                            case 'available':
+                                                $statusClass = 'text-secondary';
                                                 break;
-                                            case 'pending':
+                                            case 'booked':
                                                 $statusClass = 'text-warning';
                                                 break;
-                                            case 'rejected':
-                                                $statusClass = 'text-danger';
+                                            case 'in_use':
+                                                $statusClass = 'text-primary';
+                                                break;
+                                            case 'completed':
+                                                $statusClass = 'text-success';
                                                 break;
                                             case 'cancelled':
-                                                $statusClass = 'text-secondary';
+                                                $statusClass = 'text-danger';
+                                                break;
+                                            default:
+                                                $statusClass = 'text-dark';
                                                 break;
                                         }
                                         

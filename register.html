@@ -21,13 +21,22 @@
               <?php echo htmlspecialchars($_GET['error']); ?>
             </div>
             <?php endif; ?>
-            <input type="text" name="username" placeholder="用戶名" required />
+            <input
+              type="text"
+              name="username"
+              placeholder="用戶名"
+              required
+              pattern="[a-zA-Z0-9_]{3,20}"
+              title="用戶名必須是3-20個字符，僅包含字母、數字和底線"
+            />
             <input type="email" name="email" placeholder="電子郵件" required />
             <input
               type="password"
               name="password"
               placeholder="密碼"
               required
+              pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+              title="密碼至少包含8個字符，必須包含至少一個數字、一個大寫字母和一個小寫字母"
             />
             <input
               type="password"
@@ -35,19 +44,28 @@
               placeholder="確認密碼"
               required
             />
-            <input
-              type="text"
-              name="full_name"
-              placeholder="真實姓名"
-              required
-            />
-            <input
-              type="text"
-              name="department"
-              placeholder="部門/系所"
-              required
-            />
+            <div class="role-selector">
+              <div class="role-option">
+                <input
+                  type="radio"
+                  id="student"
+                  name="role"
+                  value="student"
+                  checked
+                />
+                <label for="student">學生</label>
+              </div>
+              <div class="role-option">
+                <input type="radio" id="teacher" name="role" value="teacher" />
+                <label for="teacher">教師</label>
+              </div>
+            </div>
             <button type="submit">註冊</button>
+            <p class="form-notice">
+              註冊即代表您同意我們的<a href="#">服務條款</a>和<a href="#"
+                >隱私政策</a
+              >
+            </p>
           </form>
         </div>
         <div class="overlay-container">
