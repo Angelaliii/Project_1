@@ -21,11 +21,11 @@ if (!$admin) {
 ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
+<head>    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理員儀表板 - 教室租借系統</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>管理員儀表板 - 教室租借系統</title>    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -235,9 +235,9 @@ if (!$admin) {
                             <a href="bookings.php?filter=today" class="admin-btn admin-btn-primary">查看全部</a>
                         </div>
                     <?php endif; ?>
-                </div>
-            </main>
+                </div>            </main>
         </div>
     </div>
+    <script src="../js/dashboard.js"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+/* main.css - 登入和註冊頁面樣式 */
+
 /* 基本樣式重置 */
 * {
   box-sizing: border-box;
@@ -67,6 +69,7 @@ input {
   margin: 8px 0;
   width: 100%;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 select {
@@ -214,247 +217,121 @@ select {
   margin: 0 5px;
   height: 40px;
   width: 40px;
+  transition: all 0.3s;
 }
 
-.role-selector {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  margin: 10px 0;
+.social-container a:hover {
+  background-color: #f2f2f2;
+}
+
+h1 {
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.forgot-password {
+  color: #757575;
+  font-size: 13px;
+  text-decoration: none;
+  margin: 15px 0;
+  transition: color 0.3s;
+}
+
+.forgot-password:hover {
+  color: #4285f4;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 100;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+  margin: 20px 0 30px;
+}
+
+span {
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .error-message {
-  color: #d93025;
-  margin-bottom: 10px;
+  background-color: rgba(234, 67, 53, 0.15);
+  color: #ea4335;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  margin: 10px 0;
   font-size: 14px;
 }
 
 .success-message {
-  color: #0f9d58;
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-/* 管理頁面樣式 */
-.admin-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.admin-title {
-  font-size: 24px;
-  color: #4285f4;
-}
-
-.admin-user-info {
-  display: flex;
-  align-items: center;
-}
-
-.admin-user-name {
-  margin-right: 15px;
-}
-
-.admin-content {
-  display: flex;
-  min-height: 600px;
-}
-
-.admin-sidebar {
-  width: 250px;
-  background-color: #f8f9fa;
-  padding: 15px;
-  border-radius: 5px;
-}
-
-.admin-sidebar ul {
-  list-style: none;
-}
-
-.admin-sidebar li {
-  margin-bottom: 10px;
-}
-
-.admin-sidebar a {
-  display: block;
-  padding: 10px;
-  color: #333;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.admin-sidebar a:hover,
-.admin-sidebar a.active {
-  background-color: #e9ecef;
-  color: #4285f4;
-}
-
-.admin-main {
-  flex-grow: 1;
-  padding: 0 20px;
-}
-
-.admin-card {
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.admin-table th,
-.admin-table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.admin-table th {
-  background-color: #f8f9fa;
-  font-weight: bold;
-}
-
-.admin-table tr:hover {
-  background-color: #f5f5f5;
-}
-
-.admin-form-group {
-  margin-bottom: 15px;
-}
-
-.admin-form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.admin-form-row {
-  display: flex;
-  margin-bottom: 15px;
-}
-
-.admin-form-row .admin-form-group {
-  flex: 1;
-  margin-right: 15px;
-}
-
-.admin-form-row .admin-form-group:last-child {
-  margin-right: 0;
-}
-
-.admin-btn {
-  padding: 8px 16px;
+  background-color: rgba(52, 168, 83, 0.15);
+  color: #34a853;
   border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+  margin: 10px 0;
   font-size: 14px;
-  cursor: pointer;
-  border: none;
+}
+
+.role-selector {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.role-option {
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.role-option input {
+  width: auto;
   margin-right: 5px;
 }
 
-.admin-btn-primary {
-  background-color: #4285f4;
-  color: white;
-}
-
-.admin-btn-success {
-  background-color: #0f9d58;
-  color: white;
-}
-
-.admin-btn-danger {
-  background-color: #d93025;
-  color: white;
-}
-
-.admin-btn-warning {
-  background-color: #f4b400;
-  color: white;
-}
-
-/* 預約表格樣式 */
-.booking-calendar {
+.options-container {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+  margin: 10px 0;
+  font-size: 14px;
 }
 
-.booking-calendar th,
-.booking-calendar td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+.remember-me {
+  display: flex;
+  align-items: center;
 }
 
-.booking-calendar th {
-  background-color: #f8f9fa;
+.remember-me input {
+  width: auto;
+  margin-right: 5px;
 }
 
-.booking-calendar .available {
-  background-color: #e6f4ea;
-  cursor: pointer;
-}
-
-.booking-calendar .booked {
-  background-color: #fce8e6;
-}
-
-.booking-calendar .my-booking {
-  background-color: #e8f0fe;
+.form-notice {
+  font-size: 12px;
+  color: #757575;
+  margin-top: 15px;
 }
 
 /* 響應式設計 */
 @media (max-width: 768px) {
   .container {
-    min-height: 700px;
+    min-height: 650px;
   }
 
   .form-container {
     width: 100%;
-    height: 100%;
   }
 
-  .sign-in-container,
-  .sign-up-container {
+  .sign-in-container {
     width: 100%;
   }
 
   .overlay-container {
     display: none;
-  }
-
-  .admin-content {
-    flex-direction: column;
-  }
-
-  .admin-sidebar {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
-  .admin-form-row {
-    flex-direction: column;
-  }
-
-  .admin-form-row .admin-form-group {
-    margin-right: 0;
-    margin-bottom: 15px;
   }
 }

@@ -2,11 +2,10 @@
 // user/dashboard.php - 用戶儀表板頁面
 require_once '../config.php';
 
-// 檢查用戶是否已登入
-if (!isset($_SESSION['user_id']) || isAdmin()) {
-    header('Location: ../login.html');
-    exit;
-}
+// 沒有管理員角色，所有用戶都使用用戶儀表板
+
+// 確保用戶已登入
+requirePermission('student');
 
 $userId = $_SESSION['user_id'];
 $user = getUserById($userId);
@@ -21,31 +20,26 @@ if (!$user) {
 ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
-<head>
+<head>    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用戶儀表板 - 教室租借系統</title>
+    <title>用戶儀表板 - 教室租借系統</title>    
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" type="image/png" href="../assects/images.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body style="background-image: url('../assects/fju_fx_3.svg'); background-repeat: no-repeat; background-size: 100%; background-attachment: fixed;">
     <div class="admin-container">
-        <header class="admin-header">
-            <h1 class="admin-title">教室租借系統</h1>
-            <div class="admin-user-info">
-                <span class="admin-user-name">歡迎, <?php echo htmlspecialchars($user['user_name']); ?></span>
-                <a href="../logout.php" class="admin-btn admin-btn-danger">登出</a>
-            </div>
-        </header>
-        
-        <div class="admin-content">
-            <aside class="admin-sidebar">
-                <ul>
-                    <li><a href="dashboard.php" class="active">儀表板</a></li>
-                    <li><a href="booking.php">預約教室</a></li>
-                    <li><a href="my_bookings.php">我的預約</a></li>
-                    <li><a href="profile.php">個人資料</a></li>
-                </ul>
-            </aside>
+        <?php include_once '../components/header.php'; ?>
+          <div class="admin-content">
+            <?php 
+            if (isAdmin()) {
+                include_once '../components/admin_sidebar.php';
+            } else {
+                include_once '../components/user_sidebar.php';
+            }
+            ?>
             
             <main class="admin-main">
                 <div class="admin-card">
@@ -174,9 +168,9 @@ if (!$user) {
                             ?>
                         </tbody>
                     </table>
-                </div>
-            </main>
+                </div>            </main>
         </div>
     </div>
+    <script src="../js/dashboard.js"></script>
 </body>
 </html>
