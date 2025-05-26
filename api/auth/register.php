@@ -11,11 +11,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $data = getJsonInput();
+    // 支持兩種數據格式：JSON 和表單數據
+    $data = [];
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    
+    if (strpos($contentType, 'application/json') !== false) {
+        // JSON 數據（API 調用）
+        $data = getJsonInput();
+    } else {
+        // 表單數據（HTML 表單提交）
+        $data = $_POST;
+    }
     
     // 驗證必填字段
     if (!isset($data['username']) || !isset($data['email']) || !isset($data['password']) || !isset($data['confirm_password'])) {
-        sendError('請提供所有必填欄位', 400);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('請提供所有必填欄位', 400);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('請提供所有必填欄位'));
+            exit;
+        }
     }
     
     $username = $data['username'];
@@ -26,15 +41,30 @@ try {
     
     // 基本驗證
     if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-        sendError('請填寫所有必填欄位', 400);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('請填寫所有必填欄位', 400);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('請填寫所有必填欄位'));
+            exit;
+        }
     }
     
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        sendError('請提供有效的電子郵件地址', 400);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('請提供有效的電子郵件地址', 400);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('請提供有效的電子郵件地址'));
+            exit;
+        }
     }
     
     if ($password !== $confirm_password) {
-        sendError('兩次輸入的密碼不一致', 400);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('兩次輸入的密碼不一致', 400);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('兩次輸入的密碼不一致'));
+            exit;
+        }
     }
     
     if (strlen($password) < 8) {
@@ -47,13 +77,13 @@ try {
     }
     
     // 角色驗證
-    $validRoles = ['student', 'teacher', 'admin'];
+    $validRoles = ['student', 'teacher'];
     if (!in_array($role, $validRoles)) {
         sendError('無效的角色', 400);
     }
     
-    // 只有管理員可以創建管理員和教師帳號
-    if (($role === 'admin' || $role === 'teacher') && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin')) {
+    // 只有教師可以創建教師帳號
+    if ($role === 'teacher' && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher')) {
         sendError('您沒有權限創建此類型的帳號', 403);
     }
     
@@ -63,14 +93,24 @@ try {
     $stmt = $pdo->prepare("SELECT user_id FROM users WHERE user_name = ?");
     $stmt->execute([$username]);
     if ($stmt->fetch()) {
-        sendError('該用戶名已被使用', 409);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('該用戶名已被使用', 409);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('該用戶名已被使用'));
+            exit;
+        }
     }
     
     // 檢查電子郵件是否已存在
     $stmt = $pdo->prepare("SELECT user_id FROM users WHERE mail = ?");
     $stmt->execute([$email]);
     if ($stmt->fetch()) {
-        sendError('該電子郵件已被使用', 409);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('該電子郵件已被使用', 409);
+        } else {
+            header('Location: ../../register.php?error=' . urlencode('該電子郵件已被使用'));
+            exit;
+        }
     }
     
     // 密碼加密 - 使用 PASSWORD_DEFAULT 演算法
@@ -82,11 +122,18 @@ try {
     
     $userId = $pdo->lastInsertId();
     
-    sendResponse([
-        'success' => true,
-        'message' => '註冊成功',
-        'user_id' => $userId
-    ], 201);
+    if (strpos($contentType, 'application/json') !== false) {
+        // API 調用：返回 JSON 響應
+        sendResponse([
+            'success' => true,
+            'message' => '註冊成功',
+            'user_id' => $userId
+        ], 201);
+    } else {
+        // 表單提交：重定向到登入頁面
+        header('Location: ../../login.php?success=' . urlencode('註冊成功，請登入'));
+        exit;
+    }
 } catch (Exception $e) {
     sendError('註冊過程中發生錯誤: ' . $e->getMessage(), 500);
 }

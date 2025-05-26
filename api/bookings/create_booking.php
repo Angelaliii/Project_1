@@ -37,7 +37,7 @@ try {
     error_log('收到的預約數據: ' . json_encode($data));
 
     // 驗證必填字段
-    if (!isset($data['classroom_ID']) || !isset($data['date']) || empty($data['slots']) || !isset($data['purpose'])) {
+    if (!isset($data['classroom_ID']) || !isset($data['date']) || empty($data['slots'])) {
         throw new Exception('缺少必要欄位');
     }
     
@@ -51,7 +51,9 @@ try {
     $classroomId = $data['classroom_ID'];
     $date = $data['date'];
     $slots = $data['slots']; // 應為小時數陣列，例如 [9, 10, 11]
-    $purpose = $data['purpose'];
+    
+    // 取得使用目的欄位如果有的話
+    $purpose = isset($data['purpose']) ? $data['purpose'] : null;
 
     // 驗證日期格式
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
@@ -76,7 +78,7 @@ try {
         JOIN bookings b ON bs.booking_ID = b.booking_ID
         WHERE bs.date = ? 
         AND b.classroom_ID = ? 
-        AND b.status IN ('pending', 'booked', 'in_use')
+        AND b.status IN ('booked', 'in_use')
         AND bs.hour IN ($placeholders)
     ");
     
@@ -103,8 +105,8 @@ try {
     
     try {
         // 創建預約
-        // 學生的預約首先是pending狀態，教師可以直接booked
-        $status = isTeacher() ? 'booked' : 'pending';
+        // 所有預約都直接設為 booked 狀態，不需要審核
+        $status = 'booked';
         
         $stmt = $pdo->prepare("INSERT INTO bookings (classroom_ID, user_ID, status, start_datetime, end_datetime, purpose) 
                               VALUES (?, ?, ?, ?, ?, ?)");

@@ -34,8 +34,26 @@ function validateJWT() {
     return true; // 目前簡化返回，實際應該驗證 JWT
 }
 
-// 不需要重複定義 isAdmin 和 isTeacher 函數，這些已在主 config.php 中定義
-// API 模塊使用主 config.php 中的 isAdmin 和 isTeacher 函數
+// 不需要重複定義 isTeacher 函數，這些已在主 config.php 中定義
+// API 模塊使用主 config.php 中的 isTeacher 函數
+
+// API 認證檢查
+function authenticateAPI() {
+    if (!isset($_SESSION['user_id'])) {
+        sendError('未授權，請先登入', 401);
+    }
+    return $_SESSION['user_id'];
+}
+
+// 獲取請求數據
+function getRequestData() {
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method === 'POST' || $method === 'PUT') {
+        $data = json_decode(file_get_contents('php://input'), true);
+        return $data ? $data : [];
+    }
+    return $_GET;
+}
 
 // API 響應助手函數
 function sendResponse($data, $statusCode = 200) {

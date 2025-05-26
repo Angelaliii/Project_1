@@ -41,8 +41,8 @@ switch ($method) {
 // 獲取所有用戶
 function listUsers() {
     try {
-        // 驗證管理員權限
-        if (!isAdmin()) {
+        // 驗證教師權限
+        if (!isTeacher()) {
             sendError('未授權', 403);
         }
         
@@ -60,8 +60,8 @@ function listUsers() {
 // 獲取單個用戶
 function getUser($userId) {
     try {
-        // 驗證權限（管理員或用戶本人）
-        if (!isAdmin() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $userId)) {
+        // 驗證權限（教師或用戶本人）
+        if (!isTeacher() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $userId)) {
             sendError('未授權', 403);
         }
         
@@ -83,8 +83,8 @@ function getUser($userId) {
 // 創建新用戶
 function createUser() {
     try {
-        // 驗證管理員權限
-        if (!isAdmin()) {
+        // 驗證教師權限
+        if (!isTeacher()) {
             sendError('未授權', 403);
         }
         
@@ -96,7 +96,7 @@ function createUser() {
         }
         
         // 驗證角色有效性
-        $validRoles = ['student', 'teacher', 'admin'];
+        $validRoles = ['student', 'teacher'];
         if (!in_array($data['role'], $validRoles)) {
             sendError('無效的角色', 400);
         }
@@ -127,8 +127,8 @@ function createUser() {
 // 更新用戶
 function updateUser($userId) {
     try {
-        // 驗證權限（管理員或用戶本人）
-        if (!isAdmin() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $userId)) {
+        // 驗證權限（教師或用戶本人）
+        if (!isTeacher() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $userId)) {
             sendError('未授權', 403);
         }
         
@@ -178,9 +178,9 @@ function updateUser($userId) {
             $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         
-        // 只有管理員可以更改角色
-        if (isset($data['role']) && isAdmin()) {
-            $validRoles = ['student', 'teacher', 'admin'];
+        // 只有教師可以更改角色
+        if (isset($data['role']) && isTeacher()) {
+            $validRoles = ['student', 'teacher'];
             if (!in_array($data['role'], $validRoles)) {
                 sendError('無效的角色', 400);
             }
@@ -209,8 +209,8 @@ function updateUser($userId) {
 // 刪除用戶
 function deleteUser($userId) {
     try {
-        // 只有管理員可以刪除用戶
-        if (!isAdmin()) {
+        // 只有教師可以刪除用戶
+        if (!isTeacher()) {
             sendError('未授權', 403);
         }
         

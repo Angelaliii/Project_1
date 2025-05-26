@@ -117,8 +117,8 @@ function getClassroom($classroomId) {
 // 創建新教室
 function createClassroom() {
     try {
-        // 驗證管理員權限
-        if (!isAdmin() && !isTeacher()) {
+        // 驗證教師權限
+        if (!isTeacher()) {
             sendError('您沒有創建教室的權限', 403);
             return;
         }
@@ -152,8 +152,8 @@ function createClassroom() {
 // 更新教室
 function updateClassroom($classroomId) {
     try {
-        // 驗證管理員權限
-        if (!isAdmin() && !isTeacher()) {
+        // 驗證教師權限
+        if (!isTeacher()) {
             sendError('您沒有更新教室的權限', 403);
             return;
         }
@@ -220,8 +220,8 @@ function updateClassroom($classroomId) {
 // 刪除教室
 function deleteClassroom($classroomId) {
     try {
-        // 驗證管理員權限
-        if (!isAdmin()) {
+        // 驗證教師權限
+        if (!isTeacher()) {
             sendError('您沒有刪除教室的權限', 403);
             return;
         }

@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# 先確保請求不是針對實際文件或目錄的
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# 將根目錄請求重定向到 public/
+RewriteRule ^$ public/ [L]
+
+# 將所有其他請求重定向到 public/ 目錄下相應的 URL
+RewriteRule (.*) public/$1 [L]

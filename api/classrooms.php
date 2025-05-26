@@ -117,9 +117,9 @@ function getClassroom() {
 
 // 創建教室
 function createClassroom() {
-    // 需要管理員權限
+    // 需要教師權限
     $userId = authenticateAPI();
-    if (!isAdmin()) {
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -180,9 +180,9 @@ function createClassroom() {
 
 // 更新教室
 function updateClassroom() {
-    // 需要管理員權限
+    // 需要教師權限
     $userId = authenticateAPI();
-    if (!isAdmin()) {
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -265,9 +265,9 @@ function updateClassroom() {
 
 // 刪除教室
 function deleteClassroom() {
-    // 需要管理員權限
+    // 需要教師權限
     $userId = authenticateAPI();
-    if (!isAdmin()) {
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     

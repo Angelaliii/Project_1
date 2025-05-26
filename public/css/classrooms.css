@@ -1,0 +1,233 @@
+/* classrooms.css - 教室瀏覽頁面專用樣式 */
+
+/* 教室卡片網格 */
+.classrooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+/* 教室卡片樣式 */
+.classroom-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.classroom-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 教室圖片容器 */
+.classroom-image {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f4f8;
+}
+
+.classroom-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.classroom-card:hover .classroom-image img {
+  transform: scale(1.05);
+}
+
+/* 無圖片時的佔位符 */
+.no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #4285f4;
+}
+
+.no-image i {
+  font-size: 4rem;
+  opacity: 0.7;
+}
+
+/* 教室信息區域 */
+.classroom-info {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.classroom-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.classroom-info p {
+  margin: 0 0 15px 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.classroom-info p i {
+  margin-right: 5px;
+  color: #4285f4;
+}
+
+/* 教室功能按鈕 */
+.classroom-actions {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* 空狀態 */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  color: #cbd5e0;
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  color: #4a5568;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  color: #718096;
+}
+
+/* 過濾區域 */
+.filter-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.filter-group {
+  flex: 1 1 200px;
+}
+
+.filter-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  background-color: white;
+  color: #2d3748;
+}
+
+/* 分頁樣式 */
+.pagination-container {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.page-link {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: white;
+  color: #4285f4;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+}
+
+.page-link:hover {
+  background-color: #e3f2fd;
+}
+
+.page-link.active {
+  background-color: #4285f4;
+  color: white;
+  font-weight: 500;
+}
+
+.page-ellipsis {
+  color: #a0aec0;
+  padding: 0 5px;
+}
+
+/* 響應式樣式 */
+@media (max-width: ) {
+  .classrooms-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
+  }
+
+  .classroom-image {
+    height: 160px;
+  }
+
+  .classroom-info {
+    padding: 15px;
+  }
+
+  .classroom-info h3 {
+    font-size: 1rem;
+  }
+
+  .filter-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .classrooms-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

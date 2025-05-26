@@ -1,0 +1,495 @@
+/* profile.css - 個人資料頁面樣式 */
+
+.profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.profile-card {
+  flex: 1 1 65%;
+  min-width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.profile-stats {
+  flex: 1 1 30%;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(45deg, #4285f4, #34a853);
+  color: white;
+}
+
+.profile-avatar {
+  font-size: 60px;
+  margin-right: 20px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.profile-role {
+  font-size: 14px;
+  opacity: 0.9;
+  display: inline-block;
+  padding: 2px 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  margin-top: 5px;
+}
+
+.profile-body {
+  padding: 20px;
+}
+
+.profile-section {
+  margin-bottom: 25px;
+}
+
+.profile-section h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.profile-field {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: baseline;
+}
+
+.field-label {
+  width: 100px;
+  color: #666;
+  font-size: 14px;
+}
+
+.field-value {
+  flex: 1;
+  font-size: 15px;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* 統計卡片 */
+.stats-card {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.stats-header {
+  padding: 15px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.stats-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stats-body {
+  padding: 15px;
+}
+
+.stats-item {
+  text-align: center;
+  padding: 10px;
+}
+
+.stats-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4285f4;
+  margin-bottom: 5px;
+}
+
+.stats-label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* 活動列表 */
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-item {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-icon i {
+  font-size: 14px;
+  color: #666;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-content p {
+  margin: 0 0 3px;
+  font-size: 13px;
+}
+
+.activity-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.activity-actions {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #4285f4;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.btn-text:hover {
+  text-decoration: underline;
+}
+
+/* 表單樣式 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group input:focus {
+  border-color: #4285f4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.form-group input[readonly] {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* 書籤頁面樣式 */
+.bookings-container {
+  margin-top: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 60px;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.empty-state h2 {
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.bookings-grid {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.booking-header {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  gap: 15px;
+  padding: 15px;
+  background: #f6f8fa;
+  border-bottom: 1px solid #e1e4e8;
+  font-weight: 600;
+}
+
+.booking-item {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  gap: 15px;
+  padding: 15px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.booking-item:hover {
+  background: #f6f8fa;
+}
+
+.booking-item.past {
+  opacity: 0.7;
+}
+
+.booking-space strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-booked {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.status-in_use {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.status-completed {
+  background-color: #f9f0ff;
+  color: #722ed1;
+}
+
+.status-cancelled {
+  background-color: #fff1f0;
+  color: #f5222d;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* 提示框樣式 */
+.alert {
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.alert-danger {
+  background-color: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #f5222d;
+}
+
+.alert-warning {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  color: #faad14;
+}
+
+/* 響應式調整 */
+@media (max-width: ) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .booking-header,
+  .booking-item {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .booking-header div:nth-child(3),
+  .booking-item .booking-status {
+    display: none;
+  }
+}
+
+/* 預約小貼士樣式 */
+.booking-tips {
+  margin-top: 30px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.booking-tips h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.booking-tips ul {
+  padding-left: 20px;
+}
+
+.booking-tips li {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.color-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+
+.color-box.available {
+  background-color: #e6ffed;
+  border: 1px solid #b7eb8f;
+}
+
+.color-box.booked {
+  background-color: #fff1f0;
+  border: 1px solid #ffa39e;
+}
+
+.color-box.selected {
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+}
+
+/* 主要導航欄樣式 */
+.main-header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo span {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.main-nav {
+  margin-left: auto;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  margin-left: 20px;
+}
+
+.nav-list a {
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 5px 0;
+  transition: color 0.3s;
+}
+
+.nav-list a:hover {
+  color: #4285f4;
+}
+
+/* 主要內容區域 */
+.main-content {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}

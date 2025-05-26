@@ -11,11 +11,27 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $data = getJsonInput();
+    // 支持兩種數據格式：JSON 和表單數據
+    $data = [];
+    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    
+    if (strpos($contentType, 'application/json') !== false) {
+        // JSON 數據（API 調用）
+        $data = getJsonInput();
+    } else {
+        // 表單數據（HTML 表單提交）
+        $data = $_POST;
+    }
     
     // 驗證必填字段
     if (!isset($data['username']) || !isset($data['password'])) {
-        sendError('請提供用戶名和密碼', 400);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('請提供用戶名和密碼', 400);
+        } else {
+            // 對於表單提交，重定向到登入頁面並顯示錯誤
+            header('Location: ../../login.php?error=' . urlencode('請提供用戶名和密碼'));
+            exit;
+        }
     }
     
     $username = $data['username'];
@@ -39,21 +55,28 @@ try {
         $_SESSION['username'] = $user['user_name'];
         $_SESSION['role'] = $user['role'];
         
-        // 創建JWT令牌（如果需要）
-        // $token = createJWT($user);
-        
-        // 返回用戶信息（不包含密碼）
-        unset($user['password']);
-        
-        sendResponse([
-            'success' => true,
-            'message' => '登入成功',
-            'user' => $user,
-            // 'token' => $token  // 如果實現了JWT
-        ]);
+        if (strpos($contentType, 'application/json') !== false) {
+            // API 調用：返回 JSON 響應
+            unset($user['password']);
+            sendResponse([
+                'success' => true,
+                'message' => '登入成功',
+                'user' => $user,
+            ]);
+        } else {
+            // 表單提交：重定向到適當的頁面
+            $redirectUrl = ($user['role'] == 'admin') ? 'admin/dashboard.php' : 'user/dashboard.php';
+            header('Location: ../../' . $redirectUrl);
+            exit;
+        }
     } else {
         // 登入失敗
-        sendError('用戶名或密碼錯誤', 401);
+        if (strpos($contentType, 'application/json') !== false) {
+            sendError('用戶名或密碼錯誤', 401);
+        } else {
+            header('Location: ../../login.php?error=' . urlencode('用戶名或密碼錯誤'));
+            exit;
+        }
     }
 } catch (Exception $e) {
     sendError('登入過程中發生錯誤: ' . $e->getMessage(), 500);

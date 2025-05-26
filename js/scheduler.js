@@ -18,9 +18,26 @@ document.addEventListener('DOMContentLoaded', function () {
   function initDatePicker() {
     const datePicker = document.getElementById('date-picker');
     if (datePicker) {
+      // 設置最小日期為今天，防止選擇過去的日期
+      const today = new Date();
+      const minDate = formatDate(today);
+      datePicker.setAttribute('min', minDate);
+
+      // 默認選擇今天
       datePicker.valueAsDate = startDate;
+
       datePicker.addEventListener('change', function () {
-        startDate = new Date(this.value);
+        const selectedDate = new Date(this.value);
+        const currentDate = new Date();
+
+        // 檢查所選日期是否為過去日期
+        if (selectedDate < new Date(currentDate.setHours(0, 0, 0, 0))) {
+          showAlert('error', '不能選擇過去的日期');
+          datePicker.valueAsDate = startDate; // 重置為上一個有效日期
+          return;
+        }
+
+        startDate = selectedDate;
         if (currentSpaceId) {
           loadSchedule(currentSpaceId, startDate);
         }
@@ -154,9 +171,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const formattedDate = formatDate(date);
     console.log(`正在載入教室 ${spaceId} 在 ${formattedDate} 的排程`);
 
-    // 確保使用絕對路徑，並加上時間戳防止快取
+    // 使用相對路徑而非絕對路徑，並加上時間戳防止快取
     const timestamp = new Date().getTime();
-    const apiUrl = `/dashboard/Project_1/api/bookings/slots_fixed.php?classroom_id=${spaceId}&date=${formattedDate}&t=${timestamp}`;
+
+    // 自動判斷當前路徑與API的相對位置
+    let baseUrl = '';
+    if (window.location.pathname.indexOf('/user/') !== -1) {
+      baseUrl = '../api/bookings/slots_new.php';
+    } else {
+      baseUrl = './api/bookings/slots_new.php';
+    }
+
+    const apiUrl = `${baseUrl}?classroom_id=${spaceId}&date=${formattedDate}&t=${timestamp}`;
     console.log('API URL:', apiUrl);
 
     fetch(apiUrl)
@@ -203,10 +229,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('渲染排程表格，slots:', slots, 'classroom:', classroom);
 
-    // 生成時間段（8:00-22:00，每整點一個時段）
+    // 生成時間段（8:00-20:30，使用特定時間間隔）
     const timeSlots = [];
-    for (let hour = 8; hour <= 22; hour++) {
+    // 上午時段：8:00-12:00，每小時一個時段
+    for (let hour = 8; hour <= 11; hour++) {
       timeSlots.push(`${hour}:00`);
+    }
+    // 中午時段：12:00-13:30
+    timeSlots.push('12:00');
+    // 下午時段：13:30-20:30，每小時一個時段
+    for (let hour = 13; hour <= 20; hour++) {
+      timeSlots.push(`${hour}:30`);
     }
 
     // 創建表格
@@ -216,10 +249,23 @@ document.addEventListener('DOMContentLoaded', function () {
       '</th></tr>';
 
     timeSlots.forEach((time, index) => {
-      if (index >= timeSlots.length - 1) return; // 忽略最後一個時間點，因為它只是結束時間
+      // 忽略最後一個時間點，因為它只是結束時間
+      if (index >= timeSlots.length - 1) return;
 
       const hour = parseInt(time.split(':')[0]);
-      const timeKey = hour.toString().padStart(2, '0') + '00';
+      const minute = time.split(':')[1];
+      const timeKey = hour.toString().padStart(2, '0') + (minute || '00');
+
+      // 計算結束時間
+      let nextTime;
+      if (index < timeSlots.length - 1) {
+        nextTime = timeSlots[index + 1];
+      } else {
+        nextTime = '21:30'; // 最後一個時段的結束時間
+      }
+
+      // 顯示時間範圍
+      const displayTime = `${time}-${nextTime}`;
 
       // 檢查這個時段是否已被預訂
       const slot = slots.find((s) => s.hour === hour);
@@ -229,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       tableHTML += `
                 <tr>
-                    <td class="time-cell">${time}</td>
+                    <td class="time-cell">${displayTime}</td>
                     <td class="grid-cell ${cellClass}" data-time="${timeKey}" data-index="${index}"></td>
                 </tr>
             `;
@@ -351,8 +397,14 @@ document.addEventListener('DOMContentLoaded', function () {
       timeSlots.push(`${hour}:00`);
     }
 
+    // 計算開始和結束時間
     const startTime = timeSlots[start];
-    const endTime = end < timeSlots.length - 1 ? timeSlots[end + 1] : '23:00';
+    let endTime;
+    if (end < timeSlots.length - 1) {
+      endTime = timeSlots[end + 1];
+    } else {
+      endTime = '21:30'; // 最後一個時段結束時間
+    }
 
     const classroom = document.getElementById('classroom-title').textContent;
     const bookingDate = formatDateDisplay(startDate);
@@ -377,6 +429,23 @@ document.addEventListener('DOMContentLoaded', function () {
                         
                         <div class="booking-detail-label">時間：</div>
                         <div class="booking-detail-value">${startTime} - ${endTime}</div>
+                        
+                        <div class="booking-detail-label">預約目的：</div>
+                        <div class="booking-detail-value">
+                          <div class="form-group">
+                            <select id="booking-purpose-select" class="form-control">
+                              <option value="">請選擇使用目的</option>
+                              <option value="課堂活動">課堂活動</option>
+                              <option value="研習會">研習會</option>
+                              <option value="討論會議">討論會議</option>
+                              <option value="活動排練">活動排練</option>
+                              <option value="其他">其他</option>
+                            </select>
+                          </div>
+                          <div id="other-purpose-group" class="form-group" style="display: none; margin-top: 10px;">
+                            <input type="text" id="other-purpose" class="form-control" placeholder="請輸入其他使用目的">
+                          </div>
+                        </div>
                     </div>
                 </div>
                 <div class="booking-modal-footer">
@@ -405,27 +474,61 @@ document.addEventListener('DOMContentLoaded', function () {
     cancelButton.addEventListener('click', closeModal);
 
     confirmButton.addEventListener('click', function () {
-      // 提交預約
-      submitBooking(currentSpaceId, startDate, start, end);
-      closeModal();
+      // 獲取預約目的
+      const purposeSelect = document.getElementById('booking-purpose-select');
+      const otherPurpose = document.getElementById('other-purpose');
+      let bookingPurpose = purposeSelect.value;
+
+      // 檢查是否選擇了目的
+      if (!bookingPurpose) {
+        showAlert('error', '請選擇預約目的');
+        return;
+      }
+
+      // 如果選擇了"其他"，則檢查是否填寫了其他目的
+      if (bookingPurpose === '其他') {
+        if (!otherPurpose.value.trim()) {
+          showAlert('error', '請填寫其他預約目的');
+          return;
+        }
+        bookingPurpose = otherPurpose.value.trim();
+      }
+
+      // 顯示確認對話框
+      if (confirm(`確定要預約嗎？預約目的：${bookingPurpose}`)) {
+        // 提交預約
+        submitBooking(currentSpaceId, startDate, start, end, bookingPurpose);
+        closeModal();
+      }
+    });
+
+    // 添加目的選單變更事件
+    const purposeSelect = document.getElementById('booking-purpose-select');
+    const otherPurposeGroup = document.getElementById('other-purpose-group');
+
+    purposeSelect.addEventListener('change', function () {
+      if (this.value === '其他') {
+        otherPurposeGroup.style.display = 'block';
+      } else {
+        otherPurposeGroup.style.display = 'none';
+      }
     });
   }
 
   // 提交預約
-  function submitBooking(spaceId, date, startIndex, endIndex) {
+  function submitBooking(spaceId, date, startIndex, endIndex, purpose) {
     showLoading(true);
 
-    // 獲取用戶輸入的預約目的
-    const purpose = prompt('請輸入預約目的', '課堂活動');
-    if (!purpose) {
-      showAlert('error', '請提供預約目的');
-      showLoading(false);
-      return;
-    }
-
-    // 整點時間槽
+    // 生成時間槽陣列（與渲染排程表格函數中的定義保持一致）
     const timeSlots = [];
-    for (let hour = 8; hour <= 22; hour++) {
+    // 上午時段：8:00-12:00，每小時一個時段
+    for (let hour = 8; hour <= 11; hour++) {
+      timeSlots.push({ hour });
+    }
+    // 中午時段：12:00-13:30
+    timeSlots.push({ hour: 12 });
+    // 下午時段：13:30-20:30，每小時一個時段
+    for (let hour = 13; hour <= 20; hour++) {
       timeSlots.push({ hour });
     }
 

@@ -76,19 +76,38 @@ function getAvailableSlots($date, $classroomId) {
             JOIN bookings b ON bs.booking_ID = b.booking_ID
             WHERE bs.date = ? 
             AND b.classroom_ID = ? 
-            AND b.status IN ('pending', 'booked', 'in_use')
+            AND b.status IN ('booked', 'in_use')
         ");
         $stmt->execute([$date, $classroomId]);
         $bookedHours = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
         error_log("已預訂的時間: " . implode(', ', $bookedHours));
         
-        // 生成完整的時間槽列表 (8:00-22:00)
+        // 生成時間槽列表 (按新的時間段定義)
         $slots = [];
-        for ($hour = 8; $hour < 22; $hour++) {
+        
+        // 上午時段：8:00-12:00，每小時一個時段
+        for ($hour = 8; $hour <= 11; $hour++) {
             $slots[] = [
                 'hour' => $hour,
                 'time' => sprintf('%02d:00-%02d:00', $hour, $hour + 1),
+                'available' => !in_array($hour, $bookedHours)
+            ];
+        }
+        
+        // 中午時段：12:00-13:30
+        $slots[] = [
+            'hour' => 12,
+            'time' => '12:00-13:30',
+            'available' => !in_array(12, $bookedHours)
+        ];
+        
+        // 下午時段：13:30-20:30，每小時一個時段
+        for ($hour = 13; $hour <= 20; $hour++) {
+            $nextHour = $hour + 1;
+            $slots[] = [
+                'hour' => $hour,
+                'time' => sprintf('%02d:30-%02d:30', $hour, $nextHour),
                 'available' => !in_array($hour, $bookedHours)
             ];
         }

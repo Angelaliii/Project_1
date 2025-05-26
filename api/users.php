@@ -31,8 +31,8 @@ function listUsers() {
     // 驗證用戶身份
     $userId = authenticateAPI();
     
-    // 檢查是否有權限（只有管理員可以查看所有用戶）
-    if (!isAdmin()) {
+    // 只有教師可以查看所有用戶
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -79,8 +79,8 @@ function getUser() {
     // 獲取要查詢的用戶ID
     $targetUserId = isset($_GET['id']) ? intval($_GET['id']) : $userId;
     
-    // 檢查是否有權限（只能查看自己或管理員可以查看所有人）
-    if ($targetUserId != $userId && !isAdmin()) {
+    // 檢查是否有權限（只能查看自己或教師可以查看所有人）
+    if ($targetUserId != $userId && !isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -102,9 +102,9 @@ function getUser() {
 
 // 創建用戶
 function createUser() {
-    // 需要管理員權限
+    // 需要教師權限
     $userId = authenticateAPI();
-    if (!isAdmin()) {
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -175,8 +175,8 @@ function updateUser() {
     $data = getRequestData();
     $targetUserId = isset($data['user_id']) ? intval($data['user_id']) : $userId;
     
-    // 檢查是否有權限（只能修改自己或管理員可以修改所有人）
-    if ($targetUserId != $userId && !isAdmin()) {
+    // 檢查是否有權限（只能修改自己或教師可以修改所有人）
+    if ($targetUserId != $userId && !isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     
@@ -212,9 +212,9 @@ function updateUser() {
             $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         
-        // 角色更新（僅管理員可以更改）
-        if (!empty($data['role']) && isAdmin()) {
-            $validRoles = ['student', 'teacher', 'admin'];
+        // 角色更新（僅教師可以更改）
+        if (!empty($data['role']) && isTeacher()) {
+            $validRoles = ['student', 'teacher'];
             if (!in_array($data['role'], $validRoles)) {
                 sendResponse(400, '無效的用戶角色');
             }
@@ -248,9 +248,9 @@ function updateUser() {
 
 // 刪除用戶
 function deleteUser() {
-    // 需要管理員權限
+    // 需要教師權限
     $userId = authenticateAPI();
-    if (!isAdmin()) {
+    if (!isTeacher()) {
         sendResponse(403, '沒有權限執行此操作');
     }
     

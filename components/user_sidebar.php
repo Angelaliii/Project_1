@@ -12,7 +12,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // 確保使用者已登入
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../login.html');
+    header('Location: ../login.php');
     exit;
 }
 

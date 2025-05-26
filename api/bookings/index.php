@@ -57,8 +57,8 @@ function listBookings() {
         $status = isset($_GET['status']) ? $_GET['status'] : null;
         $date = isset($_GET['date']) ? $_GET['date'] : null;
         
-        // 驗證權限
-        if (!isAdmin() && (!isset($_SESSION['user_id']) || ($userId && $_SESSION['user_id'] != $userId))) {
+        // 驗證權限 - 只能查看自己的預約
+        if (!isset($_SESSION['user_id']) || ($userId && $_SESSION['user_id'] != $userId)) {
             sendError('未授權', 403);
         }
         
@@ -76,8 +76,8 @@ function listBookings() {
         if ($userId) {
             $query .= " AND b.user_ID = ?";
             $params[] = $userId;
-        } elseif (!isAdmin() && isset($_SESSION['user_id'])) {
-            // 非管理員只能查看自己的預約
+        } elseif (isset($_SESSION['user_id'])) {
+            // 只能查看自己的預約
             $query .= " AND b.user_ID = ?";
             $params[] = $_SESSION['user_id'];
         }
@@ -126,8 +126,8 @@ function getBooking($bookingId) {
             sendError('預約不存在', 404);
         }
         
-        // 驗證權限（管理員或預約擁有者）
-        if (!isAdmin() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID'])) {
+        // 驗證權限（只有預約擁有者可以查看）
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID']) {
             sendError('未授權', 403);
         }
         
@@ -163,7 +163,7 @@ function createBooking() {
         $classroomId = $data['classroom_ID'];
         $startDatetime = $data['start_datetime'];
         $endDatetime = $data['end_datetime'];
-        $status = isset($data['status']) && isAdmin() ? $data['status'] : 'pending';
+        $status = 'booked'; // 直接設為已預約，無需核可
         
         // 驗證時間格式
         if (!strtotime($startDatetime) || !strtotime($endDatetime)) {
@@ -187,7 +187,7 @@ function createBooking() {
         // 檢查時段是否已被預約
         $stmt = $pdo->prepare("SELECT booking_ID FROM bookings 
                               WHERE classroom_ID = ? 
-                              AND status IN ('booked', 'in_use', 'pending') 
+                              AND status IN ('booked', 'in_use') 
                               AND NOT (end_datetime <= ? OR start_datetime >= ?)");
         $stmt->execute([$classroomId, $startDatetime, $endDatetime]);
         if ($stmt->fetch()) {
@@ -254,16 +254,13 @@ function updateBooking($bookingId) {
         }
         
         // 驗證權限
-        // 管理員可以更改任何預約
-        // 一般用戶只能更改自己的預約，且只能在 pending 或 booked 狀態下更改
-        if (!isAdmin()) {
-            if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID']) {
-                sendError('未授權', 403);
-            }
-            
-            if (!in_array($booking['status'], ['pending', 'booked'])) {
-                sendError('當前預約狀態無法修改', 400);
-            }
+        // 一般用戶只能更改自己的預約，且只能在 booked 狀態下更改
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID']) {
+            sendError('未授權', 403);
+        }
+        
+        if (!in_array($booking['status'], ['booked'])) {
+            sendError('當前預約狀態無法修改', 400);
         }
         
         // 準備更新語句
@@ -271,8 +268,8 @@ function updateBooking($bookingId) {
         $params = [];
         
         // 用戶可以更新的字段
-        if (isset($data['status']) && isAdmin()) {
-            $validStatus = ['available', 'booked', 'in_use', 'completed', 'cancelled'];
+        if (isset($data['status'])) {
+            $validStatus = ['booked', 'in_use', 'completed', 'cancelled'];
             if (!in_array($data['status'], $validStatus)) {
                 sendError('無效的狀態', 400);
             }
@@ -296,7 +293,7 @@ function updateBooking($bookingId) {
             $stmt = $pdo->prepare("SELECT booking_ID FROM bookings 
                                   WHERE classroom_ID = ? 
                                   AND booking_ID != ?
-                                  AND status IN ('booked', 'in_use', 'pending') 
+                                  AND status IN ('booked', 'in_use') 
                                   AND NOT (end_datetime <= ? OR start_datetime >= ?)");
             $stmt->execute([$booking['classroom_ID'], $bookingId, $data['start_datetime'], $data['end_datetime']]);
             if ($stmt->fetch()) {
@@ -378,13 +375,13 @@ function deleteBooking($bookingId) {
             sendError('預約不存在', 404);
         }
         
-        // 驗證權限（管理員或預約擁有者）
-        if (!isAdmin() && (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID'])) {
+        // 驗證權限（只有預約擁有者可以刪除）
+        if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $booking['user_ID']) {
             sendError('未授權', 403);
         }
         
-        // 非管理員只能刪除處於 pending 或 booked 狀態的預約
-        if (!isAdmin() && !in_array($booking['status'], ['pending', 'booked'])) {
+        // 只能刪除處於 booked 狀態的預約
+        if (!in_array($booking['status'], ['booked'])) {
             sendError('當前預約狀態無法刪除', 400);
         }
         

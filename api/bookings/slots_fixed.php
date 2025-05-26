@@ -96,7 +96,7 @@ function getAvailableSlots($date, $classroomId) {
             JOIN bookings b ON bs.booking_ID = b.booking_ID
             WHERE bs.date = ? 
             AND b.classroom_ID = ? 
-            AND b.status IN ('pending', 'booked', 'in_use')
+            AND b.status IN ('booked', 'in_use')
         ");
         $stmt->execute([$date, $classroomId]);
         $bookedHours = $stmt->fetchAll(PDO::FETCH_COLUMN);
