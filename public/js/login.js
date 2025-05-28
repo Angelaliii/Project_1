@@ -1,5 +1,3 @@
-// scripts.js - 用於登入和註冊頁面的腳本
-
 // DOM 元素加載完成後執行
 document.addEventListener('DOMContentLoaded', function () {
   // 表單驗證
