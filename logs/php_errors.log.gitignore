@@ -1,0 +1,6 @@
+[25-May-2025 14:22:35 Europe/Berlin] 開始測試 API 錯誤診斷
+[25-May-2025 14:22:35 Europe/Berlin] 嘗試連接數據庫
+[25-May-2025 14:22:35 Europe/Berlin] 成功連接到數據庫
+[25-May-2025 14:22:35 Europe/Berlin] 嘗試查詢 classrooms 表
+[25-May-2025 14:22:35 Europe/Berlin] classrooms 表中有 11 筆記錄
+[25-May-2025 14:22:35 Europe/Berlin] 嘗試獲取所有教室記錄

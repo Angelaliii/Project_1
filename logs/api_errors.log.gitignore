@@ -1,0 +1,315 @@
+[25-May-2025 15:03:31 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 15:03:31 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots.php?classroom_id=1&date=2025-05-25
+[25-May-2025 15:03:31 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 15:03:31 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+)
+
+[25-May-2025 15:03:31 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 15:03:31 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 15:03:31 Europe/Berlin] 數據庫連接成功
+[25-May-2025 15:03:31 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 15:03:31 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 15:03:31 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 15:03:31 Europe/Berlin] 準備返回響應: 
+[25-May-2025 15:07:00 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 15:07:00 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots.php?classroom_id=1&date=2023-12-30
+[25-May-2025 15:07:00 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 15:07:00 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2023-12-30
+)
+
+[25-May-2025 15:07:00 Europe/Berlin] Method: GET, 日期: 2023-12-30, 教室ID: 1
+[25-May-2025 15:07:00 Europe/Berlin] getAvailableSlots 函數開始執行: date=2023-12-30, classroomId=1
+[25-May-2025 15:07:00 Europe/Berlin] 數據庫連接成功
+[25-May-2025 15:07:00 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 15:07:00 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 15:07:00 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 15:07:00 Europe/Berlin] 準備返回響應: 
+[25-May-2025 15:55:13 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 15:55:13 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots.php?classroom_id=1&date=2025-05-25
+[25-May-2025 15:55:13 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 15:55:13 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+)
+
+[25-May-2025 15:55:13 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 15:55:13 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 15:55:13 Europe/Berlin] 數據庫連接成功
+[25-May-2025 15:55:13 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 15:55:13 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 15:55:13 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 15:55:13 Europe/Berlin] 準備返回響應: 
+[25-May-2025 16:10:40 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 16:10:40 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots.php?classroom_id=1&date=2025-05-25&t=1748182240885
+[25-May-2025 16:10:40 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 16:10:40 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+    [t] => 1748182240885
+)
+
+[25-May-2025 16:10:40 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 16:10:40 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 16:10:40 Europe/Berlin] 數據庫連接成功
+[25-May-2025 16:10:40 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 16:10:40 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 16:10:40 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 16:10:40 Europe/Berlin] 準備返回響應: 
+[25-May-2025 16:10:40 Europe/Berlin] JSON 響應已發送
+[25-May-2025 16:10:44 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 16:10:44 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots.php?classroom_id=2&date=2025-05-25&t=1748182244207
+[25-May-2025 16:10:44 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 16:10:44 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 2
+    [date] => 2025-05-25
+    [t] => 1748182244207
+)
+
+[25-May-2025 16:10:44 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 2
+[25-May-2025 16:10:44 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=2
+[25-May-2025 16:10:44 Europe/Berlin] 數據庫連接成功
+[25-May-2025 16:10:44 Europe/Berlin] 查詢教室結果: {"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}
+[25-May-2025 16:10:44 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 16:10:44 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 16:10:44 Europe/Berlin] 準備返回響應: {"status":"success","date":"2025-05-25","classroom_id":2,"slots":[{"hour":8,"time":"08:00-09:00","available":true},{"hour":9,"time":"09:00-10:00","available":true},{"hour":10,"time":"10:00-11:00","available":true},{"hour":11,"time":"11:00-12:00","available":true},{"hour":12,"time":"12:00-13:00","available":true},{"hour":13,"time":"13:00-14:00","available":true},{"hour":14,"time":"14:00-15:00","available":true},{"hour":15,"time":"15:00-16:00","available":true},{"hour":16,"time":"16:00-17:00","available":true},{"hour":17,"time":"17:00-18:00","available":true},{"hour":18,"time":"18:00-19:00","available":true},{"hour":19,"time":"19:00-20:00","available":true},{"hour":20,"time":"20:00-21:00","available":true},{"hour":21,"time":"21:00-22:00","available":true}],"classroom":{"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}}
+[25-May-2025 16:10:44 Europe/Berlin] JSON 響應已發送
+[25-May-2025 16:47:19 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 16:47:19 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-25&t=1748184439522
+[25-May-2025 16:47:19 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 16:47:19 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+    [t] => 1748184439522
+)
+
+[25-May-2025 16:47:19 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 16:47:19 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 16:47:19 Europe/Berlin] 數據庫連接成功
+[25-May-2025 16:47:19 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 16:47:19 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 16:47:19 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 16:47:19 Europe/Berlin] 準備返回響應: 
+[25-May-2025 16:47:19 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 16:47:29 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 16:47:29 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-25&t=1748184449079
+[25-May-2025 16:47:29 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 16:47:29 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+    [t] => 1748184449079
+)
+
+[25-May-2025 16:47:29 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 16:47:29 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 16:47:29 Europe/Berlin] 數據庫連接成功
+[25-May-2025 16:47:29 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 16:47:29 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 16:47:29 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 16:47:29 Europe/Berlin] 準備返回響應: 
+[25-May-2025 16:47:29 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 16:52:20 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 16:52:20 Europe/Berlin] REQUEST_URI: /dashboard/Project_1/api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-25&t=1748184740449
+[25-May-2025 16:52:20 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 16:52:20 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-25
+    [t] => 1748184740449
+)
+
+[25-May-2025 16:52:20 Europe/Berlin] Method: GET, 日期: 2025-05-25, 教室ID: 1
+[25-May-2025 16:52:20 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-25, classroomId=1
+[25-May-2025 16:52:20 Europe/Berlin] 數據庫連接成功
+[25-May-2025 16:52:20 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 16:52:20 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 16:52:20 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 16:52:20 Europe/Berlin] 準備返回響應: 
+[25-May-2025 16:52:20 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 18:03:50 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 18:03:50 Europe/Berlin] REQUEST_URI: /api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-26&t=1748189030739
+[25-May-2025 18:03:50 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:03:50 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748189030739
+)
+
+[25-May-2025 18:03:50 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[25-May-2025 18:03:50 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[25-May-2025 18:03:50 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:03:50 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 18:03:50 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:03:50 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 18:03:50 Europe/Berlin] 準備返回響應: 
+[25-May-2025 18:03:50 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 18:03:52 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 18:03:52 Europe/Berlin] REQUEST_URI: /api/bookings/slots_fixed.php?classroom_id=2&date=2025-05-26&t=1748189032372
+[25-May-2025 18:03:52 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:03:52 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 2
+    [date] => 2025-05-26
+    [t] => 1748189032372
+)
+
+[25-May-2025 18:03:52 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 2
+[25-May-2025 18:03:52 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=2
+[25-May-2025 18:03:52 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:03:52 Europe/Berlin] 查詢教室結果: {"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}
+[25-May-2025 18:03:52 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:03:52 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 18:03:52 Europe/Berlin] 準備返回響應: {"status":"success","date":"2025-05-26","classroom_id":2,"slots":[{"hour":8,"time":"08:00-09:00","available":true},{"hour":9,"time":"09:00-10:00","available":true},{"hour":10,"time":"10:00-11:00","available":true},{"hour":11,"time":"11:00-12:00","available":true},{"hour":12,"time":"12:00-13:00","available":true},{"hour":13,"time":"13:00-14:00","available":true},{"hour":14,"time":"14:00-15:00","available":true},{"hour":15,"time":"15:00-16:00","available":true},{"hour":16,"time":"16:00-17:00","available":true},{"hour":17,"time":"17:00-18:00","available":true},{"hour":18,"time":"18:00-19:00","available":true},{"hour":19,"time":"19:00-20:00","available":true},{"hour":20,"time":"20:00-21:00","available":true},{"hour":21,"time":"21:00-22:00","available":true}],"classroom":{"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}}
+[25-May-2025 18:03:52 Europe/Berlin] 發送成功響應，長度: 933
+[25-May-2025 18:03:56 Europe/Berlin] 收到的預約數據: {"classroom_ID":2,"date":"2025-05-26","slots":[11,12,13,14],"purpose":"\u8ab2\u5802\u6d3b\u52d5"}
+[25-May-2025 18:03:56 Europe/Berlin] 預約創建錯誤: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'purpose' in 'field list'
+[25-May-2025 18:16:30 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 18:16:30 Europe/Berlin] REQUEST_URI: /api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-26&t=1748189790973
+[25-May-2025 18:16:30 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:16:30 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748189790973
+)
+
+[25-May-2025 18:16:30 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[25-May-2025 18:16:30 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[25-May-2025 18:16:30 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:16:30 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 18:16:30 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:16:30 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 18:16:30 Europe/Berlin] 準備返回響應: 
+[25-May-2025 18:16:30 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 18:17:52 Europe/Berlin] === slots_fixed.php 開始執行 ===
+[25-May-2025 18:17:52 Europe/Berlin] REQUEST_URI: /api/bookings/slots_fixed.php?classroom_id=1&date=2025-05-26&t=1748189872949
+[25-May-2025 18:17:52 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:17:52 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748189872949
+)
+
+[25-May-2025 18:17:52 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[25-May-2025 18:17:52 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[25-May-2025 18:17:52 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:17:52 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 18:17:52 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:17:52 Europe/Berlin] 生成的時間槽數量: 14
+[25-May-2025 18:17:52 Europe/Berlin] 準備返回響應: 
+[25-May-2025 18:17:52 Europe/Berlin] 發送成功響應，長度: 0
+[25-May-2025 18:28:02 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 18:28:02 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=1&date=2025-05-26&t=1748190482936
+[25-May-2025 18:28:02 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:28:02 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748190482936
+)
+
+[25-May-2025 18:28:02 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[25-May-2025 18:28:02 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[25-May-2025 18:28:02 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:28:02 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 18:28:02 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:28:02 Europe/Berlin] 生成的時間槽數量: 13
+[25-May-2025 18:28:02 Europe/Berlin] 準備返回響應: 
+[25-May-2025 18:28:04 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 18:28:04 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=2&date=2025-05-26&t=1748190484063
+[25-May-2025 18:28:04 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:28:04 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 2
+    [date] => 2025-05-26
+    [t] => 1748190484063
+)
+
+[25-May-2025 18:28:04 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 2
+[25-May-2025 18:28:04 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=2
+[25-May-2025 18:28:04 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:28:04 Europe/Berlin] 查詢教室結果: {"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}
+[25-May-2025 18:28:04 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:28:04 Europe/Berlin] 生成的時間槽數量: 13
+[25-May-2025 18:28:04 Europe/Berlin] 準備返回響應: {"status":"success","date":"2025-05-26","classroom_id":2,"slots":[{"hour":8,"time":"08:00-09:00","available":true},{"hour":9,"time":"09:00-10:00","available":true},{"hour":10,"time":"10:00-11:00","available":true},{"hour":11,"time":"11:00-12:00","available":true},{"hour":12,"time":"12:00-13:30","available":true},{"hour":13,"time":"13:30-14:30","available":true},{"hour":14,"time":"14:30-15:30","available":true},{"hour":15,"time":"15:30-16:30","available":true},{"hour":16,"time":"16:30-17:30","available":true},{"hour":17,"time":"17:30-18:30","available":true},{"hour":18,"time":"18:30-19:30","available":true},{"hour":19,"time":"19:30-20:30","available":true},{"hour":20,"time":"20:30-21:30","available":true}],"classroom":{"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}}
+[25-May-2025 18:28:30 Europe/Berlin] 收到的預約數據: {"classroom_ID":2,"date":"2025-05-26","slots":[13,14,15,16],"purpose":"ewrwer"}
+[25-May-2025 18:28:30 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 18:28:30 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=2&date=2025-05-26&t=1748190510075
+[25-May-2025 18:28:30 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:28:30 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 2
+    [date] => 2025-05-26
+    [t] => 1748190510075
+)
+
+[25-May-2025 18:28:30 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 2
+[25-May-2025 18:28:30 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=2
+[25-May-2025 18:28:30 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:28:30 Europe/Berlin] 查詢教室結果: {"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}
+[25-May-2025 18:28:30 Europe/Berlin] 已預訂的時間: 13, 14, 15, 16
+[25-May-2025 18:28:30 Europe/Berlin] 生成的時間槽數量: 13
+[25-May-2025 18:28:30 Europe/Berlin] 準備返回響應: {"status":"success","date":"2025-05-26","classroom_id":2,"slots":[{"hour":8,"time":"08:00-09:00","available":true},{"hour":9,"time":"09:00-10:00","available":true},{"hour":10,"time":"10:00-11:00","available":true},{"hour":11,"time":"11:00-12:00","available":true},{"hour":12,"time":"12:00-13:30","available":true},{"hour":13,"time":"13:30-14:30","available":false},{"hour":14,"time":"14:30-15:30","available":false},{"hour":15,"time":"15:30-16:30","available":false},{"hour":16,"time":"16:30-17:30","available":false},{"hour":17,"time":"17:30-18:30","available":true},{"hour":18,"time":"18:30-19:30","available":true},{"hour":19,"time":"19:30-20:30","available":true},{"hour":20,"time":"20:30-21:30","available":true}],"classroom":{"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}}
+[25-May-2025 18:29:39 Europe/Berlin] === slots.php 開始執行 ===
+[25-May-2025 18:29:39 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=1&date=2025-05-26&t=1748190579215
+[25-May-2025 18:29:39 Europe/Berlin] REQUEST_METHOD: GET
+[25-May-2025 18:29:39 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748190579215
+)
+
+[25-May-2025 18:29:39 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[25-May-2025 18:29:39 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[25-May-2025 18:29:39 Europe/Berlin] 數據庫連接成功
+[25-May-2025 18:29:39 Europe/Berlin] 查詢教室結果: 
+[25-May-2025 18:29:39 Europe/Berlin] 已預訂的時間: 
+[25-May-2025 18:29:39 Europe/Berlin] 生成的時間槽數量: 13
+[25-May-2025 18:29:39 Europe/Berlin] 準備返回響應: 
+[26-May-2025 04:07:42 Europe/Berlin] === slots.php 開始執行 ===
+[26-May-2025 04:07:42 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=1&date=2025-05-26&t=1748225262641
+[26-May-2025 04:07:42 Europe/Berlin] REQUEST_METHOD: GET
+[26-May-2025 04:07:42 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 1
+    [date] => 2025-05-26
+    [t] => 1748225262641
+)
+
+[26-May-2025 04:07:42 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 1
+[26-May-2025 04:07:42 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=1
+[26-May-2025 04:07:42 Europe/Berlin] 數據庫連接成功
+[26-May-2025 04:07:42 Europe/Berlin] 查詢教室結果: 
+[26-May-2025 04:07:42 Europe/Berlin] 已預訂的時間: 
+[26-May-2025 04:07:42 Europe/Berlin] 生成的時間槽數量: 13
+[26-May-2025 04:07:42 Europe/Berlin] 準備返回響應: 
+[26-May-2025 04:07:44 Europe/Berlin] === slots.php 開始執行 ===
+[26-May-2025 04:07:44 Europe/Berlin] REQUEST_URI: /api/bookings/slots_new.php?classroom_id=2&date=2025-05-26&t=1748225264116
+[26-May-2025 04:07:44 Europe/Berlin] REQUEST_METHOD: GET
+[26-May-2025 04:07:44 Europe/Berlin] GET 參數: Array
+(
+    [classroom_id] => 2
+    [date] => 2025-05-26
+    [t] => 1748225264116
+)
+
+[26-May-2025 04:07:44 Europe/Berlin] Method: GET, 日期: 2025-05-26, 教室ID: 2
+[26-May-2025 04:07:44 Europe/Berlin] getAvailableSlots 函數開始執行: date=2025-05-26, classroomId=2
+[26-May-2025 04:07:44 Europe/Berlin] 數據庫連接成功
+[26-May-2025 04:07:44 Europe/Berlin] 查詢教室結果: {"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}
+[26-May-2025 04:07:44 Europe/Berlin] 已預訂的時間: 13, 14, 15, 16
+[26-May-2025 04:07:44 Europe/Berlin] 生成的時間槽數量: 13
+[26-May-2025 04:07:44 Europe/Berlin] 準備返回響應: {"status":"success","date":"2025-05-26","classroom_id":2,"slots":[{"hour":8,"time":"08:00-09:00","available":true},{"hour":9,"time":"09:00-10:00","available":true},{"hour":10,"time":"10:00-11:00","available":true},{"hour":11,"time":"11:00-12:00","available":true},{"hour":12,"time":"12:00-13:30","available":true},{"hour":13,"time":"13:30-14:30","available":false},{"hour":14,"time":"14:30-15:30","available":false},{"hour":15,"time":"15:30-16:30","available":false},{"hour":16,"time":"16:30-17:30","available":false},{"hour":17,"time":"17:30-18:30","available":true},{"hour":18,"time":"18:30-19:30","available":true},{"hour":19,"time":"19:30-20:30","available":true},{"hour":20,"time":"20:30-21:30","available":true}],"classroom":{"classroom_ID":2,"classroom_name":"202","building":"BS","room":"202","picture":null,"created_at":"2025-05-25 17:11:09","updated_at":"2025-05-25 17:11:09"}}
