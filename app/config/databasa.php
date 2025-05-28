@@ -3,11 +3,6 @@
  * 配置檔案 - 包含系統設定和常數
  */
 
-// 定義根目錄常量（如果尚未定義）
-if (!defined('ROOT_PATH')) {
-    define('ROOT_PATH', dirname(dirname(__DIR__)));
-}
-
 // 應用程序根目錄路徑
 define('APPROOT', ROOT_PATH . '/app');
 
