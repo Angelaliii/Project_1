@@ -65,7 +65,7 @@ try {
             ]);
         } else {
             // 表單提交：重定向到適當的頁面
-            $redirectUrl = ($user['role'] == 'admin') ? 'admin/dashboard.php' : 'user/dashboard.php';
+            $redirectUrl = ($user['role'] == 'teacher') ? 'app/pages/classroom.php' : 'app/pages/booking.php';
             header('Location: ../../' . $redirectUrl);
             exit;
         }
@@ -74,7 +74,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('用戶名或密碼錯誤', 401);
         } else {
-            header('Location: ../../login.php?error=' . urlencode('用戶名或密碼錯誤'));
+            header('Location: ../../app/pages/login.php?error=' . urlencode('用戶名或密碼錯誤'));
             exit;
         }
     }

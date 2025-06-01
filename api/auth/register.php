@@ -28,7 +28,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('請提供所有必填欄位', 400);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('請提供所有必填欄位'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('請提供所有必填欄位'));
             exit;
         }
     }
@@ -44,7 +44,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('請填寫所有必填欄位', 400);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('請填寫所有必填欄位'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('請填寫所有必填欄位'));
             exit;
         }
     }
@@ -53,7 +53,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('請提供有效的電子郵件地址', 400);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('請提供有效的電子郵件地址'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('請提供有效的電子郵件地址'));
             exit;
         }
     }
@@ -62,7 +62,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('兩次輸入的密碼不一致', 400);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('兩次輸入的密碼不一致'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('兩次輸入的密碼不一致'));
             exit;
         }
     }
@@ -96,7 +96,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('該用戶名已被使用', 409);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('該用戶名已被使用'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('該用戶名已被使用'));
             exit;
         }
     }
@@ -108,7 +108,7 @@ try {
         if (strpos($contentType, 'application/json') !== false) {
             sendError('該電子郵件已被使用', 409);
         } else {
-            header('Location: ../../register.php?error=' . urlencode('該電子郵件已被使用'));
+            header('Location: ../../app/pages/register.php?error=' . urlencode('該電子郵件已被使用'));
             exit;
         }
     }
@@ -131,7 +131,7 @@ try {
         ], 201);
     } else {
         // 表單提交：重定向到登入頁面
-        header('Location: ../../login.php?success=' . urlencode('註冊成功，請登入'));
+        header('Location: ../../app/pages/login.php?success=' . urlencode('註冊成功，請登入'));
         exit;
     }
 } catch (Exception $e) {
