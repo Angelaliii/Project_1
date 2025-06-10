@@ -192,8 +192,36 @@
   padding: 0 5px;
 }
 
+/* 開發中提示樣式 */
+.development-notice {
+  text-align: center;
+  padding: 60px 20px;
+  margin: 20px 0;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  border: 2px dashed #dee2e6;
+}
+
+.development-notice i {
+  font-size: 60px;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.development-notice h3 {
+  color: #495057;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.development-notice p {
+  color: #6c757d;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
 /* 響應式樣式 */
-@media (max-width: ) {
+@media (max-width: 768px) {
   .classrooms-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 15px;

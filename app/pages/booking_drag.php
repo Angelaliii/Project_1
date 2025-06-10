@@ -1,5 +1,5 @@
 <?php
-// app/pages/booking.php - 教室租借頁面
+// app/pages/booking_drag.php - 教室租借頁面
 session_start();
 
 // 引入必要文件
@@ -101,108 +101,24 @@ if (isset($_GET['classroom_id']) && !empty($_GET['classroom_id'])) {
     <link rel="stylesheet" href="../../public/css/sidebar.css">
     <link rel="stylesheet" href="../../public/css/scheduler.css">
     <link rel="stylesheet" href="../../public/css/scheduler-drag.css">
+    <link rel="stylesheet" href="../../public/css/booking-drag.css">
     
     <!-- Bootstrap & Font Awesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
     
-    <style>
-        /* 布局樣式 */
-        .container {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
-            padding: 0;
-            max-width: none;
-        }
-        
-        .content {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px; /* 與側邊欄寬度相同 */
-            width: calc(100% - 250px);
-        }
-        
-        /* 時間表格相關樣式 */
-        .time-grid {
-            display: grid;
-            grid-template-columns: 80px repeat(14, 1fr);
-            grid-gap: 1px;
-            background-color: #f0f0f0;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-        }
-        
-        .time-header {
-            background-color: #f8f9fa;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .time-cell {
-            background-color: #fff;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            height: 50px;
-            transition: background-color 0.2s;
-        }
-        
-        .time-label {
-            background-color: #f8f9fa;
-            padding: 15px 10px;
-            text-align: right;
-            font-weight: bold;
-            height: 50px;
-        }
-        
-        .time-cell:hover {
-            background-color: #f0f8ff;
-        }
-        
-        .time-cell.selected {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        .time-cell.booked {
-            background-color: #dc3545;
-            color: white;
-            cursor: not-allowed;
-        }
-        
-        .booking-form {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-        }
-        
-        .date-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .drag-instructions {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #666;
-        }
-    </style>
 </head>
 <body>
-    <!-- 引入側邊欄 -->
-    <?php include dirname(__DIR__) . '/components/sidebar.php'; ?>
-    
-    <main class="content">
+    <div class="container">
+        <!-- 引入側邊欄 -->
+        <?php include dirname(__DIR__) . '/components/sidebar.php'; ?>
+        
+        <main class="content">
             <div class="content-header">
                 <h1><i class="fas fa-calendar-plus"></i> 教室預約</h1>
-                <p>選擇教室和日期，拖曳時間格以預約多個連續時段</p>
+                <p>選擇教室和日期，點擊或拖曳時間格以選擇多個連續時段，再次點擊已選時段可取消選擇</p>
             </div>
             
             <?php if (isset($error) && !empty($error)): ?>
@@ -310,7 +226,7 @@ if (isset($_GET['classroom_id']) && !empty($_GET['classroom_id'])) {
                                 </div>
                                 
                                 <!-- 預約表單 -->
-                                <form id="booking-form" method="POST" action="process_booking.php" class="booking-form" style="display: none;">
+                                <form id="booking-form" method="POST" action="process_booking_drag.php" class="booking-form" style="display: none;">
                                     <input type="hidden" name="classroom_id" value="<?= $classroomId ?>">
                                     <input type="hidden" name="booking_date" value="<?= $selectedDate ?>">
                                     <input type="hidden" id="selected_hours" name="selected_hours" value="">
@@ -361,32 +277,32 @@ if (isset($_GET['classroom_id']) && !empty($_GET['classroom_id'])) {
             if (timeGrid) {
                 const cells = document.querySelectorAll('.time-cell:not(.booked)');
                 
-                // 滑鼠按下開始拖曳
+                // 滑鼠點擊選擇
                 cells.forEach(cell => {
-                    cell.addEventListener('mousedown', function(e) {
-                        isDragging = true;
-                        startCell = this;
-                        
-                        // 檢查是否已經選中，如果是則取消選擇
-                        const hour = parseInt(this.dataset.hour);
-                        if (selectedHours.includes(hour)) {
-                            deselectCell(this);
-                        } else {
+                    // 處理點擊事件
+                    cell.addEventListener('click', function(e) {
+                        if (!isDragging) {  // 如果不是拖曳中，視為點擊事件
                             selectCell(this);
+                            updateSelectedTimes();
+                            
+                            // 如果有選擇時間，顯示預約表單
+                            if (selectedHours.length > 0) {
+                                bookingForm.style.display = 'block';
+                            } else {
+                                bookingForm.style.display = 'none';
+                            }
                         }
-                        updateSelectedTimes();
                         
                         // 防止拖曳時選中文字
                         e.preventDefault();
                     });
                     
-                    // 點擊已選擇的單元格可以取消選擇
-                    cell.addEventListener('click', function(e) {
-                        const hour = parseInt(this.dataset.hour);
-                        if (selectedHours.includes(hour)) {
-                            deselectCell(this);
-                            updateSelectedTimes();
-                        }
+                    // 處理拖曳開始事件
+                    cell.addEventListener('mousedown', function(e) {
+                        isDragging = true;
+                        startCell = this;
+                        
+                        // 防止拖曳時選中文字
                         e.preventDefault();
                     });
                 });
@@ -395,12 +311,8 @@ if (isset($_GET['classroom_id']) && !empty($_GET['classroom_id'])) {
                 cells.forEach(cell => {
                     cell.addEventListener('mouseover', function() {
                         if (isDragging) {
-                            const hour = parseInt(this.dataset.hour);
-                            // 如果之前沒被選中，就選中它
-                            if (!selectedHours.includes(hour)) {
-                                selectCell(this);
-                                updateSelectedTimes();
-                            }
+                            selectCell(this);
+                            updateSelectedTimes();
                         }
                     });
                 });
@@ -424,33 +336,23 @@ if (isset($_GET['classroom_id']) && !empty($_GET['classroom_id'])) {
             function selectCell(cell) {
                 const hour = parseInt(cell.dataset.hour);
                 
-                // 如果單元格有效且不在已選擇列表中
-                if (!isNaN(hour) && !selectedHours.includes(hour)) {
-                    cell.classList.add('selected');
-                    selectedHours.push(hour);
+                // 如果單元格有效
+                if (!isNaN(hour)) {
+                    // 檢查是否已選擇，如是則取消選擇
+                    const index = selectedHours.indexOf(hour);
+                    if (index !== -1) {
+                        // 如果是已選擇的，則取消選擇
+                        selectedHours.splice(index, 1);
+                        cell.classList.remove('selected');
+                    } else {
+                        // 如果尚未選擇，則加入選擇
+                        cell.classList.add('selected');
+                        selectedHours.push(hour);
+                    }
                     
                     // 確保選擇的小時是按順序排列的
                     selectedHours.sort((a, b) => a - b);
                     selectedHoursInput.value = JSON.stringify(selectedHours);
-                }
-            }
-            
-            // 取消選擇單元格函數
-            function deselectCell(cell) {
-                const hour = parseInt(cell.dataset.hour);
-                if (!isNaN(hour)) {
-                    // 從選擇列表中移除
-                    const index = selectedHours.indexOf(hour);
-                    if (index !== -1) {
-                        selectedHours.splice(index, 1);
-                        cell.classList.remove('selected');
-                        selectedHoursInput.value = JSON.stringify(selectedHours);
-                        
-                        // 如果沒有選擇任何時間，隱藏預約表單
-                        if (selectedHours.length === 0) {
-                            bookingForm.style.display = 'none';
-                        }
-                    }
                 }
             }
             

@@ -24,8 +24,56 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     <link rel="stylesheet" href="../../public/css/login.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
+    
+    <style>
+        /* 自定義樣式 */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        
+        .form-control {
+            border-left: none;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .btn-primary {
+            border-radius: 8px;
+            padding: 0.8rem 0;
+            font-weight: 600;
+        }
+        
+        .password-toggle {
+            border-left: none;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .password-toggle:focus {
+            box-shadow: none;
+            outline: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -59,9 +107,9 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="password" name="password" required>
-                                    <span class="input-group-text password-toggle" onclick="togglePassword()">
+                                    <button type="button" class="input-group-text password-toggle" onclick="togglePassword()" onKeyDown="handleKeyDown(event, 'password')" aria-label="切換密碼顯示">
                                         <i class="fas fa-eye"></i>
-                                    </span>
+                                    </button>
                                 </div>
                             </div>
                             
@@ -83,6 +131,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../public/js/main.js"></script>
     <script>
         function togglePassword() {
             const passwordField = document.getElementById('password');
@@ -99,6 +148,15 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
             }
         }
         
+        function handleKeyDown(event, fieldId) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                if (fieldId === 'password') {
+                    togglePassword();
+                }
+            }
+        }
+        
         // 前端表單驗證
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             const username = document.getElementById('username').value.trim();
@@ -107,6 +165,16 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
             if (!username || !password) {
                 event.preventDefault();
                 alert('請填寫所有必填欄位');
+            }
+        });
+        
+        // 處理登出成功訊息
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successMsg = urlParams.get('success');
+            
+            if (successMsg) {
+                showNotification(successMsg, 'success');
             }
         });
     </script>

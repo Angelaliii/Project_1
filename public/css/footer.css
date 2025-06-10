@@ -1,0 +1,162 @@
+/* footer.css - 網站頁尾樣式 */
+
+.main-footer {
+  background-color: #222;
+  color: #f8f9fa;
+  padding: 50px 0 20px;
+  margin-top: 50px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+/* Logo 區域 */
+.footer-logo {
+  flex: 0 0 100%;
+  max-width: 100%;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo img {
+  height: 40px;
+  margin-right: 10px;
+  filter: brightness(0) invert(1);
+}
+
+.footer-logo span {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* 連結區域 */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 20px;
+  padding: 0 15px;
+}
+
+.footer-section h3 {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-section h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 50px;
+  background-color: #0056b3;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+  color: #adb5bd;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: #fff;
+  padding-left: 5px;
+}
+
+/* 聯絡資訊 */
+.footer-section p {
+  color: #adb5bd;
+  margin-bottom: 10px;
+}
+
+.footer-section p i {
+  width: 20px;
+  margin-right: 8px;
+  color: #0056b3;
+}
+
+/* 頁尾底部 */
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom p {
+  font-size: 0.8rem;
+  color: #adb5bd;
+  margin: 0;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+  }
+
+  .footer-logo {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-section {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .footer-section h3::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer-section ul li a:hover {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-footer {
+    padding: 30px 0 10px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+  }
+
+  .footer-section {
+    min-width: 100%;
+  }
+}

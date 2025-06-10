@@ -1,0 +1,56 @@
+/* empty-state.css - 添加空白狀態顯示樣式 */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  text-align: center;
+  color: #999;
+}
+
+.empty-state i {
+  font-size: 40px;
+  margin-bottom: 15px;
+  color: #ddd;
+}
+
+.empty-state p {
+  margin: 0 0 15px;
+  color: #666;
+}
+
+.empty-state .btn-primary {
+  background-color: #4285f4;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.empty-state .btn-primary:hover {
+  background-color: #3367d6;
+}
+
+.empty-state .btn-outline {
+  background-color: transparent;
+  color: #4285f4;
+  padding: 7px 15px;
+  border-radius: 4px;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 500;
+  border: 1px solid #4285f4;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.empty-state .btn-outline:hover {
+  background-color: #f0f7ff;
+}

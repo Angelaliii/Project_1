@@ -4,10 +4,12 @@
  */
 
 // 應用程序根目錄路徑
+define('ROOT_PATH', dirname(dirname(__DIR__)));
 define('APPROOT', ROOT_PATH . '/app');
 
 // 資料庫配置
-define('DB_HOST', 'localhost');
+define('DB_HOST', '127.0.0.1'); // 使用 IP 地址而非 localhost，避免 DNS 解析問題
+define('DB_PORT', '3306');      // 明確指定端口
 define('DB_NAME', 'rent_classroom');
 define('DB_USER', 'root');
 define('DB_PASS', '');
@@ -15,7 +17,7 @@ define('DB_CHARSET', 'utf8mb4');
 
 // 網站配置
 define('SITE_NAME', '教室租借系統');
-define('SITE_URL', 'http://localhost/dashboard/Project_1/public');
+define('SITE_URL', 'http://localhost/dashboard/Project_1.5/public');
 
 // 應用程序設定
 define('APP_DEBUG', true);

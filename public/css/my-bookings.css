@@ -1,0 +1,396 @@
+/* my-bookings.css - 我的預約頁面樣式 */
+
+/* 主要容器樣式 */
+.booking-list {
+  padding: 10px 0;
+}
+
+/* 預約卡片樣式 */
+.booking-card {
+  margin-bottom: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-left: 4px solid #1890ff;
+  padding: 16px;
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 預約頭部樣式 */
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.booking-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* 預約狀態顏色 */
+.booking-card[data-status="booked"] {
+  border-left-color: #1890ff;
+}
+
+.booking-card[data-status="completed"] {
+  border-left-color: #52c41a;
+}
+
+.booking-card[data-status="cancelled"] {
+  border-left-color: #ff4d4f;
+  background-color: rgba(255, 77, 79, 0.05);
+}
+
+.booking-card[data-status="in_use"] {
+  border-left-color: #faad14;
+}
+
+.booking-card[data-status="rejected"] {
+  border-left-color: #fa541c;
+}
+
+/* 預約狀態標籤 */
+.booking-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-booked {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.status-in-use {
+  background-color: #fffbe6;
+  color: #faad14;
+}
+
+.status-completed {
+  background-color: #f6ffed;
+  color: #52c41a;
+}
+
+.status-cancelled {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.status-rejected {
+  background-color: #fff2e8;
+  color: #fa541c;
+}
+
+/* 預約詳情樣式 */
+.booking-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .booking-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booking-info-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.booking-info-label {
+  color: #666;
+  font-weight: 500;
+  min-width: 50px;
+  margin-right: 8px;
+}
+
+/* 預約操作按鈕區域 */
+.booking-actions {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 預約按鈕樣式 */
+.booking-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.booking-btn:hover {
+  border-color: #40a9ff;
+  color: #40a9ff;
+}
+
+.booking-btn-primary {
+  background: #1890ff;
+  color: white;
+  border-color: #1890ff;
+}
+
+.booking-btn-primary:hover {
+  background: #40a9ff;
+  color: white;
+  border-color: #40a9ff;
+}
+
+.booking-btn-danger {
+  background: white;
+  color: #f5222d;
+  border-color: #f5222d;
+}
+
+.booking-btn-danger:hover {
+  background: #fff1f0;
+  color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+/* 空白狀態樣式 */
+.no-bookings {
+  text-align: center;
+  padding: 50px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.no-bookings i {
+  font-size: 48px;
+  color: #d9d9d9;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.no-bookings h3 {
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.no-bookings p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.empty-state i {
+  font-size: 48px;
+  color: #bfbfbf;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.empty-state h4 {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #333;
+}
+
+.empty-state p {
+  color: #666;
+}
+
+/* 篩選器樣式 */
+.booking-filters {
+  margin-bottom: 25px;
+}
+
+/* 通知樣式 */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  max-width: 350px;
+}
+
+/* 響應式調整 */
+@media (max-width: 576px) {
+  .booking-card {
+    padding: 12px;
+  }
+
+  .booking-title {
+    font-size: 16px;
+  }
+
+  .booking-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+.booking-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.booking-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #f8f9fa;
+}
+
+.booking-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.booking-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-booked {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-in_use {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-completed {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.booking-details {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.booking-info {
+  flex: 1;
+}
+
+.info-row {
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.info-label {
+  display: inline-block;
+  width: 80px;
+  margin-right: 10px;
+}
+
+.info-label i {
+  margin-right: 5px;
+  color: #4285f4;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #d32f2f;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-state i {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #ddd;
+}
+
+.empty-state h3,
+.empty-state h4 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.booking-btn-primary {
+  display: inline-block;
+  background-color: #4285f4;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.booking-btn-primary:hover {
+  background-color: #3367d6;
+  text-decoration: none;
+  color: white;
+}
+
+.alert {
+  margin-bottom: 20px;
+}
+
+.no-bookings {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-bookings i {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #ddd;
+}

@@ -1,139 +1,80 @@
 <?php
-// api/auth/register.php - 處理API註冊請求
-require_once dirname(__DIR__) . '/config.php';
+// api/auth/register.php - 處理用戶註冊
 
-// 設置CORS頭
-setCorsHeaders();
+// 包含必要的文件
+require_once '../../app/config/database.php';
+require_once '../../app/models/UserModel.php';
 
-// 確保使用POST方法
+// 檢查請求方法
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('不支持的HTTP方法', 405);
+    header('Location: ../../app/pages/register.php?error=不允許的請求方法');
+    exit;
+}
+
+// 接收表單數據
+$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+$password = $_POST['password'];
+$confirmPassword = $_POST['confirm_password'];
+
+// 基本驗證
+if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
+    header('Location: ../../app/pages/register.php?error=所有字段都是必填的');
+    exit;
+}
+
+// 驗證電子郵件格式
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    header('Location: ../../app/pages/register.php?error=請提供有效的電子郵件地址');
+    exit;
+}
+
+// 檢查密碼長度和複雜度
+if (strlen($password) < 8) {
+    header('Location: ../../app/pages/register.php?error=密碼長度至少需要8個字符');
+    exit;
+}
+
+// 檢查密碼複雜度（至少一個大寫字母，一個小寫字母和一個數字）
+if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $password)) {
+    header('Location: ../../app/pages/register.php?error=密碼必須包含大寫字母、小寫字母和數字');
+    exit;
+}
+
+// 檢查密碼是否匹配
+if ($password !== $confirmPassword) {
+    header('Location: ../../app/pages/register.php?error=兩次輸入的密碼不一致');
+    exit;
 }
 
 try {
-    // 支持兩種數據格式：JSON 和表單數據
-    $data = [];
-    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
-    
-    if (strpos($contentType, 'application/json') !== false) {
-        // JSON 數據（API 調用）
-        $data = getJsonInput();
-    } else {
-        // 表單數據（HTML 表單提交）
-        $data = $_POST;
-    }
-    
-    // 驗證必填字段
-    if (!isset($data['username']) || !isset($data['email']) || !isset($data['password']) || !isset($data['confirm_password'])) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('請提供所有必填欄位', 400);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('請提供所有必填欄位'));
-            exit;
-        }
-    }
-    
-    $username = $data['username'];
-    $email = $data['email'];
-    $password = $data['password'];
-    $confirm_password = $data['confirm_password'];
-    $role = isset($data['role']) ? $data['role'] : 'student'; // 預設為學生
-    
-    // 基本驗證
-    if (empty($username) || empty($email) || empty($password) || empty($confirm_password)) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('請填寫所有必填欄位', 400);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('請填寫所有必填欄位'));
-            exit;
-        }
-    }
-    
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('請提供有效的電子郵件地址', 400);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('請提供有效的電子郵件地址'));
-            exit;
-        }
-    }
-    
-    if ($password !== $confirm_password) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('兩次輸入的密碼不一致', 400);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('兩次輸入的密碼不一致'));
-            exit;
-        }
-    }
-    
-    if (strlen($password) < 8) {
-        sendError('密碼長度至少需要8個字符', 400);
-    }
-    
-    // 密碼複雜度檢查 (至少包含一個大寫字母、一個小寫字母和一個數字)
-    if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $password)) {
-        sendError('密碼必須包含至少一個大寫字母、一個小寫字母和一個數字', 400);
-    }
-    
-    // 角色驗證
-    $validRoles = ['student', 'teacher'];
-    if (!in_array($role, $validRoles)) {
-        sendError('無效的角色', 400);
-    }
-    
-    // 只有教師可以創建教師帳號
-    if ($role === 'teacher' && (!isset($_SESSION['role']) || $_SESSION['role'] !== 'teacher')) {
-        sendError('您沒有權限創建此類型的帳號', 403);
-    }
-    
-    $pdo = connectDB();
+    $userModel = new UserModel();
     
     // 檢查用戶名是否已存在
-    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE user_name = ?");
-    $stmt->execute([$username]);
-    if ($stmt->fetch()) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('該用戶名已被使用', 409);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('該用戶名已被使用'));
-            exit;
-        }
+    if ($userModel->findByUsername($username)) {
+        header('Location: ../../app/pages/register.php?error=用戶名已被使用，請選擇另一個');
+        exit;
     }
     
     // 檢查電子郵件是否已存在
-    $stmt = $pdo->prepare("SELECT user_id FROM users WHERE mail = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetch()) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('該電子郵件已被使用', 409);
-        } else {
-            header('Location: ../../app/pages/register.php?error=' . urlencode('該電子郵件已被使用'));
-            exit;
-        }
+    if ($userModel->findByEmail($email)) {
+        header('Location: ../../app/pages/register.php?error=電子郵件地址已被使用，請使用另一個');
+        exit;
     }
     
-    // 密碼加密 - 使用 PASSWORD_DEFAULT 演算法
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    // 創建新用戶
+    $userId = $userModel->create($username, $email, $password);
     
-    // 保存用戶資料
-    $stmt = $pdo->prepare("INSERT INTO users (user_name, mail, password, role) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$username, $email, $hashedPassword, $role]);
-    
-    $userId = $pdo->lastInsertId();
-    
-    if (strpos($contentType, 'application/json') !== false) {
-        // API 調用：返回 JSON 響應
-        sendResponse([
-            'success' => true,
-            'message' => '註冊成功',
-            'user_id' => $userId
-        ], 201);
+    if ($userId) {
+        header('Location: ../../app/pages/login.php?success=註冊成功！請使用您的新帳戶登入');
+        exit;
     } else {
-        // 表單提交：重定向到登入頁面
-        header('Location: ../../app/pages/login.php?success=' . urlencode('註冊成功，請登入'));
+        header('Location: ../../app/pages/register.php?error=註冊時發生錯誤，請稍後再試');
         exit;
     }
 } catch (Exception $e) {
-    sendError('註冊過程中發生錯誤: ' . $e->getMessage(), 500);
+    // 記錄錯誤
+    error_log("註冊錯誤: " . $e->getMessage(), 0);
+    header('Location: ../../app/pages/register.php?error=註冊時發生錯誤，請稍後再試');
+    exit;
 }

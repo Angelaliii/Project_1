@@ -1,112 +1,62 @@
 <?php
-// api/auth/login.php - 處理API登入請求
-require_once dirname(__DIR__) . '/config.php';
+// api/auth/login.php - 處理用戶登入
 
-// 設置CORS頭
-setCorsHeaders();
+// 包含必要的文件
+require_once '../../app/config/database.php';
+require_once '../../app/models/UserModel.php';
 
-// 確保使用POST方法
+session_start();
+
+// 檢查請求方法
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    sendError('不支持的HTTP方法', 405);
+    header('Location: ../../app/pages/login.php?error=不允許的請求方法');
+    exit;
+}
+
+// 接收表單數據
+$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+$password = $_POST['password'];
+$rememberMe = isset($_POST['remember_me']);
+
+// 基本驗證
+if (empty($username) || empty($password)) {
+    header('Location: ../../app/pages/login.php?error=使用者名稱和密碼不能為空');
+    exit;
 }
 
 try {
-    // 支持兩種數據格式：JSON 和表單數據
-    $data = [];
-    $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+    // 驗證用戶
+    $userModel = new UserModel();
+    $user = $userModel->authenticate($username, $password);
     
-    if (strpos($contentType, 'application/json') !== false) {
-        // JSON 數據（API 調用）
-        $data = getJsonInput();
-    } else {
-        // 表單數據（HTML 表單提交）
-        $data = $_POST;
-    }
-    
-    // 驗證必填字段
-    if (!isset($data['username']) || !isset($data['password'])) {
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('請提供用戶名和密碼', 400);
-        } else {
-            // 對於表單提交，重定向到登入頁面並顯示錯誤
-            header('Location: ../../login.php?error=' . urlencode('請提供用戶名和密碼'));
-            exit;
-        }
-    }
-    
-    $username = $data['username'];
-    $password = $data['password'];
-    
-    $pdo = connectDB();
-    
-    // 使用預處理語句防止 SQL 注入
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE user_name = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if ($user && password_verify($password, $user['password'])) {
-        // 登入成功
-        
-        // 創建會話
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+    if ($user) {
+        // 登入成功，設置 session
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['user_name'];
+        $_SESSION['email'] = $user['mail'];
         $_SESSION['role'] = $user['role'];
         
-        if (strpos($contentType, 'application/json') !== false) {
-            // API 調用：返回 JSON 響應
-            unset($user['password']);
-            sendResponse([
-                'success' => true,
-                'message' => '登入成功',
-                'user' => $user,
-            ]);
-        } else {
-            // 表單提交：重定向到適當的頁面
-            $redirectUrl = ($user['role'] == 'teacher') ? 'app/pages/classroom.php' : 'app/pages/booking.php';
-            header('Location: ../../' . $redirectUrl);
-            exit;
+        // 如果記住我選項被勾選
+        if ($rememberMe) {
+            // 設置 cookie，有效期30天
+            $token = bin2hex(random_bytes(32));
+            setcookie('remember_token', $token, time() + 30 * 24 * 60 * 60, '/');
+            
+            // TODO: 在資料庫中存儲令牌
         }
+        
+        // 重定向到儀表板
+        $redirectUrl = ($user['role'] === 'teacher') ? '../pages/classroom.php' : '../pages/booking.php';
+        header("Location: ../../app/pages/$redirectUrl");
+        exit;
     } else {
         // 登入失敗
-        if (strpos($contentType, 'application/json') !== false) {
-            sendError('用戶名或密碼錯誤', 401);
-        } else {
-            header('Location: ../../app/pages/login.php?error=' . urlencode('用戶名或密碼錯誤'));
-            exit;
-        }
+        header('Location: ../../app/pages/login.php?error=無效的使用者名稱或密碼');
+        exit;
     }
 } catch (Exception $e) {
-    sendError('登入過程中發生錯誤: ' . $e->getMessage(), 500);
-}
-
-/**
- * 創建JWT令牌
- * 
- * @param array $user 用戶數據
- * @return string JWT令牌
- */
-function createJWT($user) {
-    // 這裡可以實現JWT令牌創建邏輯
-    // 在實際生產環境中，應該使用專業的JWT庫
-    
-    $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
-    $payload = json_encode([
-        'sub' => $user['user_id'],
-        'name' => $user['user_name'],
-        'role' => $user['role'],
-        'iat' => time(),
-        'exp' => time() + 3600 // 令牌1小時有效
-    ]);
-    
-    $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
-    $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
-    
-    $secret = 'your-secret-key'; // 在實際應用中，應該存儲在配置文件中
-    $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
-    $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($signature));
-    
-    return $base64UrlHeader . "." . $base64UrlPayload . "." . $base64UrlSignature;
+    // 記錄錯誤
+    error_log("登入錯誤: " . $e->getMessage(), 0);
+    header('Location: ../../app/pages/login.php?error=登入時發生錯誤，請稍後再試');
+    exit;
 }
