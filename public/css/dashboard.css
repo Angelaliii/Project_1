@@ -1,357 +1,193 @@
-/* dashboard.css - 儀表板頁面樣式 */
+/* dashboard.css - 儀表板頁面專屬樣式 */
 
 /* 儀表板容器 */
 .dashboard {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  position: relative;
 }
 
+/* 儀表板頭部 */
 .dashboard-header {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .dashboard-header h1 {
-  margin: 0;
   font-size: 24px;
   color: #333;
+  margin: 0;
+  font-weight: 600;
 }
 
 .dashboard-date {
-  color: #666;
   font-size: 14px;
-  margin-top: 5px;
+  color: #666;
+  background-color: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* 儀表板區域佈局 */
+/* 儀表板區塊佈局 */
 .dashboard-sections {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 20px;
 }
 
+/* 主要內容區域 */
 .dashboard-main {
-  flex: 1 1 65%;
-  min-width: 300px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* 側邊欄 */
 .dashboard-sidebar {
-  flex: 1 1 30%;
-  min-width: 250px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 儀表板卡片 */
+/* 卡片樣式 */
 .dashboard-card {
-  background: white;
-  border-radius: 10px;
+  background-color: #fff;
+  border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   padding: 15px 20px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dashboard-card-header h2 {
+  font-size: 18px;
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
   color: #333;
+  font-weight: 600;
   display: flex;
   align-items: center;
 }
 
 .dashboard-card-header h2 i {
   margin-right: 8px;
-  color: #4285f4;
+  color: #0056b3;
 }
 
 .dashboard-card-header .view-all {
-  font-size: 12px;
-  color: #4285f4;
+  color: #0056b3;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.dashboard-card-header .view-all:hover {
+  color: #003d7a;
+  text-decoration: underline;
 }
 
 .dashboard-card-content {
   padding: 20px;
+  min-height: 150px;
 }
 
-/* 預約列表 */
-.booking-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.booking-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.booking-item:last-child {
-  border-bottom: none;
-}
-
-.booking-icon {
-  margin-right: 15px;
-  width: 40px;
-  height: 40px;
-  background: #f0f8ff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.booking-icon i {
-  font-size: 18px;
-  color: #4285f4;
-}
-
-.booking-details {
-  flex: 1;
-}
-
-.booking-details h3 {
-  margin: 0 0 5px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.booking-time {
-  font-size: 12px;
-  color: #666;
-  margin: 0 0 5px;
-}
-
-.booking-status {
-  display: inline-block;
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: #f0f0f0;
-  color: #666;
-}
-
-.status-booked {
-  background: #e8f0fe;
-  color: #4285f4;
-}
-
-.status-in_use {
-  background: #e6f4ea;
-  color: #34a853;
-}
-
-.status-completed {
-  background: #f1f3f4;
-  color: #5f6368;
-}
-
-.booking-actions {
-  margin-left: 10px;
-}
-
-/* 空狀態 */
+/* 空狀態樣式 */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 25px;
-  text-align: center;
+  height: 100%;
+  padding: 30px 0;
   color: #999;
+  text-align: center;
 }
 
 .empty-state i {
   font-size: 40px;
   margin-bottom: 15px;
-  color: #ddd;
+  color: #ccc;
 }
 
 .empty-state p {
-  margin: 0 0 15px;
-}
-
-/* 統計摘要 */
-.stats-summary {
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
-  padding: 10px 0;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #4285f4;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-}
-
-/* 快速動作 */
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.btn-block {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 12px;
-  text-align: center;
-}
-
-.btn-block i {
-  margin-right: 8px;
-}
-
-/* 活動列表 */
-.activity-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.activity-item:last-child {
-  border-bottom: none;
-}
-
-.activity-icon {
-  margin-right: 15px;
-  width: 30px;
-  height: 30px;
-  background: #f5f5f5;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.activity-icon i {
-  font-size: 14px;
-  color: #666;
-}
-
-.activity-details {
-  flex: 1;
-}
-
-.activity-details p {
-  margin: 0 0 5px;
-  font-size: 13px;
-}
-
-.activity-time {
-  font-size: 12px;
-  color: #999;
-}
-
-body {
-  display: flex;
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f7fa;
-}
-
-.container {
-  display: flex;
-  flex: 1;
-  width: 100%;
-}
-
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 25px;
-  text-align: center;
-  color: #999;
-}
-
-.empty-state i {
-  font-size: 40px;
   margin-bottom: 15px;
-  color: #ddd;
 }
 
-.empty-state p {
-  margin: 0 0 15px;
-}
-
-.btn-primary {
-  background-color: #4285f4;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  display: inline-block;
+.empty-state .btn {
   margin-top: 10px;
 }
 
-.btn-primary:hover {
-  background-color: #3367d6;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #4285f4;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-}
-
+/* 統計數據樣式 */
 .stats-summary {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   padding: 10px 0;
 }
 
 .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 10px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #0056b3;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* 響應式設計 */
+@media (max-width: 992px) {
+  .dashboard-sections {
+    grid-template-columns: 1.5fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-date {
+    margin-top: 10px;
+  }
+
+  .dashboard-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card-header {
+    padding: 12px 15px;
+  }
+
+  .dashboard-card-content {
+    padding: 15px;
+  }
 }

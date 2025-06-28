@@ -1,0 +1,9 @@
+body {
+  background: url("<?php echo $rootPath; ?>public/img/background.svg") no-repeat
+    center center fixed;
+  background-size: cover;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}

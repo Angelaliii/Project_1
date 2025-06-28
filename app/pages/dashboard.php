@@ -21,13 +21,14 @@ if ($_SESSION['role'] == 'teacher') {
 // 設定頁面標題和樣式
 $pageTitle = '儀表板';
 $pageStyles = ['dashboard.css'];
-$rootPath = '../../';
 
 // 引入頭部組件（包含導航）
 include_once '../components/header.php';
 ?>
 
-<div class="dashboard">
+
+<main class="content-container">
+  <div class="dashboard">
     <div class="dashboard-header">
         <h1>歡迎回來，<?php echo htmlspecialchars($username); ?>！</h1>
         <div class="dashboard-date" id="currentDate">
@@ -115,8 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('儀表板頁面已加載完成');
 });
 </script>
+</main>
 
-<?php
-// 引入頁尾組件
-include_once '../components/footer.php';
-?>
+<?php include_once '../components/footer.php'; ?>

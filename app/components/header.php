@@ -5,7 +5,13 @@ if (!isset($pageTitle)) {
 }
 
 // 取得網站根目錄路徑 (相對於當前頁面)
-$rootPath = isset($rootPath) ? $rootPath : '../../';
+if (!isset($rootPath)) {
+    $scriptPath = $_SERVER['SCRIPT_NAME'];
+
+    $parts = explode('/', $scriptPath);
+    $rootPath = '/' . $parts[1] . '/' . $parts[2] . '/';
+}
+
 
 // 檢查用戶是否已登入
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -25,11 +31,10 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <link rel="apple-touch-icon" href="<?php echo $rootPath; ?>public/img/FJU_logo.png">
     
     <!-- 自定義 CSS -->
-    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/style.css">
+    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/main.css">
     <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/header.css">
     <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/footer.css">
     
-    <!-- 可選: 根據頁面類型載入特定的 CSS -->
     <?php if (isset($pageStyles) && is_array($pageStyles)): ?>
         <?php foreach ($pageStyles as $style): ?>
             <link rel="stylesheet" href="<?php echo $rootPath . 'public/css/' . $style; ?>">
@@ -40,16 +45,6 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-    <style>
-        body {
-            background: url("<?php echo $rootPath; ?>public/img/background.svg") no-repeat center center fixed;
-            background-size: cover;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-    </style>
 </head>
 <body>
 
@@ -76,7 +71,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                         <i class="fas fa-search"></i> 瀏覽教室
                     </a></li>
                     <li><a href="<?php echo $rootPath; ?>app/pages/booking.php" class="<?php echo ($current_page == 'booking.php') ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-plus"></i> 空間預約
+                        <i class="fas fa-calendar-plus"></i> 教室預約
                     </a></li>
                     <li><a href="<?php echo $rootPath; ?>app/pages/my_bookings.php" class="<?php echo ($current_page == 'my_bookings.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i> 我的預約
@@ -115,16 +110,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     </button>
                     <div class="dropdown-content">
                         <a href="<?php echo $rootPath; ?>app/pages/profile.php">
-                            <i class="fas fa-user"></i> 個人資料
-                        </a>
-                        <a href="<?php echo $rootPath; ?>app/pages/edit_profile.php">
-                            <i class="fas fa-user-edit"></i> 編輯資料
-                        </a>
-                        <a href="<?php echo $rootPath; ?>app/pages/change_password.php">
-                            <i class="fas fa-key"></i> 更改密碼
-                        </a>
-                        <a href="<?php echo $rootPath; ?>app/pages/my_bookings.php">
-                            <i class="fas fa-calendar"></i> 我的預約
+                            <i class="fas fa-user"></i> 個人資料維護
                         </a>
                         <a href="<?php echo $rootPath; ?>app/pages/logout.php" class="dropdown-item logout-link">
                             <i class="fas fa-sign-out-alt"></i> 登出
@@ -139,6 +125,3 @@ $isLoggedIn = isset($_SESSION['user_id']);
         </div>
     </div>
 </header>
-
-<div class="content-container">
-    <!-- 在這裡，頁面內容將會被添加 -->

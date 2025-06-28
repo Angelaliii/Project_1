@@ -22,6 +22,35 @@ define('SITE_URL', 'http://localhost/dashboard/Project_1.5/public');
 // 應用程序設定
 define('APP_DEBUG', true);
 
+/**
+ * 取得 PDO 資料庫連接
+ * @return PDO 資料庫連接實例
+ */
+function getDbConnection() {
+    static $db = null;
+    
+    if ($db === null) {
+        try {
+            $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            
+            $db = new PDO($dsn, DB_USER, DB_PASS, $options);
+        } catch (PDOException $e) {
+            if (APP_DEBUG) {
+                die("數據庫連接失敗: " . $e->getMessage());
+            } else {
+                die("系統發生錯誤，請稍後再試或聯繫管理員。");
+            }
+        }
+    }
+    
+    return $db;
+}
+
 // 錯誤處理配置
 if (APP_DEBUG) {
     // 開發環境：顯示所有錯誤
@@ -41,12 +70,3 @@ if (APP_DEBUG) {
     }
     ini_set('error_log', $logDir . '/php_errors.log');
 }
-
-// 時區設定
-date_default_timezone_set('Asia/Taipei');
-
-// 不自動包含資料庫連接類和輔助函數
-// 這些文件會通過自動載入器加載
-// 如果需要立即使用，請手動包含
-// require_once ROOT_PATH . '/app/core/Database.php';
-// require_once ROOT_PATH . '/app/core/Helper.php';

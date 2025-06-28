@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   padding: 20px;
-  background: linear-gradient(45deg, #4285f4, #34a853);
+  background: #9faabd;
   color: white;
 }
 
@@ -82,6 +82,25 @@
 .field-value {
   flex: 1;
   font-size: 15px;
+}
+
+/* 編輯模式樣式 */
+.profile-field-edit {
+  display: none;
+  margin-bottom: 12px;
+}
+
+.profile-field-edit .form-control {
+  font-size: 14px;
+}
+
+.profile-edit-buttons {
+  margin-top: 15px;
+}
+
+#save-profile-btn,
+#cancel-profile-btn {
+  display: none;
 }
 
 .profile-actions {
@@ -353,7 +372,7 @@
 }
 
 /* 響應式調整 */
-@media (max-width: ) {
+@media (max-width: 992px) {
   .profile-container {
     flex-direction: column;
   }
@@ -424,15 +443,6 @@
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-.header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
 }
 
 .logo {

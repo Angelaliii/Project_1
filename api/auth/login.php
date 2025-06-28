@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // 接收表單數據
 $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
 $password = $_POST['password'];
-$rememberMe = isset($_POST['remember_me']);
 
 // 基本驗證
 if (empty($username) || empty($password)) {
@@ -29,25 +28,22 @@ try {
     $userModel = new UserModel();
     $user = $userModel->authenticate($username, $password);
     
-    if ($user) {
-        // 登入成功，設置 session
+    if ($user) {        // 登入成功，設置 session
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['user_name'];
         $_SESSION['email'] = $user['mail'];
         $_SESSION['role'] = $user['role'];
         
-        // 如果記住我選項被勾選
-        if ($rememberMe) {
-            // 設置 cookie，有效期30天
-            $token = bin2hex(random_bytes(32));
-            setcookie('remember_token', $token, time() + 30 * 24 * 60 * 60, '/');
-            
-            // TODO: 在資料庫中存儲令牌
+        // 根據角色重定向到對應頁面
+        if ($user['role'] === 'admin') {
+            $redirectUrl = 'dashboard.php';
+        } elseif ($user['role'] === 'teacher') {
+            $redirectUrl = 'classroom.php';
+        } else {
+            $redirectUrl = 'booking.php';
         }
         
-        // 重定向到儀表板
-        $redirectUrl = ($user['role'] === 'teacher') ? '../pages/classroom.php' : '../pages/booking.php';
-        header("Location: ../../app/pages/$redirectUrl");
+        header("Location: ../../app/pages/{$redirectUrl}");
         exit;
     } else {
         // 登入失敗

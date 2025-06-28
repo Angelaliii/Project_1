@@ -21,64 +21,17 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登入 - 教室租借系統</title>
     <link rel="stylesheet" href="../../public/css/style.css">
-    <link rel="stylesheet" href="../../public/css/login.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- <link rel="stylesheet" href="../../public/css/auth.css"> -->
     <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
-    
-    <style>
-        /* 自定義樣式 */
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card-body {
-            padding: 2.5rem;
-        }
-        
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .input-group-text {
-            background-color: #f8f9fa;
-            border-right: none;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        
-        .form-control {
-            border-left: none;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-        
-        .btn-primary {
-            border-radius: 8px;
-            padding: 0.8rem 0;
-            font-weight: 600;
-        }
-        
-        .password-toggle {
-            border-left: none;
-            background-color: #f8f9fa;
-            cursor: pointer;
-        }
-        
-        .password-toggle:focus {
-            box-shadow: none;
-            outline: none;
-        }
-    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-body p-5">
+            <div class="col">
+                <div class="container shadow">
+                    <div class="container-body p-5">
                         <div class="text-center mb-4">
                             <img src="../../public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
                             <h2>教室租借系統</h2>
@@ -113,10 +66,6 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                 </div>
                             </div>
                             
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
-                                <label class="form-check-label" for="rememberMe">記住我</label>
-                            </div>
                             
                             <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>
                             
@@ -129,7 +78,6 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
             </div>
         </div>
     </div>
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../public/js/main.js"></script>
     <script>
@@ -172,10 +120,6 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const successMsg = urlParams.get('success');
-            
-            if (successMsg) {
-                showNotification(successMsg, 'success');
-            }
         });
     </script>
 </body>

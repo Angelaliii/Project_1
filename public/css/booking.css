@@ -1,5 +1,6 @@
-/* scheduler.css - 排程系統樣式 */
+/* booking.css - 預約頁面的專用樣式 */
 
+/* 預約系統容器 */
 .scheduler-container {
   display: flex;
   width: 100%;
@@ -14,7 +15,9 @@
   background: white;
   border-right: 1px solid #e1e4e8;
   padding: 15px;
-  overflow-y: auto;
+  height: calc(100vh - 230px); /* 確保有固定高度，略小於容器高度 */
+  overflow-y: auto; /* 當內容超過容器高度時顯示垂直滾動條 */
+  overflow-x: hidden; /* 隱藏水平滾動條 */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -70,6 +73,95 @@
   font-size: 12px;
   color: #666;
   margin-top: 3px;
+}
+
+/* 時間表格相關樣式 */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  grid-gap: 2px;
+  margin: 20px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.time-header {
+  background-color: #f5f5f5;
+  padding: 10px 5px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.time-label {
+  background-color: #f5f5f5;
+  padding: 10px 5px;
+  text-align: center;
+  font-weight: bold;
+  border-right: 1px solid #e0e0e0;
+}
+
+.time-cell {
+  background-color: #f0ffef;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.time-cell:hover {
+  background-color: #d4ffd4;
+}
+
+.time-cell.selected {
+  background-color: #4caf50;
+}
+
+.time-cell.booked {
+  background-color: #ffebee;
+  cursor: not-allowed;
+}
+
+/* 排程表格中的時間欄位 */
+.scheduler-grid .time-cell {
+  font-size: 12px;
+  padding: 5px;
+  text-align: right;
+  font-weight: 600;
+  color: #666;
+  width: 80px;
+  position: sticky;
+  left: 0;
+  background: #f6f8fa;
+  z-index: 5;
+}
+
+/* 日期導航 */
+.date-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+}
+
+/* 拖曳說明文字 */
+.drag-instructions {
+  background-color: #e3f2fd;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+  font-size: 14px;
+}
+
+.drag-instructions i {
+  color: #1976d2;
+  margin-right: 5px;
+}
+
+/* 預約表單樣式 */
+.booking-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
 }
 
 /* 右側排程表格 */
@@ -151,19 +243,6 @@
   border: 1px solid #e1e4e8;
   vertical-align: top;
   height: 30px;
-}
-
-.time-cell {
-  font-size: 12px;
-  padding: 5px;
-  text-align: right;
-  font-weight: 600;
-  color: #666;
-  width: 80px;
-  position: sticky;
-  left: 0;
-  background: #f6f8fa;
-  z-index: 5;
 }
 
 .grid-cell {
@@ -258,29 +337,6 @@
   gap: 10px;
 }
 
-/* 響應式適配 */
-@media (max-width: ) {
-  .scheduler-container {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .space-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e1e4e8;
-    max-height: 200px;
-  }
-
-  .scheduler-grid-container {
-    padding: 10px;
-  }
-
-  .scheduler-controls {
-    flex-wrap: wrap;
-  }
-}
-
 /* 加載動畫 */
 .scheduler-loading {
   position: absolute;
@@ -357,4 +413,47 @@
   cursor: pointer;
   margin-left: 10px;
   font-weight: bold;
+}
+
+/* 響應式調整 */
+@media (max-width: 992px) {
+  .time-grid {
+    grid-template-columns: repeat(8, 1fr);
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .scheduler-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .space-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e1e4e8;
+    max-height: 200px;
+  }
+
+  .scheduler-grid-container {
+    padding: 10px;
+  }
+
+  .scheduler-controls {
+    flex-wrap: wrap;
+  }
+
+  .date-nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .date-nav form {
+    width: 100%;
+  }
+
+  .date-nav input[type="date"] {
+    width: 100% !important;
+  }
 }

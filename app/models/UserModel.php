@@ -9,18 +9,7 @@ class UserModel {
      * 構造函數
      */
     public function __construct() {
-        try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
-            $options = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ];
-            
-            $this->db = new PDO($dsn, DB_USER, DB_PASS, $options);
-        } catch (PDOException $e) {
-            throw new Exception("數據庫連接失敗: " . $e->getMessage());
-        }
+        $this->db = getDbConnection();
     }
     
     /**
@@ -166,7 +155,6 @@ class UserModel {
                 $stmt = $this->db->prepare("SELECT * FROM users ORDER BY user_name");
                 $stmt->execute();
             }
-            
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             throw new Exception("獲取用戶列表時出錯: " . $e->getMessage());
@@ -174,26 +162,131 @@ class UserModel {
     }
     
     /**
+     * 獲取用戶的預約記錄
+     * 
+     * @param int $userId 用戶ID
+     * @param string $filter 篩選條件 (all, upcoming, past, cancelled)
+     * @return array 預約列表
+     */
+    public function getUserBookings($userId, $filter = 'all') {
+        try {
+            $sql = "SELECT b.booking_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, 
+                    c.classroom_name, c.building, c.room
+                    FROM bookings b
+                    INNER JOIN classrooms c ON b.classroom_ID = c.classroom_ID
+                    WHERE b.user_ID = ?";
+            
+            // 根據篩選條件添加WHERE子句
+            if ($filter === 'upcoming') {
+                $sql .= " AND b.start_datetime > NOW() AND b.status != 'cancelled'";
+            } elseif ($filter === 'past') {
+                $sql .= " AND b.end_datetime <= NOW() AND b.status != 'cancelled'";
+            } elseif ($filter === 'cancelled') {
+                $sql .= " AND b.status = 'cancelled'";
+            }
+            
+            $sql .= " ORDER BY b.start_datetime DESC";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // 轉換預約狀態文字
+            foreach ($bookings as &$booking) {
+                switch ($booking['status']) {
+                    case 'booked':
+                        $booking['status_text'] = '已預約';
+                        break;
+                    case 'in_use':
+                        $booking['status_text'] = '使用中';
+                        break;
+                    case 'completed':
+                        $booking['status_text'] = '已完成';
+                        break;
+                    case 'cancelled':
+                        $booking['status_text'] = '已取消';
+                        break;
+                    default:
+                        $booking['status_text'] = '未知狀態';
+                }
+                // 設置預約用途，如果沒有則顯示「一般用途」
+                if (empty($booking['purpose'])) {
+                    $booking['purpose'] = '一般用途';
+                }
+            }
+            
+            return $bookings;
+        } catch (PDOException $e) {
+            throw new Exception("獲取用戶預約記錄時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * 獲取用戶的活動記錄
+     * 
+     * @param int $userId 用戶ID
+     * @param int $limit 限制數量
+     * @return array 活動記錄列表
+     */
+    public function getUserActivities($userId, $limit = 5) {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT b.booking_ID, b.start_datetime, b.created_at, b.status, c.classroom_name
+                FROM bookings b 
+                JOIN classrooms c ON b.classroom_ID = c.classroom_ID 
+                WHERE b.user_ID = ? 
+                ORDER BY b.created_at DESC 
+                LIMIT ?
+            ");
+            $stmt->execute([$userId, $limit]);
+            $recentBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $activities = [];
+            foreach ($recentBookings as $booking) {
+                $action = '預約了';
+                if ($booking['status'] === 'cancelled') {
+                    $action = '取消了';
+                } elseif ($booking['status'] === 'completed') {
+                    $action = '完成了';
+                }
+                
+                $activities[] = [
+                    'id' => $booking['booking_ID'],
+                    'icon' => 'calendar-alt',
+                    'action' => $action,
+                    'description' => htmlspecialchars($booking['classroom_name']) . ' 教室',
+                    'booking_time' => $booking['start_datetime'],
+                    'timestamp' => $booking['created_at']
+                ];
+            }
+            
+            return $activities;
+        } catch (PDOException $e) {
+            throw new Exception("獲取用戶活動記錄時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
      * 驗證用戶登入
      * 
-     * @param string $username 用戶名
+     * @param string $username 用戶名或電子郵件
      * @param string $password 密碼（明文）
      * @return array|false 用戶數據或 false
      */
     public function authenticate($username, $password) {
         try {
-            // 首先嘗試用用戶名查詢
-            $user = $this->findByUsername($username);
+            // 檢查是否為電子郵件格式
+            $isEmail = filter_var($username, FILTER_VALIDATE_EMAIL);
             
-            // 如果找不到，嘗試使用電子郵件查詢
-            if (!$user && filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            // 根據輸入的是用戶名還是電子郵件選擇查詢方式
+            if ($isEmail) {
                 $user = $this->findByEmail($username);
+            } else {
+                $user = $this->findByUsername($username);
             }
             
-            // 檢查是否找到用戶且密碼正確
+            // 如果找到用戶且密碼匹配
             if ($user && password_verify($password, $user['password'])) {
-                // 不要返回密碼
-                unset($user['password']);
                 return $user;
             }
             

@@ -15,7 +15,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   height: 60px;
@@ -201,11 +200,13 @@
 
 /* 內容容器 */
 .content-container {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  margin-top: 20px;
-  min-height: calc(100vh - 60px - 200px); /* 減去頭部和頁尾高度 */
+  background-image: url("../img/background.svg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
 }
 
 /* 響應式設計 */

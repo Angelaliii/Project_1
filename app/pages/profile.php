@@ -6,14 +6,34 @@ session_start();
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/models/UserModel.php';
 
+
 // 確定使用者已登入
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
 }
 
+// 設定頁面標題和樣式
+$pageTitle = '個人資料';
+$pageStyles = ['profile.css'];
+
 // 獲取當前頁面路徑
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// 設定當前標籤
+$activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'overview';
+
+// 處理錯誤和成功信息
+$error = '';
+$success = '';
+if (isset($_SESSION['error_message'])) {
+    $error = $_SESSION['error_message'];
+    unset($_SESSION['error_message']);
+}
+if (isset($_SESSION['success_message'])) {
+    $success = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
 
 // 獲取用戶資料
 try {
@@ -52,27 +72,17 @@ try {
         'month' => $monthBookings
     ];
     
-    // 獲取最近活動
-    // 這裡我們簡單地獲取最近的預約作為活動記錄
-    $stmt = $pdo->prepare("
-        SELECT b.booking_ID, b.start_datetime, b.end_datetime, c.classroom_name
-        FROM bookings b 
-        JOIN classrooms c ON b.classroom_ID = c.classroom_ID 
-        WHERE b.user_ID = ? 
-        ORDER BY b.created_at DESC 
-        LIMIT 5
-    ");
-    $stmt->execute([$_SESSION['user_id']]);
-    $recentBookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    $activities = [];
-    foreach ($recentBookings as $booking) {
-        $activities[] = [
-            'icon' => 'calendar-alt',
-            'description' => '您預約了 ' . htmlspecialchars($booking['classroom_name']) . ' 教室',
-            'timestamp' => $booking['start_datetime']
-        ];
+    // 設定預約狀態篩選條件
+    $filterStatus = 'all'; // 預設顯示所有預約
+    if (isset($_GET['filter']) && in_array($_GET['filter'], ['all', 'upcoming', 'past', 'cancelled'])) {
+        $filterStatus = $_GET['filter'];
     }
+    
+    // 獲取用戶的預約記錄
+    $bookings = $userModel->getUserBookings($_SESSION['user_id'], $filterStatus);
+    
+    // 獲取用戶的活動記錄
+    $activities = $userModel->getUserActivities($_SESSION['user_id'], 5);
     
 } catch (Exception $e) {
     // 記錄錯誤
@@ -82,42 +92,33 @@ try {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>個人資料 - 教室租借系統</title>
-    <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
-    
-    <!-- 引入 CSS 文件 -->
-    <link rel="stylesheet" href="../../public/css/style.css">
-    <link rel="stylesheet" href="../../public/css/sidebar.css">
-    <link rel="stylesheet" href="../../public/css/profile.css">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
+<?php include_once '../components/header.php'; ?>
+
+<main class="content-container">
     <div class="container-fluid">
         <div class="row">
-            <!-- 引入側邊欄 -->
-            <div class="col-md-3">
-                <?php include dirname(__DIR__) . '/components/sidebar.php'; ?>
-            </div>
-            
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <main class="content">
                     <div class="content-header">
                         <h1><i class="fas fa-user-circle"></i> 個人資料</h1>
                         <p>查看和管理您的個人資料</p>
                     </div>
                     
-                    <?php if (isset($error)): ?>
-                        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                    <?php if (!empty($error)): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <?= htmlspecialchars($error) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     <?php endif; ?>
                     
+                    <?php if (!empty($success)): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <?= htmlspecialchars($success) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <!-- 概覽標籤內容 -->
                     <div class="profile-container">
                         <!-- 個人資料卡片 -->
                         <div class="profile-card">
@@ -135,6 +136,7 @@ try {
                                                 case 'admin': $roleText = '管理員'; break;
                                                 case 'teacher': $roleText = '教師'; break;
                                                 case 'student': $roleText = '學生'; break;
+                                                default: $roleText = '用戶';
                                             }
                                         }
                                         echo $roleText;
@@ -144,27 +146,99 @@ try {
                             </div>
                             
                             <div class="profile-body">
-                                <div class="profile-section">
-                                    <h3>個人資料</h3>
-                                    <div class="profile-field">
-                                        <span class="field-label">電子郵件</span>
-                                        <span class="field-value"><?php echo htmlspecialchars($user['mail'] ?? ''); ?></span>
+                                <form action="edit_profile.php" method="POST" id="profile-edit-form">
+                                    <div class="profile-section">
+                                        <h3>個人資料</h3>
+                                        
+                                        <!-- 用戶名 -->
+                                        <div class="profile-field profile-field-display">
+                                            <span class="field-label">用戶名</span>
+                                            <span class="field-value"><?php echo htmlspecialchars($user['user_name'] ?? ''); ?></span>
+                                        </div>
+                                        <div class="profile-field-edit">
+                                            <label for="username" class="form-label">用戶名</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars($user['user_name'] ?? '') ?>" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 電子郵件 (不可編輯) -->
+                                        <div class="profile-field profile-field-display">
+                                            <span class="field-label">電子郵件</span>
+                                            <span class="field-value"><?php echo htmlspecialchars($user['mail'] ?? ''); ?></span>
+                                        </div>
+                                        <div class="profile-field-edit">
+                                            <label for="email" class="form-label">電子郵件</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                                <input type="email" class="form-control bg-light" id="email" name="email" value="<?= htmlspecialchars($user['mail'] ?? '') ?>" readonly disabled>
+                                                <input type="hidden" name="email" value="<?= htmlspecialchars($user['mail'] ?? '') ?>">
+                                            </div>
+                                            <small class="form-text text-muted">電子郵件地址註冊後不可更改</small>
+                                        </div>
+                                        
+                                        <!-- 註冊日期（唯讀） -->
+                                        <div class="profile-field profile-field-display">
+                                            <span class="field-label">註冊日期</span>
+                                            <span class="field-value">
+                                                <?php echo isset($user['created_at']) ? date('Y/m/d', strtotime($user['created_at'])) : ''; ?>
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- 使用者角色（唯讀） -->
+                                        <div class="profile-field profile-field-display">
+                                            <span class="field-label">角色</span>
+                                            <span class="field-value"><?php echo $roleText; ?></span>
+                                        </div>
                                     </div>
-                                    <div class="profile-field">
-                                        <span class="field-label">註冊日期</span>
-                                        <span class="field-value">
-                                            <?php echo isset($user['created_at']) ? date('Y/m/d', strtotime($user['created_at'])) : ''; ?>
-                                        </span>
+                                    
+                                    <div class="profile-actions">
+                                        <button type="button" id="edit-profile-btn" class="btn btn-primary">
+                                            <i class="fas fa-edit"></i> 編輯資料
+                                        </button>
+                                        <button type="submit" id="save-profile-btn" class="btn btn-success">
+                                            <i class="fas fa-save"></i> 儲存變更
+                                        </button>
+                                        <button type="button" id="cancel-profile-btn" class="btn btn-outline-secondary">
+                                            <i class="fas fa-times"></i> 取消
+                                        </button>
                                     </div>
-                                </div>
+                                </form>
                                 
-                                <div class="profile-actions">
-                                    <a href="edit_profile.php" class="btn btn-primary">
-                                        <i class="fas fa-edit"></i> 編輯資料
-                                    </a>
-                                    <a href="change_password.php" class="btn btn-secondary">
-                                        <i class="fas fa-key"></i> 修改密碼
-                                    </a>
+                                <!-- 修改密碼區域 -->
+                                <div class="profile-section mt-4">
+                                    <h3>修改密碼</h3>
+                                    <form action="change_password.php" method="POST" id="change-password-form">
+                                        <div class="mb-3">
+                                            <label for="current_password" class="form-label">當前密碼</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                                <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="new_password" class="form-label">新密碼</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                                <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                            </div>
+                                            <small class="form-text text-muted">密碼必須至少8個字符，包含大小寫字母和數字</small>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="confirm_password" class="form-label">確認新密碼</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-check-double"></i></span>
+                                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> 更新密碼
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +267,7 @@ try {
                             
                             <div class="stats-card">
                                 <div class="stats-header">
-                                    <h3>活動記錄</h3>
+                                    <h3>記錄</h3>
                                 </div>
                                 <div class="stats-body">
                                     <?php if (empty($activities)): ?>
@@ -208,7 +282,7 @@ try {
                                                         <i class="fas fa-<?php echo $activity['icon']; ?>"></i>
                                                     </span>
                                                     <div class="activity-content">
-                                                        <p><?php echo htmlspecialchars($activity['description']); ?></p>
+                                                        <p><?php echo htmlspecialchars($activity['action'] . ' ' . $activity['description']); ?></p>
                                                         <span class="activity-time"><?php echo date('m/d H:i', strtotime($activity['timestamp'])); ?></span>
                                                     </div>
                                                 </li>
@@ -218,18 +292,22 @@ try {
                                     
                                     <?php if (!empty($activities)): ?>
                                         <div class="activity-actions text-center mt-3">
-                                            <a href="my_bookings.php" class="btn btn-sm btn-outline-primary">查看所有預約</a>
+                                            <a href="my_bookings.php" class="btn btn-sm btn-outline-primary">查看預約紀錄</a>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+
                 </main>
             </div>
         </div>
     </div>
+</main>
+
+<?php include_once '../components/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <script src="../../public/js/profile.js"></script>
