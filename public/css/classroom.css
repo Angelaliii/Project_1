@@ -16,26 +16,15 @@
   padding-bottom: 10px;
 }
 
-/* 表格樣式已使用Bootstrap的table, table-hover類別 */
-
-/* 按鈕相關樣式 - 使用 Bootstrap 替代 */
 .action-buttons {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-/* 彈出視窗自定義樣式 */
-/* 這些樣式已由Bootstrap提供，不再需要自定義 */
-
-/* 權限控制相關樣式已使用Bootstrap的form-check類別 */
-
-/* 搜尋功能樣式已使用Bootstrap的input-group類別 */
 .search-container {
   margin-bottom: 20px;
 }
-
-/* 分頁導航樣式已使用Bootstrap的pagination類別 */
 
 .row-disabled {
   opacity: 0.6;
@@ -87,8 +76,6 @@
 .row-clicked {
   animation: row-click-effect 0.3s ease;
 }
-
-/* 小按鈕樣式已使用Bootstrap的btn-sm類別 */
 
 /* 管理員提示信息 */
 .admin-tip {

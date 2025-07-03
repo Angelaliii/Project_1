@@ -5,23 +5,6 @@
   padding: 10px 0;
 }
 
-/* 預約卡片樣式 */
-.booking-card {
-  margin-bottom: 20px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border-left: 4px solid #1890ff;
-  padding: 16px;
-}
-
-.booking-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
 /* 預約頭部樣式 */
 .booking-header {
   display: flex;
@@ -68,31 +51,6 @@
   border-radius: 50px;
   font-size: 12px;
   font-weight: 500;
-}
-
-.status-booked {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.status-in_use {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.status-completed {
-  background-color: #f5f5f5;
-  color: #616161;
-}
-
-.status-cancelled {
-  background-color: #ffebee;
-  color: #d32f2f;
-}
-
-.status-rejected {
-  background-color: #fff2e8;
-  color: #fa541c;
 }
 
 /* 預約詳情樣式 */
@@ -198,13 +156,6 @@
 }
 
 /* 空白狀態樣式 */
-.no-bookings {
-  text-align: center;
-  padding: 40px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
 
 .no-bookings i {
   font-size: 60px;
@@ -222,15 +173,6 @@
 .no-bookings p {
   color: #666;
   margin-bottom: 20px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  margin-top: 20px;
-  color: #999;
 }
 
 .empty-state i {

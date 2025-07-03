@@ -57,18 +57,6 @@
 }
 
 /* 卡片樣式 */
-.dashboard-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
 
 .dashboard-card-header {
   padding: 15px 20px;
@@ -107,31 +95,6 @@
 .dashboard-card-content {
   padding: 20px;
   min-height: 150px;
-}
-
-/* 空狀態樣式 */
-.empty-state {
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 30px 0;
-  color: #999;
-  text-align: center;
-}
-
-.empty-state i {
-  font-size: 40px;
-  margin-bottom: 15px;
-  color: #ccc;
-}
-
-.empty-state p {
-  margin-bottom: 15px;
-}
-
-.empty-state .btn {
-  margin-top: 10px;
 }
 
 /* 統計數據樣式 */
@@ -240,26 +203,6 @@
   font-size: 12px;
   border-radius: 12px;
   font-weight: 500;
-}
-
-.status-booked {
-  background-color: #e1f5fe;
-  color: #0277bd;
-}
-
-.status-in-use {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.status-completed {
-  background-color: #f1f8e9;
-  color: #558b2f;
-}
-
-.status-cancelled {
-  background-color: #ffebee;
-  color: #c62828;
 }
 
 /* 系統公告樣式 */

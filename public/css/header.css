@@ -20,30 +20,6 @@
   height: 60px;
 }
 
-/* Logo 樣式 */
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo a {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #333;
-}
-
-.logo img {
-  height: 40px;
-  margin-right: 10px;
-}
-
-.logo span {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: #1a1a1a;
-}
-
 /* 主導航樣式 */
 .main-nav {
   flex-grow: 1;
@@ -167,35 +143,6 @@
 .auth-buttons {
   display: flex;
   gap: 10px;
-}
-
-.btn {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-
-.btn-outline {
-  border: 1px solid #0056b3;
-  color: #0056b3;
-  background: transparent;
-}
-
-.btn-outline:hover {
-  background-color: #0056b3;
-  color: white;
-}
-
-.btn-primary {
-  background-color: #0056b3;
-  color: white;
-  border: 1px solid #0056b3;
-}
-
-.btn-primary:hover {
-  background-color: #004494;
 }
 
 /* 響應式設計 */

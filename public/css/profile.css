@@ -5,15 +5,6 @@
   margin-top: 20px;
 }
 
-.profile-card {
-  flex: 1 1 65%;
-  min-width: 300px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-}
-
 .profile-stats {
   flex: 1 1 30%;
   min-width: 250px;
@@ -109,13 +100,6 @@
 }
 
 /* 統計卡片 */
-.stats-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
 
 .stats-header {
   padding: 15px;
@@ -215,48 +199,9 @@
   text-decoration: underline;
 }
 
-/* 表單樣式 */
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #444;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.form-group input:focus {
-  border-color: #4285f4;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
-}
-
-.form-group input[readonly] {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
 /* 書籤頁面樣式 */
 .bookings-container {
   margin-top: 20px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .empty-icon {
@@ -313,45 +258,7 @@
   margin-bottom: 5px;
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.status-booked {
-  background-color: #e6f7ff;
-  color: #1890ff;
-}
-
-.status-in_use {
-  background-color: #f6ffed;
-  color: #52c41a;
-}
-
-.status-completed {
-  background-color: #f9f0ff;
-  color: #722ed1;
-}
-
-.status-cancelled {
-  background-color: #fff1f0;
-  color: #f5222d;
-}
-
-.btn-sm {
-  padding: 5px 10px;
-  font-size: 12px;
-}
-
 /* 提示框樣式 */
-.alert {
-  padding: 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
 
 .alert-success {
   background-color: #f6ffed;
