@@ -1,5 +1,5 @@
 <?php
-// login.php - 用戶登入頁面
+// reset_password.php - 密碼重置頁面
 session_start();
 
 // 如果已經登入，重定向到儀表板
@@ -9,9 +9,28 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
+// 檢查令牌
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+if (empty($token)) {
+    header('Location: login.php?error=無效的密碼重置連結');
+    exit;
+}
+
 // 處理表單提交
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 $success = isset($_GET['success']) ? $_GET['success'] : '';
+
+// 驗證令牌
+require_once '../config/database.php';
+require_once '../models/UserModel.php';
+
+$userModel = new UserModel();
+$user = $userModel->findByResetToken($token);
+
+if (!$user) {
+    header('Location: login.php?error=密碼重置連結已過期或無效');
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +38,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登入 - 教室租借系統</title>
+    <title>重置密碼 - 教室租借系統</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../public/css/auth.css">
@@ -27,14 +46,14 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
 </head>
 <body>
-        <div class="justify-content-center">
+        <div class="row justify-content-center">
             <div class="col">
                 <div class="container shadow">
                     <div class="container-body p-5">
                         <div class="text-center mb-4">
                             <img src="../../public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
                             <h2>教室租借系統</h2>
-                            <p class="text-muted">請登入您的帳戶</p>
+                            <p class="text-muted">重置您的密碼</p>
                         </div>
                         
                         <?php if (!empty($error)): ?>
@@ -45,18 +64,11 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                             <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
                         <?php endif; ?>
                         
-                        <form id="loginForm" action="../../api/auth/login.php" method="POST">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">電子郵件信箱</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="username" name="username" placeholder="your.email@example.com" required>
-                                </div>
-                                <div class="form-text">請使用您的電子郵件地址登入</div>
-                            </div>
+                        <form id="resetPasswordForm" action="../../api/auth/process_reset.php" method="POST">
+                            <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
                             
                             <div class="mb-3">
-                                <label for="password" class="form-label">密碼</label>
+                                <label for="password" class="form-label">新密碼</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     <input type="password" class="form-control" id="password" name="password" required>
@@ -64,23 +76,27 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
-                                <div class="mt-2 text-end">
-                                    <a href="forget_password.php" class="text-decoration-none">忘記密碼?</a>
+                                <div class="form-text">密碼必須至少8個字符，包含大寫字母、小寫字母和數字。</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">確認新密碼</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                    <button type="button" class="input-group-text password-toggle" onclick="togglePassword('confirm_password')" onKeyDown="handleKeyDown(event, 'confirm_password')" aria-label="切換密碼顯示">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
                             </div>
                             
-                            <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>
-                            
-                            <div class="text-center">
-                                <p>還沒有帳戶? <a href="register.php">註冊</a></p>
-                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">更新密碼</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../public/js/main.js"></script>
+
     <script>
         // 切換密碼顯示
         function togglePassword(fieldId) {
@@ -106,37 +122,31 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
             }
         }
         
-        // 登入表單提交驗證
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            const emailInput = document.getElementById('username');
-            const email = emailInput.value.trim();
-            
-            // 驗證是否為有效的電子郵件格式
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                e.preventDefault();
-                alert('請輸入有效的電子郵件地址');
-                emailInput.focus();
-            }
-        });
-        
-        // 前端表單驗證
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            const username = document.getElementById('username').value.trim();
+        // 表單驗證
+        document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
             
-            // 檢查必填欄位
-            if (!username || !password) {
-                event.preventDefault();
-                alert('請填寫所有必填欄位');
+            // 檢查密碼長度和複雜度
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('密碼長度至少需要8個字符');
                 return;
             }
-        });
-        
-        // 處理登出成功訊息
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const successMsg = urlParams.get('success');
+            
+            // 檢查密碼複雜度（至少一個大寫字母，一個小寫字母和一個數字）
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(password)) {
+                e.preventDefault();
+                alert('密碼必須包含大寫字母、小寫字母和數字');
+                return;
+            }
+            
+            // 檢查密碼是否匹配
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('兩次輸入的密碼不一致');
+                return;
+            }
         });
     </script>
 </body>

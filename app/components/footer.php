@@ -3,7 +3,7 @@
 $rootPath = isset($rootPath) ? $rootPath : '../../';
 ?>
 
-</div>
+</div> <!-- .page-wrapper -->
 
 <footer class="main-footer">
     <div class="footer-container">

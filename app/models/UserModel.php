@@ -269,7 +269,7 @@ class UserModel {
     /**
      * 驗證用戶登入
      * 
-     * @param string $username 用戶名或電子郵件
+     * @param string $username 電子郵件
      * @param string $password 密碼（明文）
      * @return array|false 用戶數據或 false
      */
@@ -278,12 +278,13 @@ class UserModel {
             // 檢查是否為電子郵件格式
             $isEmail = filter_var($username, FILTER_VALIDATE_EMAIL);
             
-            // 根據輸入的是用戶名還是電子郵件選擇查詢方式
-            if ($isEmail) {
-                $user = $this->findByEmail($username);
-            } else {
-                $user = $this->findByUsername($username);
+            // 只允許電子郵件格式登入
+            if (!$isEmail) {
+                return false;
             }
+            
+            // 查詢用戶
+            $user = $this->findByEmail($username);
             
             // 如果找到用戶且密碼匹配
             if ($user && password_verify($password, $user['password'])) {
@@ -293,6 +294,69 @@ class UserModel {
             return false;
         } catch (PDOException $e) {
             throw new Exception("驗證用戶時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * 保存密碼重置令牌
+     * 
+     * @param int $userId 用戶ID
+     * @param string $token 重置令牌
+     * @param string $expiry 過期時間（Y-m-d H:i:s 格式）
+     * @return bool 是否成功
+     */
+    public function saveResetToken($userId, $token, $expiry) {
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE users SET 
+                reset_token = ?, 
+                reset_token_expiry = ?
+                WHERE user_id = ?
+            ");
+            return $stmt->execute([$token, $expiry, $userId]);
+        } catch (PDOException $e) {
+            throw new Exception("保存重置令牌時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * 根據重置令牌查找用戶
+     * 
+     * @param string $token 重置令牌
+     * @return array|false 用戶數據或 false
+     */
+    public function findByResetToken($token) {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT * FROM users 
+                WHERE reset_token = ? 
+                AND reset_token_expiry > NOW()
+                LIMIT 1
+            ");
+            $stmt->execute([$token]);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            throw new Exception("查詢重置令牌時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * 清除重置令牌
+     * 
+     * @param int $userId 用戶ID
+     * @return bool 是否成功
+     */
+    public function clearResetToken($userId) {
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE users SET 
+                reset_token = NULL, 
+                reset_token_expiry = NULL
+                WHERE user_id = ?
+            ");
+            return $stmt->execute([$userId]);
+        } catch (PDOException $e) {
+            throw new Exception("清除重置令牌時出錯: " . $e->getMessage());
         }
     }
 }

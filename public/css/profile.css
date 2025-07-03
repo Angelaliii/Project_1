@@ -435,69 +435,9 @@
   border: 1px solid #91d5ff;
 }
 
-/* 主要導航欄樣式 */
-.main-header {
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo img {
-  height: 40px;
-  margin-right: 10px;
-}
-
-.logo span {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
-
-.main-nav {
-  margin-left: auto;
-}
-
-.nav-list {
-  display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-list li {
-  margin-left: 20px;
-}
-
-.nav-list a {
-  color: #555;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 5px 0;
-  transition: color 0.3s;
-}
-
-.nav-list a:hover {
-  color: #4285f4;
-}
-
 /* 主要內容區域 */
 .main-content {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 20px;
-}
-
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }

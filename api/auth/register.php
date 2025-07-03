@@ -50,17 +50,13 @@ if ($password !== $confirmPassword) {
 try {
     $userModel = new UserModel();
     
-    // 檢查用戶名是否已存在
-    if ($userModel->findByUsername($username)) {
-        header('Location: ../../app/pages/register.php?error=用戶名已被使用，請選擇另一個');
+    // 檢查電子郵件是否已存在
+    if ($userModel->findByEmail($email)) {
+        header('Location: ../../app/pages/register.php?error=此電子郵件已註冊，請直接登入或使用忘記密碼功能');
         exit;
     }
     
-    // 檢查電子郵件是否已存在
-    if ($userModel->findByEmail($email)) {
-        header('Location: ../../app/pages/register.php?error=電子郵件地址已被使用，請使用另一個');
-        exit;
-    }
+    // 注意：不再檢查用戶名是否已存在，允許使用相同的用戶名
     
     // 創建新用戶
     $userId = $userModel->create($username, $email, $password);

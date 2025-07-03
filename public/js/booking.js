@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
     'selected-times-display'
   );
 
+  // 初始化 Tooltips
+  initTooltips();
+
   if (timeGrid) {
     const cells = document.querySelectorAll('.time-cell:not(.booked)');
 
@@ -19,24 +22,27 @@ document.addEventListener('DOMContentLoaded', function () {
           const hour = parseInt(this.dataset.hour);
           if (isNaN(hour)) return;
 
+          // 修復單格取消功能
           if (selectedHours.includes(hour)) {
+            // 取消選取
             this.classList.remove('selected');
             selectedHours = selectedHours.filter((h) => h !== hour);
+            console.log('取消選取時間:', hour, '剩餘選取:', selectedHours);
           } else {
+            // 添加選取
             this.classList.add('selected');
             selectedHours.push(hour);
           }
 
+          // 更新 input 值和顯示
           selectedHours.sort((a, b) => a - b);
           selectedHoursInput.value = JSON.stringify(selectedHours);
           updateSelectedTimes();
 
+          // 如果沒有選取的小時，隱藏表單
           bookingForm.style.display =
             selectedHours.length > 0 ? 'block' : 'none';
         }
-
-        // 顯示或隱藏表單
-        bookingForm.style.display = selectedHours.length > 0 ? 'block' : 'none';
 
         // 防止事件冒泡
         e.preventDefault();
@@ -161,4 +167,87 @@ document.addEventListener('DOMContentLoaded', function () {
 
     console.log('清除完成');
   };
+
+  // 初始化 Tooltips
+  function initTooltips() {
+    const bookedCells = document.querySelectorAll('.time-cell.booked');
+
+    bookedCells.forEach((cell) => {
+      // 為已預約的時段添加懸停事件
+      if (cell.hasAttribute('data-user')) {
+        const userName = cell.getAttribute('data-user');
+        const userEmail = cell.getAttribute('data-email');
+
+        // 建立自訂 Tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'custom-tooltip';
+        tooltip.innerHTML = `
+          <div class="tooltip-header">預約資訊</div>
+          <div class="tooltip-content">
+            <div class="tooltip-row"><strong>租借人:</strong> ${userName}</div>
+            <div class="tooltip-row"><strong>聯絡方式:</strong> ${userEmail}</div>
+          </div>
+        `;
+
+        // 添加至 body
+        document.body.appendChild(tooltip);
+
+        // 滑鼠懸停顯示 Tooltip
+        cell.addEventListener('mouseenter', (e) => {
+          const rect = cell.getBoundingClientRect();
+          tooltip.style.left = rect.left + 'px';
+          tooltip.style.top = rect.bottom + 10 + 'px';
+          tooltip.classList.add('visible');
+        });
+
+        // 滑鼠離開隱藏 Tooltip
+        cell.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('visible');
+        });
+      }
+    });
+  }
 });
+
+// 添加自訂 Tooltip 樣式
+const style = document.createElement('style');
+style.textContent = `
+  .custom-tooltip {
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    width: 250px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+  }
+  
+  .custom-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .tooltip-header {
+    background-color: #4285f4;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px 4px 0 0;
+    font-weight: bold;
+  }
+  
+  .tooltip-content {
+    padding: 10px;
+  }
+  
+  .tooltip-row {
+    margin-bottom: 5px;
+  }
+  
+  .time-cell.booked {
+    cursor: help;
+  }
+`;
+document.head.appendChild(style);

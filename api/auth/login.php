@@ -14,12 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // 接收表單數據
-$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
+$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_EMAIL);
 $password = $_POST['password'];
 
 // 基本驗證
 if (empty($username) || empty($password)) {
-    header('Location: ../../app/pages/login.php?error=使用者名稱和密碼不能為空');
+    header('Location: ../../app/pages/login.php?error=郵箱和密碼不能為空');
+    exit;
+}
+
+// 驗證是否為有效的電子郵件格式
+if (!filter_var($username, FILTER_VALIDATE_EMAIL)) {
+    header('Location: ../../app/pages/login.php?error=請使用有效的電子郵件地址登入');
     exit;
 }
 
@@ -35,11 +41,11 @@ try {
         $_SESSION['role'] = $user['role'];
         
         // 根據角色重定向到對應頁面
-        if ($user['role'] === 'admin') {
-            $redirectUrl = 'dashboard.php';
-        } elseif ($user['role'] === 'teacher') {
+        if ($user['role'] === 'admin' || $user['role'] === 'teacher') {
+            // 管理員和教師進入教室管理頁面
             $redirectUrl = 'classroom.php';
         } else {
+            // 學生進入預約頁面
             $redirectUrl = 'booking.php';
         }
         
@@ -47,7 +53,7 @@ try {
         exit;
     } else {
         // 登入失敗
-        header('Location: ../../app/pages/login.php?error=無效的使用者名稱或密碼');
+        header('Location: ../../app/pages/login.php?error=無效的電子郵件或密碼');
         exit;
     }
 } catch (Exception $e) {

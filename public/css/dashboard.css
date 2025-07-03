@@ -111,7 +111,6 @@
 
 /* 空狀態樣式 */
 .empty-state {
-  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -162,6 +161,326 @@
   margin-top: 5px;
 }
 
+/* 最近預約樣式 */
+.recent-bookings {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.booking-item {
+  display: flex;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 12px;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.booking-item:hover {
+  background-color: #f0f0f0;
+}
+
+.booking-date {
+  min-width: 100px;
+  border-right: 1px solid #e0e0e0;
+  padding-right: 15px;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.booking-day {
+  font-weight: 500;
+  font-size: 14px;
+  color: #555;
+}
+
+.booking-weekday {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0056b3;
+  margin-top: 5px;
+}
+
+.booking-details {
+  flex: 1;
+}
+
+.booking-details h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.booking-location,
+.booking-time,
+.booking-purpose {
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.booking-location i,
+.booking-time i,
+.booking-purpose i {
+  margin-right: 5px;
+  width: 16px;
+}
+
+.booking-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.status-booked {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.status-in-use {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-completed {
+  background-color: #f1f8e9;
+  color: #558b2f;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* 系統公告樣式 */
+.announcements {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.announcement-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.announcement-item:last-child {
+  border-bottom: none;
+}
+
+.announcement-item:hover {
+  background-color: #f9f9f9;
+}
+
+.announcement-date {
+  min-width: 80px;
+  font-size: 12px;
+  color: #888;
+}
+
+.announcement-title {
+  flex: 1;
+  font-size: 14px;
+}
+
+.announcement-title a {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.announcement-title a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* 公告模態對話框樣式 */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  overflow: auto;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  max-width: 500px;
+  width: 100%;
+  margin: 30px auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.close {
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: #000;
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.close:hover {
+  opacity: 0.75;
+}
+
+.announcement-content {
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
+/* 常用教室樣式 */
+.favorite-classrooms {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.classroom-item {
+  display: flex;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 10px 15px;
+  transition: background-color 0.2s;
+}
+
+.classroom-item:hover {
+  background-color: #f0f0f0;
+}
+
+.classroom-icon {
+  min-width: 40px;
+  height: 40px;
+  background-color: #e3f2fd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.classroom-icon i {
+  font-size: 20px;
+  color: #1976d2;
+}
+
+.classroom-details {
+  flex: 1;
+}
+
+.classroom-details h3 {
+  margin: 0 0 5px 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.classroom-location {
+  font-size: 13px;
+  color: #666;
+}
+
+.booking-count {
+  font-size: 12px;
+  color: #888;
+  margin-top: 3px;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #0056b3;
+  color: #0056b3;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 4px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s, color 0.2s;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn-sm:hover {
+  background-color: #003d7a;
+}
+
 /* 響應式設計 */
 @media (max-width: 992px) {
   .dashboard-sections {
@@ -189,5 +508,34 @@
 
   .dashboard-card-content {
     padding: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-item {
+    flex-direction: column;
+  }
+
+  .booking-date {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    padding-right: 0;
+    padding-bottom: 10px;
+    margin-right: 0;
+    margin-bottom: 10px;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .booking-day {
+    margin-right: 10px;
+  }
+
+  .booking-status {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 10px;
+    display: inline-block;
   }
 }

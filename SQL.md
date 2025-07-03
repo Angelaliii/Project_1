@@ -42,3 +42,31 @@ created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 FOREIGN KEY (booking_ID) REFERENCES bookings(booking_ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS `announcements` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`title` varchar(255) NOT NULL COMMENT '公告標題',
+`content` text NOT NULL COMMENT '公告內容',
+`publish_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '發佈日期',
+`expiry_date` datetime DEFAULT NULL COMMENT '過期日期，若為 NULL 則不過期',
+`status` enum('published','draft','archived') NOT NULL DEFAULT 'published' COMMENT '狀態: published(已發布), draft(草稿), archived(已封存)',
+`created_by` int(11) NOT NULL COMMENT '創建者 ID',
+`created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '創建時間',
+`updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新時間',
+PRIMARY KEY (`id`),
+KEY `idx_publish_date` (`publish_date`),
+KEY `idx_status` (`status`),
+KEY `idx_created_by` (`created_by`),
+CONSTRAINT `fk_announcement_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系統公告資料表';
+
+-- 新增教室權限表
+CREATE TABLE classroom_permissions (
+permission_id INT AUTO_INCREMENT PRIMARY KEY,
+classroom_id INT NOT NULL,
+allowed_roles VARCHAR(50) NOT NULL COMMENT '允許租借的角色，使用逗號分隔如 "student,teacher,admin"',
+created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (classroom_id) REFERENCES classrooms(classroom_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+UNIQUE KEY idx_classroom_id (classroom_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='教室租借權限表';

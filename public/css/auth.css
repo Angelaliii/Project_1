@@ -1,0 +1,14 @@
+/* auth.css - 登入和註冊頁面樣式 */
+
+/* 密碼切換按鈕樣式 */
+.password-toggle {
+  background-color: #e9ecef;
+  cursor: pointer;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-left: none;
+}
+
+.password-toggle:hover {
+  background-color: #d5d8dc;
+}

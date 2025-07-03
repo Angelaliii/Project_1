@@ -198,17 +198,6 @@
   background-color: #004494;
 }
 
-/* 內容容器 */
-.content-container {
-  margin: 0 auto;
-  padding: 20px;
-  background-image: url("../img/background.svg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-}
-
 /* 響應式設計 */
 @media (max-width: 992px) {
   .nav-list {

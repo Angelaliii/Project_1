@@ -4,9 +4,11 @@
 .scheduler-container {
   display: flex;
   width: 100%;
-  height: calc(100vh - 200px); /* 減去頁頭和頁尾的高度 */
+  min-height: 600px; /* 使用最小高度而非固定高度 */
+  max-height: calc(100vh - 250px); /* 設定最大高度，確保不會太大 */
   margin-top: 20px;
-  overflow: hidden;
+  margin-bottom: 30px; /* 添加底部間距 */
+  overflow-y: auto; /* 允許垂直滾動 */
 }
 
 /* 左側空間列表 */
@@ -15,10 +17,40 @@
   background: white;
   border-right: 1px solid #e1e4e8;
   padding: 15px;
-  height: calc(100vh - 230px); /* 確保有固定高度，略小於容器高度 */
+  max-height: 600px; /* 使用最大高度限制，適應不同內容 */
   overflow-y: auto; /* 當內容超過容器高度時顯示垂直滾動條 */
   overflow-x: hidden; /* 隱藏水平滾動條 */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* 教室列表分頁導航 */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.pagination {
+  justify-content: center;
+}
+
+.pagination .page-link {
+  color: #4285f4;
+  border: 1px solid #ddd;
+  margin: 0 2px;
+  font-size: 0.8rem;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #4285f4;
+  border-color: #4285f4;
+  color: white;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
 }
 
 .space-filters {
@@ -427,6 +459,8 @@
   .scheduler-container {
     flex-direction: column;
     height: auto;
+    min-height: auto; /* 移動設備上不設置最小高度 */
+    max-height: none; /* 移動設備上不限制最大高度 */
   }
 
   .space-sidebar {

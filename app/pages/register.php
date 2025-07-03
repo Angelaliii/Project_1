@@ -20,24 +20,21 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>註冊 - 教室租借系統</title>
-    <link rel="stylesheet" href="../../public/css/style.css">
-    <!-- <link rel="stylesheet" href="../../public/css/auth.css"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../public/css/auth.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
     <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
-    
-
 </head>
 <body>
-    <div class="mt-5">
         <div class="row justify-content-center">
             <div class="col">
                 <div class="container shadow">
                     <div class="container-body p-5">
                         <div class="text-center mb-4">
                             <img src="../../public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
-                            <h2>註冊新帳戶</h2>
-                            <p class="text-muted">加入教室租借系統</p>
+                            <h2>教室租借系統</h2>
+                            <p class="text-muted">註冊新的帳戶</p>
                         </div>
                         
                         <?php if (!empty($error)): ?>
@@ -55,23 +52,24 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     <input type="text" class="form-control" id="username" name="username" required>
                                 </div>
-                                <small class="form-text text-muted">用戶名將用於登入，必須唯一</small>
+                                <small class="form-text text-muted">設置您的顯示名稱</small>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="email" class="form-label">電子郵件</label>
+                                <label for="email" class="form-label">電子郵件信箱</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="your.email@example.com" required>
                                 </div>
+                                <small class="form-text text-muted">請使用有效的電子郵件地址註冊</small>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="password" class="form-label">密碼</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control password-field" id="password" name="password" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('password')" onKeyDown="handleKeyDown(event, 'password')" aria-label="切換密碼顯示">
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                    <button type="button" class="input-group-text password-toggle" onclick="togglePassword('password')" onKeyDown="handleKeyDown(event, 'password')" aria-label="切換密碼顯示">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -82,8 +80,8 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                 <label for="confirm_password" class="form-label">確認密碼</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control password-field" id="confirm_password" name="confirm_password" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')" onKeyDown="handleKeyDown(event, 'confirm_password')" aria-label="切換確認密碼顯示">
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                    <button type="button" class="input-group-text password-toggle" onclick="togglePassword('confirm_password')" onKeyDown="handleKeyDown(event, 'confirm_password')" aria-label="切換確認密碼顯示">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -99,14 +97,13 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                 </div>
             </div>
         </div>
-    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../public/js/main.js"></script>
     <script>
         function togglePassword(fieldId) {
             const passwordField = document.getElementById(fieldId);
-            const icon = document.querySelector(`#${fieldId}`).nextElementSibling.querySelector('i');
+            const icon = document.querySelector(`.password-toggle[onclick*="${fieldId}"] i`);
             
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';

@@ -1,9 +1,260 @@
+/* 全域重置與基礎樣式 */
+html,
 body {
-  background: url("<?php echo $rootPath; ?>public/img/background.svg") no-repeat
-    center center fixed;
-  background-size: cover;
-  background-color: #f5f7fa;
+  height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  background: url("../img/background.svg") no-repeat center center fixed;
+  background-size: cover;
+  background-color: #f5f7fa;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 頁面佈局結構 */
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  flex: 1;
+}
+
+.content-container {
+  flex: 1 0 auto;
+  padding-bottom: 2rem;
+}
+
+/* 通用容器樣式 */
+.container {
+  max-width: 450px;
+  margin-top: 5%;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.container-body {
+  border-radius: 10px;
+}
+
+/* 通用按鈕樣式 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: #0056b3;
+  color: white;
+  border: 1px solid #0056b3;
+}
+
+.btn-primary:hover {
+  background-color: #004494;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline {
+  border: 1px solid #0056b3;
+  color: #0056b3;
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* 通用表單樣式 */
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group input:focus {
+  border-color: #4285f4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.form-group input[readonly] {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* 通用連結樣式 */
+a {
+  color: #4e73df;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #2e59d9;
+  text-decoration: underline;
+}
+
+/* 通用Logo樣式 */
+.logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo span {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+/* 通用卡片樣式 */
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 通用空白狀態樣式 */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  color: #999;
+}
+
+.empty-state i {
+  font-size: 48px;
+  color: #ccc;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.empty-state h2,
+.empty-state h3,
+.empty-state h4 {
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 500;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* 通用狀態標籤樣式 */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-booked {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-in_use {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-completed {
+  background-color: #f5f5f5;
+  color: #616161;
+}
+
+.status-cancelled {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+/* 通用提示框樣式 */
+.alert {
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.alert-danger {
+  background-color: #fff1f0;
+  border: 1px solid #ffa39e;
+  color: #f5222d;
+}
+
+.alert-warning {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  color: #faad14;
+}
+
+/* 通用響應式調整 */
+@media (max-width: 768px) {
+  .container {
+    margin-top: 2%;
+    max-width: 90%;
+  }
+
+  .form-group input {
+    font-size: 14px;
+  }
 }

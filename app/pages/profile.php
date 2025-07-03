@@ -267,7 +267,7 @@ try {
                             
                             <div class="stats-card">
                                 <div class="stats-header">
-                                    <h3>記錄</h3>
+                                    <h3>活動記錄</h3>
                                 </div>
                                 <div class="stats-body">
                                     <?php if (empty($activities)): ?>
