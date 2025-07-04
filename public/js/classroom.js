@@ -1,87 +1,172 @@
-// 新增教室彈出視窗 - 使用Bootstrap Modal
-const addModal = new bootstrap.Modal(
-  document.getElementById('addClassroomModal'),
-  {
-    keyboard: false,
-  }
-);
-const editPermissionModal = new bootstrap.Modal(
-  document.getElementById('editPermissionModal'),
-  {
-    keyboard: false,
-  }
-);
-const openModalBtn = document.getElementById('openAddClassroomBtn');
+// classroom.js - 教室管理頁面的 JavaScript 腳本
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    console.log('初始化教室管理頁面...');
 
-// 檢查元素是否存在再綁定事件
-if (openModalBtn) {
-  openModalBtn.addEventListener('click', () => {
-    addModal.show();
-  });
-}
+    // 初始化模態框
+    let addModal, editClassroomModal;
 
-// 權限編輯按鈕點擊事件
-const editPermissionBtns = document.querySelectorAll('.edit-permission-btn');
-if (editPermissionBtns.length > 0) {
-  editPermissionBtns.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation(); // 防止事件冒泡到行點擊事件
-      const classroomId = btn.getAttribute('data-id');
-      const roles = btn.getAttribute('data-roles').split(',');
-
-      // 設置表單值
-      document.getElementById('edit_classroom_id').value = classroomId;
-      document.getElementById('perm_student').checked =
-        roles.includes('student');
-      document.getElementById('perm_teacher').checked =
-        roles.includes('teacher');
-      document.getElementById('perm_admin').checked = roles.includes('admin');
-
-      // 顯示彈窗
-      editPermissionModal.show();
-    });
-  });
-}
-
-// 管理員點擊行開啟權限編輯功能
-const adminRows = document.querySelectorAll('.admin-row');
-if (adminRows.length > 0) {
-  adminRows.forEach((row) => {
-    row.addEventListener('click', (e) => {
-      // 如果點擊的是按鈕，不處理
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-        return;
-      }
-
-      const classroomId = row.getAttribute('data-id');
-      const roles = row.getAttribute('data-roles').split(',');
-
-      // 設置表單值
-      document.getElementById('edit_classroom_id').value = classroomId;
-      document.getElementById('perm_student').checked =
-        roles.includes('student');
-      document.getElementById('perm_teacher').checked =
-        roles.includes('teacher');
-      document.getElementById('perm_admin').checked = roles.includes('admin');
-
-      // 顯示彈窗
-      editPermissionModal.show();
-    });
-  });
-}
-
-// 關閉按鈕事件處理 - Bootstrap已處理
-
-// 表單提交前驗證 - 權限更新表單
-document
-  .querySelector('form[name="update_permissions"]')
-  ?.addEventListener('submit', function (e) {
-    const checkboxes = this.querySelectorAll('input[type="checkbox"]:checked');
-    if (checkboxes.length === 0) {
-      e.preventDefault();
-      alert('請至少選擇一個角色');
+    const addModalEl = document.getElementById('addClassroomModal');
+    if (addModalEl) {
+      addModal = new bootstrap.Modal(addModalEl);
+      console.log('新增教室模態框初始化成功');
+    } else {
+      console.error('找不到新增教室模態框元素');
     }
-  });
+
+    const editClassroomModalEl = document.getElementById('editClassroomModal');
+    if (editClassroomModalEl) {
+      editClassroomModal = new bootstrap.Modal(editClassroomModalEl);
+      console.log('編輯教室模態框初始化成功');
+    } else {
+      console.error('找不到編輯教室模態框元素');
+    }
+
+    // 新增教室按鈕事件
+    const openModalBtn = document.getElementById('openAddClassroomBtn');
+    if (openModalBtn) {
+      openModalBtn.addEventListener('click', function () {
+        if (addModal) {
+          addModal.show();
+          console.log('顯示新增教室模態框');
+        } else {
+          console.error('無法顯示新增教室模態框：模態框未初始化');
+        }
+      });
+    }
+
+    // 學生權限開關事件 - 新增模式
+    const roleStudentElem = document.getElementById('role-student');
+    if (roleStudentElem) {
+      roleStudentElem.addEventListener('change', function () {
+        const statusElem = document.getElementById('add_student_status');
+        if (statusElem) {
+          statusElem.textContent = this.checked ? '開啟' : '關閉';
+        }
+      });
+    }
+
+    // 學生權限開關事件 - 編輯模式
+    const editPermStudentElem = document.getElementById('edit_perm_student');
+    if (editPermStudentElem) {
+      editPermStudentElem.addEventListener('change', function () {
+        const studentStatusElem = document.getElementById('student_status');
+        if (studentStatusElem) {
+          studentStatusElem.textContent = this.checked ? '開啟' : '關閉';
+        }
+      });
+    }
+
+    // 編輯教室按鈕點擊事件
+    const editBtns = document.querySelectorAll('.edit-classroom-btn');
+    if (editBtns.length > 0) {
+      console.log(`找到 ${editBtns.length} 個編輯按鈕`);
+      editBtns.forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          console.log('編輯按鈕被點擊');
+
+          // 獲取資料
+          const classroomId = this.getAttribute('data-id');
+          const roles = this.getAttribute('data-roles').split(',');
+          const name = this.getAttribute('data-name');
+          const building = this.getAttribute('data-building');
+          const room = this.getAttribute('data-room');
+
+          console.log(`編輯教室：ID=${classroomId}, 名稱=${name}`);
+
+          try {
+            // 設置表單值
+            document.getElementById('edit_classroom_id').value = classroomId;
+            document.getElementById('edit_classroom_name').value = name;
+            document.getElementById('edit_building').value = building;
+            document.getElementById('edit_room').value = room;
+
+            // 設置學生權限開關
+            const studentAllowed = roles.includes('student');
+            document.getElementById('edit_perm_student').checked =
+              studentAllowed;
+            document.getElementById('student_status').textContent =
+              studentAllowed ? '開啟' : '關閉';
+
+            // 顯示彈窗
+            if (editClassroomModal) {
+              editClassroomModal.show();
+              console.log('顯示編輯教室模態框');
+            } else {
+              console.error('無法顯示編輯教室模態框：模態框未初始化');
+            }
+          } catch (err) {
+            console.error('處理編輯操作時發生錯誤：', err);
+          }
+        });
+      });
+    } else {
+      console.warn('未找到任何編輯教室按鈕');
+    }
+
+    // 刪除教室按鈕事件
+    const deleteBtn = document.getElementById('deleteClassroomBtn');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', function () {
+        const classroomId = document.getElementById('edit_classroom_id').value;
+        const classroomName = document.getElementById(
+          'edit_classroom_name'
+        ).value;
+
+        if (
+          confirm(
+            `確定要刪除教室 "${classroomName}" 嗎？\n\n此操作會同時刪除該教室的所有預約記錄。\n\n請再次確認您的操作。`
+          )
+        ) {
+          // 建立並提交表單
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.style.display = 'none';
+
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'classroom_id';
+          input.value = classroomId;
+
+          const submitBtn = document.createElement('input');
+          submitBtn.type = 'hidden';
+          submitBtn.name = 'delete_classroom';
+          submitBtn.value = '1';
+
+          form.appendChild(input);
+          form.appendChild(submitBtn);
+          document.body.appendChild(form);
+
+          form.submit();
+        }
+      });
+    }
+
+    // 表單提交前驗證 - 教室編輯表單
+    const updateForm = document.querySelector('#editClassroomModal form');
+    if (updateForm) {
+      updateForm.addEventListener('submit', function (e) {
+        // 檢查必填欄位
+        const classroomName = document
+          .getElementById('edit_classroom_name')
+          .value.trim();
+        const building = document.getElementById('edit_building').value.trim();
+
+        if (classroomName === '') {
+          e.preventDefault();
+          notificationSystem.showError('教室名稱為必填欄位', '表單驗證失敗');
+        } else if (building === '') {
+          e.preventDefault();
+          notificationSystem.showError('樓宇為必填欄位', '表單驗證失敗');
+        }
+        // 成功時由伺服器端透過 notificationSystem 顯示成功訊息
+      });
+    }
+  } catch (error) {
+    console.error('初始化教室管理頁面時發生錯誤:', error);
+  }
+});
 
 // 添加點擊行時的視覺反饋
 function addClassWithTimeout(element, className, timeout) {
@@ -89,51 +174,4 @@ function addClassWithTimeout(element, className, timeout) {
   setTimeout(() => {
     element.classList.remove(className);
   }, timeout);
-}
-
-// 為管理員行添加點擊效果
-document.querySelectorAll('.admin-row').forEach((row) => {
-  row.addEventListener('click', function (e) {
-    // 如果點擊的不是按鈕，添加點擊效果
-    if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
-      addClassWithTimeout(this, 'row-clicked', 300);
-    }
-  });
-});
-
-// 刪除教室按鈕事件處理
-const deleteButtons = document.querySelectorAll('.delete-classroom-btn');
-if (deleteButtons.length > 0) {
-  deleteButtons.forEach((btn) => {
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation(); // 防止事件冒泡
-      const classroomId = this.getAttribute('data-id');
-
-      if (
-        confirm(
-          '確定要刪除這個教室嗎？此操作無法撤銷，若教室已有預約記錄將無法刪除。'
-        )
-      ) {
-        // 建立並提交表單
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.style.display = 'none';
-
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'classroom_id';
-        input.value = classroomId;
-
-        const submitBtn = document.createElement('input');
-        submitBtn.type = 'hidden';
-        submitBtn.name = 'delete_classroom';
-        submitBtn.value = '1';
-
-        form.appendChild(input);
-        form.appendChild(submitBtn);
-        document.body.appendChild(form);
-        form.submit();
-      }
-    });
-  });
 }

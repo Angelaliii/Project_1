@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const editForm = document.getElementById('profile-edit-form');
   const viewFields = document.querySelectorAll('.profile-field-display');
   const editFields = document.querySelectorAll('.profile-field-edit');
+  const passwordForm = document.getElementById('change-password-form');
 
   // 初始化隱藏編輯區域和按鈕，顯示檢視區域
   editFields.forEach((field) => (field.style.display = 'none'));
@@ -42,6 +43,66 @@ document.addEventListener('DOMContentLoaded', function () {
       if (editButton) editButton.style.display = 'inline-block';
       if (saveButton) saveButton.style.display = 'none';
       if (cancelButton) cancelButton.style.display = 'none';
+    });
+  }
+
+  // 處理表單提交
+  if (editForm) {
+    editForm.addEventListener('submit', function (e) {
+      // 驗證表單
+      const username = document.getElementById('username').value.trim();
+      if (!username) {
+        e.preventDefault();
+        if (typeof notificationSystem !== 'undefined') {
+          notificationSystem.showError('用戶名不能為空');
+        } else {
+          alert('用戶名不能為空');
+        }
+      }
+    });
+  }
+
+  // 處理密碼表單提交
+  if (passwordForm) {
+    passwordForm.addEventListener('submit', function (e) {
+      const currentPassword = document.getElementById('current_password').value;
+      const newPassword = document.getElementById('new_password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+
+      // 驗證密碼
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        e.preventDefault();
+        if (typeof notificationSystem !== 'undefined') {
+          notificationSystem.showError('所有密碼欄位都是必填的');
+        } else {
+          alert('所有密碼欄位都是必填的');
+        }
+        return;
+      }
+
+      // 驗證新密碼格式
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordPattern.test(newPassword)) {
+        e.preventDefault();
+        if (typeof notificationSystem !== 'undefined') {
+          notificationSystem.showError(
+            '新密碼必須至少8個字符，且包含大小寫字母和數字'
+          );
+        } else {
+          alert('新密碼必須至少8個字符，且包含大小寫字母和數字');
+        }
+        return;
+      }
+
+      // 檢查密碼是否匹配
+      if (newPassword !== confirmPassword) {
+        e.preventDefault();
+        if (typeof notificationSystem !== 'undefined') {
+          notificationSystem.showError('新密碼與確認密碼不一致');
+        } else {
+          alert('新密碼與確認密碼不一致');
+        }
+      }
     });
   }
 });

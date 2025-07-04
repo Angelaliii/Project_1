@@ -11,22 +11,26 @@ body {
   background-size: cover;
   background-color: #f5f7fa;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 /* 頁面佈局結構 */
 .page-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   flex: 1;
+  box-sizing: border-box; /* 確保padding不會增加整體高度 */
 }
 
 .content-container {
   flex: 1 0 auto;
-  padding-bottom: 2rem;
+  width: 100%;
+  padding-bottom: 20px; /* 確保內容與footer之間有足夠間距 */
+  box-sizing: border-box; /* 確保padding不會增加整體高度 */
 }
 
 /* 通用容器樣式 */
@@ -265,7 +269,8 @@ a:hover {
   color: #52c41a;
 }
 
-.alert-danger {
+.alert-danger,
+.alert-error {
   background-color: #fff1f0;
   border: 1px solid #ffa39e;
   color: #f5222d;
@@ -275,6 +280,84 @@ a:hover {
   background-color: #fffbe6;
   border: 1px solid #ffe58f;
   color: #faad14;
+}
+
+/* 通知樣式 */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 400px;
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.notification-success {
+  border-left: 4px solid #52c41a;
+}
+
+.notification-error {
+  border-left: 4px solid #f5222d;
+}
+
+.notification-warning {
+  border-left: 4px solid #faad14;
+}
+
+.notification-icon {
+  margin-right: 12px;
+  font-size: 20px;
+}
+
+.notification-success .notification-icon {
+  color: #52c41a;
+}
+
+.notification-error .notification-icon {
+  color: #f5222d;
+}
+
+.notification-warning .notification-icon {
+  color: #faad14;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  color: #666;
+}
+
+.notification-close {
+  color: #999;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: color 0.3s;
+}
+
+.notification-close:hover {
+  color: #333;
 }
 
 /* 通用響應式調整 */
@@ -288,3 +371,5 @@ a:hover {
     font-size: 14px;
   }
 }
+
+/* 修復滾動條相關樣式在最上方的全域基礎樣式中已經定義 */

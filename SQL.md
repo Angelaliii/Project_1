@@ -4,7 +4,7 @@ user_id INT AUTO_INCREMENT PRIMARY KEY,
 user_name VARCHAR(255) NOT NULL UNIQUE,
 mail VARCHAR(255) NOT NULL UNIQUE,
 password VARCHAR(255) NOT NULL,
-role ENUM('student', 'teacher', 'admin') NOT NULL,
+role ENUM('student', 'teacher') NOT NULL,
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ;
@@ -64,7 +64,7 @@ CONSTRAINT `fk_announcement_user` FOREIGN KEY (`created_by`) REFERENCES `users` 
 CREATE TABLE classroom_permissions (
 permission_id INT AUTO_INCREMENT PRIMARY KEY,
 classroom_id INT NOT NULL,
-allowed_roles VARCHAR(50) NOT NULL COMMENT '允許租借的角色，使用逗號分隔如 "student,teacher,admin"',
+allowed_roles VARCHAR(50) NOT NULL COMMENT '允許租借的角色，使用逗號分隔如 "student,teacher"',
 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 FOREIGN KEY (classroom_id) REFERENCES classrooms(classroom_ID) ON DELETE CASCADE ON UPDATE CASCADE,

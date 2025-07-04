@@ -3,10 +3,12 @@
 .main-footer {
   background-color: #222;
   color: #f8f9fa;
-  padding: 50px 0 20px;
-  margin-top: 2rem; /* 與內容保持一定距離 */
+  padding: 10px 0;
   width: 100%; /* 確保頁尾寬度100% */
-  position: relative; /* 使用相對定位而非固定位置 */
+  margin-top: auto; /* 將 footer 推到內容末尾 */
+  height: 60px; /* 固定高度，確保一致性 */
+  box-sizing: border-box; /* 確保padding不會增加整體高度 */
+  z-index: 10; /* 確保footer顯示在適當層級 */
 }
 
 .footer-container {
@@ -91,14 +93,19 @@
 /* 頁尾底部 */
 .footer-bottom {
   text-align: center;
-  padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0;
 }
 
 .footer-bottom p {
   font-size: 0.8rem;
   color: #adb5bd;
   margin: 0;
+  line-height: 20px;
 }
 
 /* 響應式設計 */
@@ -129,7 +136,8 @@
 
 @media (max-width: 576px) {
   .main-footer {
-    padding: 30px 0 10px;
+    padding: 10px 0;
+    height: 50px; /* 手機版更小的footer高度 */
   }
 
   .footer-links {
@@ -138,5 +146,10 @@
 
   .footer-section {
     min-width: 100%;
+  }
+
+  /* 對應調整頁面包裝器 */
+  .page-wrapper {
+    padding-bottom: 50px; /* 與手機版footer高度一致 */
   }
 }

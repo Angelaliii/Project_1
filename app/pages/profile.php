@@ -94,34 +94,39 @@ try {
 
 <?php include_once '../components/header.php'; ?>
 
-<main class="content-container">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <main class="content">
-                    <div class="content-header">
+<div class="page-wrapper">
+    <main class="content-container">
+        <div class="container-fluid py-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="content-header mb-4">
                         <h1><i class="fas fa-user-circle"></i> 個人資料</h1>
-                        <p>查看和管理您的個人資料</p>
+                        <p class="text-muted">查看和管理您的個人資料</p>
                     </div>
                     
-                    <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <?= htmlspecialchars($error) ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <?php if (!empty($success)): ?>
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <?= htmlspecialchars($success) ?>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
+                    <!-- 通知系統會自動顯示，無需再使用傳統警告 -->
+                    <?php if (!empty($error) || !empty($success)): ?>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            <?php if (!empty($error)): ?>
+                            if (typeof notificationSystem !== 'undefined') {
+                                notificationSystem.showError("<?= htmlspecialchars($error) ?>");
+                            }
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($success)): ?>
+                            if (typeof notificationSystem !== 'undefined') {
+                                notificationSystem.showSuccess("<?= htmlspecialchars($success) ?>");
+                            }
+                            <?php endif; ?>
+                        });
+                    </script>
                     <?php endif; ?>
                     
                     <!-- 概覽標籤內容 -->
                     <div class="profile-container">
                         <!-- 個人資料卡片 -->
-                        <div class="profile-card">
+                        <div class="profile-card card">
                             <div class="profile-header">
                                 <div class="profile-avatar">
                                     <i class="fas fa-user-circle"></i>
@@ -129,7 +134,7 @@ try {
                                 <div class="profile-info">
                                     <h2><?php echo htmlspecialchars($user['user_name'] ?? ''); ?></h2>
                                     <span class="profile-role">
-                                        <?php 
+                                        <?php
                                         $roleText = '用戶';
                                         if (isset($user['role'])) {
                                             switch($user['role']) {
@@ -148,16 +153,16 @@ try {
                             <div class="profile-body">
                                 <form action="edit_profile.php" method="POST" id="profile-edit-form">
                                     <div class="profile-section">
-                                        <h3>個人資料</h3>
+                                        <h3><i class="fas fa-info-circle me-2"></i>個人資料</h3>
                                         
                                         <!-- 用戶名 -->
                                         <div class="profile-field profile-field-display">
-                                            <span class="field-label">用戶名</span>
+                                            <span class="field-label"><i class="fas fa-user me-2"></i>用戶名</span>
                                             <span class="field-value"><?php echo htmlspecialchars($user['user_name'] ?? ''); ?></span>
                                         </div>
                                         <div class="profile-field-edit">
-                                            <label for="username" class="form-label">用戶名</label>
-                                            <div class="input-group">
+                                            <label for="username" class="form-label">用戶名 <span class="text-danger">*</span></label>
+                                            <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                                                 <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars($user['user_name'] ?? '') ?>" required>
                                             </div>
@@ -165,12 +170,12 @@ try {
                                         
                                         <!-- 電子郵件 (不可編輯) -->
                                         <div class="profile-field profile-field-display">
-                                            <span class="field-label">電子郵件</span>
+                                            <span class="field-label"><i class="fas fa-envelope me-2"></i>電子郵件</span>
                                             <span class="field-value"><?php echo htmlspecialchars($user['mail'] ?? ''); ?></span>
                                         </div>
                                         <div class="profile-field-edit">
                                             <label for="email" class="form-label">電子郵件</label>
-                                            <div class="input-group">
+                                            <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                                 <input type="email" class="form-control bg-light" id="email" name="email" value="<?= htmlspecialchars($user['mail'] ?? '') ?>" readonly disabled>
                                                 <input type="hidden" name="email" value="<?= htmlspecialchars($user['mail'] ?? '') ?>">
@@ -180,7 +185,7 @@ try {
                                         
                                         <!-- 註冊日期（唯讀） -->
                                         <div class="profile-field profile-field-display">
-                                            <span class="field-label">註冊日期</span>
+                                            <span class="field-label"><i class="fas fa-calendar-alt me-2"></i>註冊日期</span>
                                             <span class="field-value">
                                                 <?php echo isset($user['created_at']) ? date('Y/m/d', strtotime($user['created_at'])) : ''; ?>
                                             </span>
@@ -188,39 +193,48 @@ try {
                                         
                                         <!-- 使用者角色（唯讀） -->
                                         <div class="profile-field profile-field-display">
-                                            <span class="field-label">角色</span>
-                                            <span class="field-value"><?php echo $roleText; ?></span>
+                                            <span class="field-label"><i class="fas fa-user-tag me-2"></i>角色</span>
+                                            <span class="field-value">
+                                                <span class="badge bg-<?php 
+                                                    switch($user['role'] ?? '') {
+                                                        case 'admin': echo 'danger'; break;
+                                                        case 'teacher': echo 'primary'; break;
+                                                        case 'student': echo 'success'; break;
+                                                        default: echo 'secondary';
+                                                    }
+                                                ?>"><?php echo $roleText; ?></span>
+                                            </span>
                                         </div>
                                     </div>
                                     
-                                    <div class="profile-actions">
+                                    <div class="profile-actions mt-4">
                                         <button type="button" id="edit-profile-btn" class="btn btn-primary">
-                                            <i class="fas fa-edit"></i> 編輯資料
+                                            <i class="fas fa-edit me-1"></i> 編輯資料
                                         </button>
                                         <button type="submit" id="save-profile-btn" class="btn btn-success">
-                                            <i class="fas fa-save"></i> 儲存變更
+                                            <i class="fas fa-save me-1"></i> 儲存變更
                                         </button>
                                         <button type="button" id="cancel-profile-btn" class="btn btn-outline-secondary">
-                                            <i class="fas fa-times"></i> 取消
+                                            <i class="fas fa-times me-1"></i> 取消
                                         </button>
                                     </div>
                                 </form>
                                 
                                 <!-- 修改密碼區域 -->
                                 <div class="profile-section mt-4">
-                                    <h3>修改密碼</h3>
+                                    <h3><i class="fas fa-key me-2"></i>修改密碼</h3>
                                     <form action="change_password.php" method="POST" id="change-password-form">
                                         <div class="mb-3">
-                                            <label for="current_password" class="form-label">當前密碼</label>
-                                            <div class="input-group">
+                                            <label for="current_password" class="form-label">當前密碼 <span class="text-danger">*</span></label>
+                                            <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
                                             </div>
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <label for="new_password" class="form-label">新密碼</label>
-                                            <div class="input-group">
+                                            <label for="new_password" class="form-label">新密碼 <span class="text-danger">*</span></label>
+                                            <div class="input-group mb-2">
                                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                                                 <input type="password" class="form-control" id="new_password" name="new_password" required>
                                             </div>
@@ -228,15 +242,15 @@ try {
                                         </div>
                                         
                                         <div class="mb-3">
-                                            <label for="confirm_password" class="form-label">確認新密碼</label>
-                                            <div class="input-group">
+                                            <label for="confirm_password" class="form-label">確認新密碼 <span class="text-danger">*</span></label>
+                                            <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
                                             </div>
                                         </div>
                                         
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> 更新密碼
+                                            <i class="fas fa-save me-1"></i> 更新密碼
                                         </button>
                                     </form>
                                 </div>
@@ -245,33 +259,42 @@ try {
                         
                         <!-- 統計數據 -->
                         <div class="profile-stats">
-                            <div class="stats-card">
+                            <div class="stats-card card">
                                 <div class="stats-header">
-                                    <h3>預約統計</h3>
+                                    <h3><i class="fas fa-chart-bar me-2"></i>預約統計</h3>
                                 </div>
                                 <div class="stats-body">
-                                    <div class="stats-item">
-                                        <div class="stats-value"><?php echo $stats['total'] ?? 0; ?></div>
-                                        <div class="stats-label">總預約數</div>
-                                    </div>
-                                    <div class="stats-item">
-                                        <div class="stats-value"><?php echo $stats['upcoming'] ?? 0; ?></div>
-                                        <div class="stats-label">即將到來</div>
-                                    </div>
-                                    <div class="stats-item">
-                                        <div class="stats-value"><?php echo $stats['month'] ?? 0; ?></div>
-                                        <div class="stats-label">本月預約</div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="stats-item">
+                                                <div class="stats-value"><?php echo $stats['total'] ?? 0; ?></div>
+                                                <div class="stats-label">總預約數</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="stats-item">
+                                                <div class="stats-value"><?php echo $stats['upcoming'] ?? 0; ?></div>
+                                                <div class="stats-label">即將到來</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="stats-item">
+                                                <div class="stats-value"><?php echo $stats['month'] ?? 0; ?></div>
+                                                <div class="stats-label">本月預約</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="stats-card">
+                            <div class="stats-card card">
                                 <div class="stats-header">
-                                    <h3>活動記錄</h3>
+                                    <h3><i class="fas fa-history me-2"></i>活動記錄</h3>
                                 </div>
                                 <div class="stats-body">
                                     <?php if (empty($activities)): ?>
                                         <div class="empty-state">
+                                            <i class="fas fa-clipboard-list"></i>
                                             <p>沒有最近活動記錄</p>
                                         </div>
                                     <?php else: ?>
@@ -292,22 +315,23 @@ try {
                                     
                                     <?php if (!empty($activities)): ?>
                                         <div class="activity-actions text-center mt-3">
-                                            <a href="my_bookings.php" class="btn btn-sm btn-outline-primary">查看預約紀錄</a>
+                                            <a href="my_bookings.php" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-calendar-check me-1"></i>查看預約紀錄
+                                            </a>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-
-                </main>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+</div> <!-- 結束 page-wrapper -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../../public/js/notification.js"></script>
+<script src="../../public/js/profile.js"></script>
 
 <?php include_once '../components/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../public/js/profile.js"></script>

@@ -3,8 +3,6 @@
 $rootPath = isset($rootPath) ? $rootPath : '../../';
 ?>
 
-</div> <!-- .page-wrapper -->
-
 <footer class="main-footer">
     <div class="footer-container">
         <div class="footer-bottom">
@@ -13,8 +11,7 @@ $rootPath = isset($rootPath) ? $rootPath : '../../';
     </div>
 </footer>
 
-<!-- 引入 Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS 由各頁面自行引入，避免重複 -->
 
 </body>
 </html>

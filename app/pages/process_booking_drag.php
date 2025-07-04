@@ -65,8 +65,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET, DB_USER, DB_PASS);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        // 檢查教室是否存在
-        $stmt = $pdo->prepare("SELECT * FROM classrooms WHERE classroom_ID = ?");
+        // 檢查教室是否存在並獲取權限信息
+        $stmt = $pdo->prepare("
+            SELECT c.*, 
+                   COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles 
+            FROM classrooms c
+            LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id
+            WHERE c.classroom_ID = ?
+        ");
         $stmt->execute([$classroomId]);
         $classroom = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -74,6 +80,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['booking_errors'] = ["所選教室不存在"];
             header("Location: booking.php?date=$bookingDate");
             exit;
+        }
+        
+        // 檢查用戶權限 - 教師永遠有權限
+        if ($_SESSION['role'] !== 'teacher') {
+            $allowedRoles = explode(',', $classroom['allowed_roles']);
+            if (!in_array($_SESSION['role'], $allowedRoles)) {
+                $_SESSION['booking_errors'] = ["您沒有權限預約此教室"];
+                header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
+                exit;
+            }
         }
         
         // 檢查所選時段是否已被預約

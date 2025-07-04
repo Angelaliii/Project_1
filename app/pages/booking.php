@@ -24,15 +24,32 @@ $classroomsPerPage = 10; // 每頁顯示教室數
 $buildingStmt = $conn->query("SELECT DISTINCT building FROM classrooms ORDER BY building");
 $buildings = $buildingStmt->fetchAll(PDO::FETCH_COLUMN);
 
-// 根據篩選條件查詢教室
-$countQuery = "SELECT COUNT(*) FROM classrooms";
-$query = "SELECT * FROM classrooms";
+// 根據篩選條件查詢教室（只顯示用戶有權限預約的教室）
+$countQuery = "SELECT COUNT(*) FROM classrooms c LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id";
+$query = "SELECT c.* FROM classrooms c LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id";
 $params = [];
 
+// 權限條件 - 教師可以看到所有教室，其他用戶只能看到有權限的教室
+$permissionCondition = "";
+if ($_SESSION['role'] !== 'teacher') {
+    $permissionCondition = "(cp.allowed_roles IS NULL OR FIND_IN_SET(?, cp.allowed_roles) > 0)";
+    $params[] = $_SESSION['role'];
+}
+
+$whereConditions = [];
+if (!empty($permissionCondition)) {
+    $whereConditions[] = $permissionCondition;
+}
+
 if ($buildingFilter !== 'all') {
-    $countQuery .= " WHERE building = ?";
-    $query .= " WHERE building = ?";
+    $whereConditions[] = "c.building = ?";
     $params[] = $buildingFilter;
+}
+
+if (!empty($whereConditions)) {
+    $whereClause = " WHERE " . implode(" AND ", $whereConditions);
+    $countQuery .= $whereClause;
+    $query .= $whereClause;
 }
 
 // 獲取總教室數
@@ -47,7 +64,7 @@ if ($currentPage > $totalPages) {
 }
 
 // 分頁查詢
-$query .= " ORDER BY building, room LIMIT " . (($currentPage - 1) * $classroomsPerPage) . ", " . $classroomsPerPage;
+$query .= " ORDER BY c.building, c.room LIMIT " . (($currentPage - 1) * $classroomsPerPage) . ", " . $classroomsPerPage;
 $stmt = $conn->prepare($query);
 $stmt->execute($params);
 $classrooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -57,32 +74,48 @@ $selectedClassroom = null;
 $bookedSlots = [];
 
 if ($classroomId) {
-    // 獲取教室詳細信息
-    $classroomStmt = $conn->prepare("SELECT * FROM classrooms WHERE classroom_ID = ?");
+    // 獲取教室詳細信息並檢查權限
+    $classroomStmt = $conn->prepare("
+        SELECT c.*, 
+               COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles 
+        FROM classrooms c
+        LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id
+        WHERE c.classroom_ID = ?
+    ");
     $classroomStmt->execute([$classroomId]);
     $selectedClassroom = $classroomStmt->fetch(PDO::FETCH_ASSOC);
     
-    // 獲取該教室在所選日期的已預約時間段，同時獲取租借人資訊
-    $bookingStmt = $conn->prepare("
-        SELECT bs.hour, u.user_name, u.mail, b.booking_ID
-        FROM booking_slots bs
-        JOIN bookings b ON bs.booking_ID = b.booking_ID
-        JOIN users u ON b.user_ID = u.user_id
-        WHERE b.classroom_ID = ? AND bs.date = ? AND b.status != 'cancelled'
-    ");
-    $bookingStmt->execute([$classroomId, $selectedDate]);
-    $bookedSlotsInfo = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
+    // 檢查用戶是否有預約此教室的權限
+    if ($selectedClassroom && $_SESSION['role'] !== 'teacher') {
+        $allowedRoles = explode(',', $selectedClassroom['allowed_roles']);
+        if (!in_array($_SESSION['role'], $allowedRoles)) {
+            $selectedClassroom = null; // 沒有權限，不顯示教室詳情
+        }
+    }
     
-    // 提取簡單的時段列表和詳細資訊的映射
-    $bookedSlots = [];
-    $bookedSlotsDetails = [];
-    foreach ($bookedSlotsInfo as $info) {
-        $bookedSlots[] = $info['hour'];
-        $bookedSlotsDetails[$info['hour']] = [
-            'user_name' => $info['user_name'],
-            'mail' => $info['mail'],
-            'booking_id' => $info['booking_ID']
-        ];
+    if ($selectedClassroom) {
+        // 獲取該教室在所選日期的已預約時間段，同時獲取租借人資訊
+        $bookingStmt = $conn->prepare("
+            SELECT bs.hour, u.user_name, u.mail, b.booking_ID
+            FROM booking_slots bs
+            JOIN bookings b ON bs.booking_ID = b.booking_ID
+            JOIN users u ON b.user_ID = u.user_id
+            WHERE b.classroom_ID = ? AND bs.date = ? AND b.status != 'cancelled'
+        ");
+        $bookingStmt->execute([$classroomId, $selectedDate]);
+        $bookedSlotsInfo = $bookingStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // 提取簡單的時段列表和詳細資訊的映射
+        $bookedSlots = [];
+        $bookedSlotsDetails = [];
+        foreach ($bookedSlotsInfo as $info) {
+            $bookedSlots[] = $info['hour'];
+            $bookedSlotsDetails[$info['hour']] = [
+                'user_name' => $info['user_name'],
+                'mail' => $info['mail'],
+                'booking_id' => $info['booking_ID']
+            ];
+        }
     }
 }
 
@@ -118,7 +151,7 @@ if (isset($_SESSION['booking_success'])) {
 ?>
 
 
-<main class="content-container">
+<main class="content-container p-4">
     <?php if (!empty($errors)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>預約失敗!</strong>
@@ -307,12 +340,12 @@ if (isset($_SESSION['booking_success'])) {
                             <input type="hidden" id="selected_hours" name="selected_hours" value="">
                             
                             <div class="mb-3">
-                                <label for="purpose" class="form-label">使用目的</label>
+                                <label for="purpose" class="form-label">使用目的 <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="purpose" name="purpose" rows="3" required></textarea>
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label" for="selected-times-display">已選擇時間</label>
+                                <h6 class="form-label">已選擇時間</h6>
                                 <div class="alert alert-info" id="selected-times-display">尚未選擇時間，請在上方時間表格拖曳選擇</div>
                             </div>
                             
@@ -333,7 +366,9 @@ if (isset($_SESSION['booking_success'])) {
         </div>
     </div>
 </main>
+</div><!-- 結束 page-wrapper -->
 
 <?php include_once '../components/footer.php'; ?>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../public/js/booking.js"></script>

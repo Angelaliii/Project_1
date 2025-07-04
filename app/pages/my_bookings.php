@@ -211,6 +211,10 @@ include_once '../components/header.php';
                     </div>
                 </main>
             </div>
-</main>
+        </div>
+    </div>
+</div> <!-- 結束 page-wrapper -->
 
 <?php include_once '../components/footer.php'; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

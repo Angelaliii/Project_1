@@ -64,9 +64,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
-                                <div class="mt-2 text-end">
-                                    <a href="forget_password.php" class="text-decoration-none">忘記密碼?</a>
-                                </div>
+
                             </div>
                             
                             <button type="submit" class="btn btn-primary w-100 mb-3">登入</button>

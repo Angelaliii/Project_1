@@ -87,6 +87,19 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                 </div>
                             </div>
                             
+                            <div class="mb-3">
+                                <label for="role" class="form-label">身份</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                    <select class="form-control" id="role" name="role" required>
+                                        <option value="">請選擇身份</option>
+                                        <option value="student">學生</option>
+                                        <option value="teacher">教師</option>
+                                    </select>
+                                </div>
+                                <small class="form-text text-muted">請根據您的實際身份選擇</small>
+                            </div>
+                            
                             <button type="submit" class="btn btn-primary w-100 mb-3">註冊</button>
                             
                             <div class="text-center">
@@ -129,9 +142,10 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
+            const role = document.getElementById('role').value;
             
             // 檢查必填欄位
-            if (!username || !email || !password || !confirmPassword) {
+            if (!username || !email || !password || !confirmPassword || !role) {
                 event.preventDefault();
                 alert('請填寫所有必填欄位');
                 return;

@@ -47,12 +47,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
 
 </head>
 <body>
-<div class="page-wrapper">
+<div class="page-wrapper"><!-- 開始 page-wrapper -->
 
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="<?php echo $isLoggedIn ? $rootPath . 'app/pages/classroom.php' : $rootPath . 'index.php'; ?>">
+            <a href="<?php echo $isLoggedIn ? $rootPath . 'app/pages/booking.php' : $rootPath . 'index.php'; ?>">
                 <img src="<?php echo $rootPath; ?>public/img/FJU_logo.png" alt="教室租借系統">
                 <span>教室租借系統</span>
             </a>
@@ -66,19 +66,16 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     $current_page = basename($_SERVER['PHP_SELF']);
                     ?>
 
-                    <li><a href="<?php echo $rootPath; ?>app/pages/classroom.php" class="<?php echo ($current_page == 'classroom.php' || $current_page == 'classroom_detail.php') ? 'active' : ''; ?>">
-                        <i class="fas fa-search"></i> 瀏覽教室
-                    </a></li>
                     <li><a href="<?php echo $rootPath; ?>app/pages/booking.php" class="<?php echo ($current_page == 'booking.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-plus"></i> 教室預約
                     </a></li>
                     <li><a href="<?php echo $rootPath; ?>app/pages/my_bookings.php" class="<?php echo ($current_page == 'my_bookings.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i> 我的預約
                     </a></li>
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'teacher'): ?>
-                        <li><a href="<?php echo $rootPath; ?>app/pages/manage_bookings.php" class="<?php echo ($current_page == 'manage_bookings.php') ? 'active' : ''; ?>">
-                            <i class="fas fa-calendar-check"></i> 管理預約
-                        </a></li>
+                    <?php if ($_SESSION['role'] == 'teacher'): ?>
+                    <li><a href="<?php echo $rootPath; ?>app/pages/classroom_management.php" class="<?php echo ($current_page == 'classroom_management.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-cogs"></i> 教室管理
+                    </a></li>
                     <?php endif; ?>
                 <?php else: ?>
                     <li><a href="<?php echo $rootPath; ?>index.php">

@@ -16,10 +16,17 @@ $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
 $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
 $password = $_POST['password'];
 $confirmPassword = $_POST['confirm_password'];
+$role = filter_input(INPUT_POST, 'role', FILTER_SANITIZE_SPECIAL_CHARS);
 
 // 基本驗證
-if (empty($username) || empty($email) || empty($password) || empty($confirmPassword)) {
+if (empty($username) || empty($email) || empty($password) || empty($confirmPassword) || empty($role)) {
     header('Location: ../../app/pages/register.php?error=所有字段都是必填的');
+    exit;
+}
+
+// 驗證角色
+if (!in_array($role, ['student', 'teacher'])) {
+    header('Location: ../../app/pages/register.php?error=請選擇有效的身份');
     exit;
 }
 
@@ -52,14 +59,14 @@ try {
     
     // 檢查電子郵件是否已存在
     if ($userModel->findByEmail($email)) {
-        header('Location: ../../app/pages/register.php?error=此電子郵件已註冊，請直接登入或使用忘記密碼功能');
+        header('Location: ../../app/pages/register.php?error=此電子郵件已註冊，請直接登入');
         exit;
     }
     
     // 注意：不再檢查用戶名是否已存在，允許使用相同的用戶名
     
     // 創建新用戶
-    $userId = $userModel->create($username, $email, $password);
+    $userId = $userModel->create($username, $email, $password, $role);
     
     if ($userId) {
         header('Location: ../../app/pages/login.php?success=註冊成功！請使用您的新帳戶登入');
