@@ -52,7 +52,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
-            <a href="<?php echo $isLoggedIn ? $rootPath . 'app/pages/booking.php' : $rootPath . 'index.php'; ?>">
+            <a href="<?php echo $isLoggedIn ? $rootPath . 'app/pages/booking.php' : $rootPath . 'index.php'; ?>" class="logo-link">
                 <img src="<?php echo $rootPath; ?>public/img/FJU_logo.png" alt="教室租借系統">
                 <span>教室租借系統</span>
             </a>

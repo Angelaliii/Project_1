@@ -106,14 +106,28 @@ if (!empty($message)) {
         <div class="search-container">
             <form action="" method="get" class="search-form">
                 <div class="input-group mb-3">
-                    <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control">
-                    <button type="submit" class="btn btn-primary">搜尋</button>
+                    <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
                 </div>
                 <?php if (!empty($search)): ?>
                 <a href="classroom.php" class="btn btn-link p-0">清除搜尋</a>
                 <?php endif; ?>
             </form>
         </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 輸入後自動搜尋
+            const searchInput = document.getElementById('auto-search-input');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.form.submit();
+                }, 500); // 0.5秒後自動提交
+            });
+        });
+        </script>
 
         <!-- 教室列表 -->
         <div class="table-responsive">

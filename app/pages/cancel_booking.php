@@ -23,8 +23,7 @@ if (!$bookingId) {
 }
 
 try {
-    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET, DB_USER, DB_PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = getDbConnection();
 
     // 首先檢查預約是否屬於當前用戶
     $stmt = $pdo->prepare("SELECT * FROM bookings WHERE booking_ID = ? AND user_ID = ?");

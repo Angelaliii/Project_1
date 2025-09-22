@@ -126,12 +126,15 @@ class ClassroomModel {
                 // 獲取新插入的教室 ID
                 $classroom_id = $this->db->lastInsertId();
                 
-                // 處理權限
-                $allowed_roles = isset($data['allowed_roles']) ? $data['allowed_roles'] : ['student', 'teacher'];
+                // 處理權限 - 尊重使用者選擇的權限
+                $allowed_roles = [];
                 
                 // 確保教師永遠有權限
-                if (!in_array('teacher', $allowed_roles)) {
-                    $allowed_roles[] = 'teacher';
+                $allowed_roles[] = 'teacher';
+                
+                // 只有在用戶明確選擇了學生權限時才添加
+                if (isset($data['allowed_roles']) && is_array($data['allowed_roles']) && in_array('student', $data['allowed_roles'])) {
+                    $allowed_roles[] = 'student';
                 }
                 
                 $allowed_roles_string = implode(',', $allowed_roles);
@@ -187,12 +190,15 @@ class ClassroomModel {
                 throw new Exception("更新教室信息失敗");
             }
 
-            // 處理權限
-            $allowed_roles = isset($data['allowed_roles']) ? $data['allowed_roles'] : [];
+            // 處理權限 - 只使用必要的權限
+            $allowed_roles = [];
             
-            // 確保教師永遠有權限
-            if (!in_array('teacher', $allowed_roles)) {
-                $allowed_roles[] = 'teacher';
+            // 教師永遠有權限
+            $allowed_roles[] = 'teacher';
+            
+            // 只有在用戶明確選擇了學生權限時才添加
+            if (isset($data['allowed_roles']) && is_array($data['allowed_roles']) && in_array('student', $data['allowed_roles'])) {
+                $allowed_roles[] = 'student';
             }
             
             $allowed_roles_string = implode(',', $allowed_roles);

@@ -157,6 +157,17 @@
   }
 }
 
+/* Logo 在 header 中的特殊樣式 */
+.main-header .logo-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.main-header .logo-link:hover {
+  color: #333;
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .header-container {
     flex-direction: column;

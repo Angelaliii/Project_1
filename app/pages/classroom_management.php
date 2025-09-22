@@ -158,8 +158,8 @@ if (!empty($message) && !headers_sent()) {
 
 ?>
 
-<main class="content-container">
-    <div class="booking-container">
+<main class="content-container p-4">
+    <div class="booking-container mx-auto" style="max-width: 1200px;">
         <div class="content-header">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h1><i class="fas fa-cogs"></i> 教室管理</h1>
@@ -171,8 +171,7 @@ if (!empty($message) && !headers_sent()) {
         <div class="search-container d-flex justify-content-between align-items-center mb-3">
             <form action="" method="get" class="search-form flex-grow-1 me-2">
                 <div class="input-group">
-                    <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control">
-                    <button type="submit" class="btn btn-primary">搜尋</button>
+                    <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
                 </div>
                 <?php if (!empty($search)): ?>
                 <a href="classroom_management.php" class="btn btn-link p-0 mt-1">清除搜尋</a>
@@ -182,10 +181,25 @@ if (!empty($message) && !headers_sent()) {
                 <i class="fas fa-plus"></i> 新增教室
             </button>
         </div>
+        
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 輸入後自動搜尋
+            const searchInput = document.getElementById('auto-search-input');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.form.submit();
+                }, 500); // 0.5秒後自動提交
+            });
+        });
+        </script>
 
         <!-- 教室列表 -->
-        <div class="table-responsive">
-            <table class="table table-hover">
+        <div class="table-responsive card shadow-sm p-3">
+            <table class="table table-hover table-striped">
                 <thead class="table-light">
                     <tr>
                         <th>教室ID</th>
@@ -280,93 +294,9 @@ if (!empty($message) && !headers_sent()) {
         <?php endif; ?>
     </div>
 
-    <!-- 新增教室的彈出窗口 -->
-    <div id="addClassroomModal" class="modal fade" tabindex="-1" aria-labelledby="addClassroomModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addClassroomModalLabel">新增教室</h5>
-                    <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="關閉"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="post" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
-                            <input type="text" id="classroom_name" name="classroom_name" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="building" class="form-label">樓宇 <span class="text-danger">*</span></label>
-                            <input type="text" id="building" name="building" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="room" class="form-label">房間號碼</label>
-                            <input type="text" id="room" name="room" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">租借權限設置</label>
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="me-3">學生租借權限：</span>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="allowed_roles[]" value="student" checked id="role-student" style="width: 3em; height: 1.5em;">
-                                    <label class="form-check-label" for="role-student" id="add_student_status">開啟</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">取消</button>
-                            <button type="submit" name="add_classroom" class="btn btn-success">新增</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 編輯教室的彈出窗口 -->
-    <div id="editClassroomModal" class="modal fade" tabindex="-1" aria-labelledby="editClassroomModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editClassroomModalLabel">編輯教室資訊</h5>
-                    <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="關閉"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="" method="post">
-                        <input type="hidden" id="edit_classroom_id" name="classroom_id">
-                        <div class="mb-3">
-                            <label for="edit_classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
-                            <input type="text" id="edit_classroom_name" name="classroom_name" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_building" class="form-label">樓宇 <span class="text-danger">*</span></label>
-                            <input type="text" id="edit_building" name="building" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_room" class="form-label">房間號碼</label>
-                            <input type="text" id="edit_room" name="room" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">租借權限設置</label>
-                            <div class="d-flex align-items-center mb-2">
-                                <span class="me-3">學生租借權限：</span>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="edit_perm_student" name="allowed_roles[]" value="student" style="width: 3em; height: 1.5em;">
-                                    <label class="form-check-label" for="edit_perm_student" id="student_status">關閉</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer d-flex justify-content-between">
-                            <button type="button" class="btn btn-danger" id="deleteClassroomBtn">刪除教室</button>
-                            <div>
-                                <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">取消</button>
-                                <button type="submit" name="update_classroom" class="btn btn-success">儲存</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- 引入模態視窗組件 -->
+    <?php include_once '../components/modals/add_classroom_modal.php'; ?>
+    <?php include_once '../components/modals/edit_classroom_modal.php'; ?>
 </main>
 </div> <!-- 結束 page-wrapper -->
 
@@ -375,5 +305,7 @@ if (!empty($message) && !headers_sent()) {
 
 <script src="../../public/js/notification.js"></script>
 <script src="../../public/js/classroom.js"></script>
+<script src="../../public/js/add_classroom_modal.js"></script>
+<script src="../../public/js/edit_classroom_modal.js"></script>
 
 <?php include_once '../components/footer.php'; ?>

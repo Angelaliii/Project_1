@@ -1,196 +1,247 @@
 <?php
-// process_booking_drag.php - 處理教室預約
+// process_booking_drag.php - 處理教室預約（依新規格修正版）
 session_start();
 
-// 引入必要文件
 require_once dirname(__DIR__) . '/config/database.php';
 
-// 確定使用者已登入
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+// 建議設時區，與 DB 保持一致
+date_default_timezone_set('Asia/Taipei');
+
+// 小工具：導向
+function redirect_with_errors(string $bookingDate, array $errors) {
+    $_SESSION['booking_errors'] = $errors;
+    $q = $bookingDate !== '' ? ('?date=' . urlencode($bookingDate)) : '';
+    header("Location: booking.php{$q}");
+    exit;
+}
+function redirect_success(string $bookingDate, string $msg) {
+    $_SESSION['booking_success'] = $msg;
+    header("Location: booking.php?date=" . urlencode($bookingDate) . "&success=1");
     exit;
 }
 
-// 處理表單提交
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 獲取表單數據
-    $classroomId = isset($_POST['classroom_id']) ? (int) $_POST['classroom_id'] : 0;
-    $bookingDate = isset($_POST['booking_date']) ? $_POST['booking_date'] : '';
-    $selectedHoursJson = isset($_POST['selected_hours']) ? $_POST['selected_hours'] : '';
-    $purpose = isset($_POST['purpose']) ? $_POST['purpose'] : '';
-    
-    // 解析選擇的小時
-    $selectedHours = [];
-    if (!empty($selectedHoursJson)) {
-        $selectedHours = json_decode($selectedHoursJson);
+// 需登入
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php"); // 同層
+    exit;
+}
+$sessionRole = isset($_SESSION['role']) ? strtolower(trim((string)$_SESSION['role'])) : '';
+if ($sessionRole === '' || !in_array($sessionRole, ['student','teacher'], true)) {
+    redirect_with_errors('', ['找不到有效的使用者角色，請重新登入']);
+}
+
+// 僅允許 POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: booking.php");
+    exit;
+}
+
+// 讀取輸入
+$bookingDate = isset($_POST['booking_date']) ? trim((string)$_POST['booking_date']) : '';
+$selectedSlotsJson = $_POST['selected_slots'] ?? '';
+$purposeRaw = isset($_POST['purpose']) ? (string)$_POST['purpose'] : '';
+
+// 驗證日期（Y-m-d）
+$tz = new DateTimeZone('Asia/Taipei');
+$dtCheck = DateTime::createFromFormat('Y-m-d', $bookingDate, $tz);
+$validDate = $dtCheck && $dtCheck->format('Y-m-d') === $bookingDate;
+if (!$validDate) {
+    redirect_with_errors($bookingDate, ['日期格式不正確（需為 YYYY-MM-DD）']);
+}
+
+// 處理 purpose（純文字、≤ 100）
+$purpose = trim(strip_tags($purposeRaw));
+if ($purpose === '') {
+    redirect_with_errors($bookingDate, ['用途為必填']);
+}
+if (mb_strlen($purpose) > 100) {
+    redirect_with_errors($bookingDate, ['用途文字過長（最多 100 字）']);
+}
+
+// 解析/驗證 selected_slots
+$selected = json_decode($selectedSlotsJson, true);
+if (!is_array($selected)) {
+    redirect_with_errors($bookingDate, ['選擇的時段資料格式錯誤（非有效 JSON）']);
+}
+
+// 依教室分組 + 驗證
+$groupedByClassroom = [];
+$allHoursFlat = []; // 用來做「今天是否已過時」的檢查（聚合全部小時）
+foreach ($selected as $i => $slot) {
+    if (!is_array($slot) || !array_key_exists('classroomId', $slot) || !array_key_exists('hour', $slot)) {
+        redirect_with_errors($bookingDate, ["第 " . ($i + 1) . " 個時段資料缺少必要欄位（classroomId/hour）"]);
     }
-    
-    // 基本驗證
-    if (empty($classroomId) || empty($bookingDate) || empty($selectedHours) || empty($purpose)) {
-        $_SESSION['booking_errors'] = ["所有欄位都是必填的"];
-        header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-        exit;
+    $classroomId = filter_var($slot['classroomId'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $hour = filter_var($slot['hour'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 23]]);
+    if ($classroomId === false || $hour === false) {
+        redirect_with_errors($bookingDate, ["第 " . ($i + 1) . " 個時段的 classroomId/hour 超出允許範圍"]);
     }
-    
-    // 對選擇的時間排序
-    sort($selectedHours);
-    
-    // 找出連續的時間段分組
-    $timeGroups = [];
-    $currentGroup = [$selectedHours[0]];
-    
-    for ($i = 1; $i < count($selectedHours); $i++) {
-        if ($selectedHours[$i] == $selectedHours[$i-1] + 1) {
-            // 時間連續，添加到當前組
-            $currentGroup[] = $selectedHours[$i];
-        } else {
-            // 時間不連續，結束當前組，開始新的一組
-            $timeGroups[] = $currentGroup;
-            $currentGroup = [$selectedHours[$i]];
+    // 營運時段：允許的起始小時 8–20（20→到 21:00）
+    if ($hour < 8 || $hour > 20) {
+        redirect_with_errors($bookingDate, ["第 " . ($i + 1) . " 個時段不在營運時段（允許 08–21，起始小時僅能 08–20）"]);
+    }
+
+    $groupedByClassroom[$classroomId][] = (int)$hour;
+    $allHoursFlat[] = (int)$hour;
+}
+
+if (empty($groupedByClassroom)) {
+    redirect_with_errors($bookingDate, ['所有欄位都是必填的']);
+}
+
+// 允許今天，但不可包含已過去的小時
+$now = new DateTime('now', $tz);
+$baseDay = DateTime::createFromFormat('Y-m-d H:i:s', $bookingDate . ' 00:00:00', $tz);
+if (!$baseDay) {
+    redirect_with_errors($bookingDate, ['日期解析錯誤']);
+}
+$pastHours = [];
+if ($baseDay->format('Y-m-d') === $now->format('Y-m-d')) {
+    foreach (array_unique($allHoursFlat) as $h) {
+        $slotStart = (clone $baseDay)->modify("+{$h} hours");
+        if ($slotStart <= $now) {
+            $pastHours[] = $h;
         }
     }
-    
-    // 添加最後一組
-    $timeGroups[] = $currentGroup;
-    
-    // 驗證時間是否在未來
-    $bookingTimestamp = strtotime($bookingDate);
-    if ($bookingTimestamp <= time()) {
-        $_SESSION['booking_errors'] = ["只能預約未來的時間段"];
-        header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-        exit;
-    }
-    
-    try {
-        $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET, DB_USER, DB_PASS);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        // 檢查教室是否存在並獲取權限信息
+}
+if (!empty($pastHours)) {
+    sort($pastHours);
+    $txt = implode(', ', array_map(fn($h) => sprintf('%02d:00', $h), $pastHours));
+    redirect_with_errors($bookingDate, ["以下時段已經過去，無法預約：{$txt}"]);
+}
+
+// 執行交易
+try {
+    $pdo = getDbConnection();
+    // 建議在 getDbConnection() 設定：$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $pdo->beginTransaction();
+    $bookingCount = 0;
+
+    foreach ($groupedByClassroom as $classroomId => $hours) {
+        // 去重 + 排序
+        $hours = array_values(array_unique(array_map('intval', $hours)));
+        sort($hours);
+
+        // 取教室與權限
         $stmt = $pdo->prepare("
-            SELECT c.*, 
-                   COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles 
+            SELECT c.classroom_ID, c.classroom_name,
+                   COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles
             FROM classrooms c
-            LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id
+            LEFT JOIN classroom_permissions cp
+              ON c.classroom_ID = cp.classroom_id
             WHERE c.classroom_ID = ?
+            LIMIT 1
         ");
         $stmt->execute([$classroomId]);
         $classroom = $stmt->fetch(PDO::FETCH_ASSOC);
-        
         if (!$classroom) {
-            $_SESSION['booking_errors'] = ["所選教室不存在"];
-            header("Location: booking.php?date=$bookingDate");
-            exit;
+            $pdo->rollBack();
+            redirect_with_errors($bookingDate, ['某些選擇的教室不存在']);
         }
-        
-        // 檢查用戶權限 - 教師永遠有權限
-        if ($_SESSION['role'] !== 'teacher') {
-            $allowedRoles = explode(',', $classroom['allowed_roles']);
-            if (!in_array($_SESSION['role'], $allowedRoles)) {
-                $_SESSION['booking_errors'] = ["您沒有權限預約此教室"];
-                header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-                exit;
+
+        // 權限：teacher 無條件通過；student 必須被允許
+        if ($sessionRole !== 'teacher') {
+            $allowedRoles = array_map(fn($r) => strtolower(trim($r)), explode(',', (string)$classroom['allowed_roles']));
+            if (!in_array('student', $allowedRoles, true)) {
+                $pdo->rollBack();
+                redirect_with_errors($bookingDate, ["您沒有權限預約教室「{$classroom['classroom_name']}」"]);
             }
         }
-        
-        // 檢查所選時段是否已被預約
-        $placeholders = implode(',', array_fill(0, count($selectedHours), '?'));
-        $params = array_merge([$classroomId, $bookingDate], $selectedHours);
-        
+
+        // 檢查是否衝突（以小時檢查）
+        $placeholders = implode(',', array_fill(0, count($hours), '?'));
+        $params = array_merge([$classroomId, $bookingDate], $hours);
         $stmt = $pdo->prepare("
-            SELECT COUNT(*) as booked_count 
-            FROM booking_slots bs 
-            JOIN bookings b ON b.booking_ID = bs.booking_ID 
-            WHERE b.classroom_ID = ? 
-            AND bs.date = ? 
-            AND bs.hour IN ($placeholders)
-            AND b.status != 'cancelled'
+            SELECT bs.hour
+            FROM booking_slots bs
+            WHERE bs.classroom_ID = ?
+              AND bs.`date` = ?
+              AND bs.hour IN ($placeholders)
         ");
         $stmt->execute($params);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($result['booked_count'] > 0) {
-            $_SESSION['booking_errors'] = ["部分所選時段已被預約，請重新選擇"];
-            header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-            exit;
+        $bookedHours = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+
+        if (!empty($bookedHours)) {
+            sort($bookedHours);
+            $bookedStr = implode(', ', array_map(fn($h) => sprintf('%02d:00', $h), $bookedHours));
+            $pdo->rollBack();
+            redirect_with_errors($bookingDate, ["教室「{$classroom['classroom_name']}」的時段 {$bookedStr} 已被預約"]);
         }
-        
-        // 開始交易
-        $pdo->beginTransaction();
-        
-        // 處理每個連續時間段為一個預約
-        $bookingCount = 0;
-        
-        foreach ($timeGroups as $group) {
-            // 計算開始和結束時間
-            $startHour = reset($group);
-            $endHour = end($group) + 1; // 結束時間為最後一個小時 + 1
-            
-            $startDatetime = $bookingDate . ' ' . sprintf('%02d:00:00', $startHour);
-            $endDatetime = $bookingDate . ' ' . sprintf('%02d:00:00', $endHour);
-            
-            // 創建新預約
-            $stmt = $pdo->prepare("
-                INSERT INTO bookings (classroom_ID, user_ID, status, start_datetime, end_datetime, purpose, created_at, updated_at) 
-                VALUES (?, ?, 'booked', ?, ?, ?, NOW(), NOW())
-            ");
-            $result = $stmt->execute([$classroomId, $_SESSION['user_id'], $startDatetime, $endDatetime, $purpose]);
-            
-            if (!$result) {
-                $pdo->rollBack();
-                $_SESSION['booking_errors'] = ["預約失敗，請稍後再試"];
-                header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-                exit;
+
+        // 把連續時段分組（例如 8,9,10 → 一組）
+        $timeGroups = [];
+        $current = [$hours[0]];
+        for ($i = 1; $i < count($hours); $i++) {
+            if ($hours[$i] === $hours[$i - 1] + 1) {
+                $current[] = $hours[$i];
+            } else {
+                $timeGroups[] = $current;
+                $current = [$hours[$i]];
             }
-            
-            // 獲取新創建的預約ID
-            $bookingId = $pdo->lastInsertId();
-            
-            // 創建每個小時的時段記錄
-            $insertSlotStmt = $pdo->prepare("
-                INSERT INTO booking_slots (booking_ID, date, hour, created_at, updated_at) 
-                VALUES (?, ?, ?, NOW(), NOW())
+        }
+        $timeGroups[] = $current;
+
+        // 逐組建立 booking + slots
+        foreach ($timeGroups as $group) {
+            $startHour = $group[0];
+            $endHour = end($group) + 1; // 結束為下一小時（最多 21）
+
+            // 用 DateTime 組起訖，避免 24:00 問題
+            $startDt = (clone $baseDay)->modify("+{$startHour} hours")->format('Y-m-d H:i:s');
+            $endDt   = (clone $baseDay)->modify("+{$endHour} hours")->format('Y-m-d H:i:s');
+
+            // 再保險：不得超過 21:00
+            $maxEnd = (clone $baseDay)->modify('+21 hours'); // 當日 21:00
+            if (new DateTime($endDt, $tz) > $maxEnd) {
+                $pdo->rollBack();
+                redirect_with_errors($bookingDate, ['超出營運時段（最晚至 21:00）']);
+            }
+
+            // 建立 bookings
+            $stmt = $pdo->prepare("
+                INSERT INTO bookings (classroom_ID, user_ID, status, start_datetime, end_datetime, purpose)
+                VALUES (?, ?, 'booked', ?, ?, ?)
             ");
-            
-            foreach ($group as $hour) {
-                $result = $insertSlotStmt->execute([$bookingId, $bookingDate, $hour]);
-                
-                if (!$result) {
+            $stmt->execute([$classroomId, $_SESSION['user_id'], $startDt, $endDt, $purpose]);
+            $bookingId = $pdo->lastInsertId();
+
+            // 建立每小時 slots
+            $ins = $pdo->prepare("
+                INSERT INTO booking_slots (booking_ID, classroom_ID, `date`, hour)
+                VALUES (?, ?, ?, ?)
+            ");
+            foreach ($group as $h) {
+                try {
+                    $ins->execute([$bookingId, $classroomId, $bookingDate, (int)$h]);
+                } catch (PDOException $ex) {
+                    // 1062 duplicate key → 被同時搶先
+                    if ((int)$ex->errorInfo[1] === 1062) {
+                        $pdo->rollBack();
+                        redirect_with_errors($bookingDate, ['有時段被同時搶先預約了，請重新選擇']);
+                    }
                     $pdo->rollBack();
-                    $_SESSION['booking_errors'] = ["預約時段創建失敗，請稍後再試"];
-                    header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-                    exit;
+                    error_log('建立時段失敗: ' . $ex->getMessage(), 0);
+                    redirect_with_errors($bookingDate, ['預約時段創建失敗，請稍後再試']);
                 }
             }
-            
+
             $bookingCount++;
         }
-        
-        // 提交交易
-        $pdo->commit();
-        
-        // 設置成功訊息並重定向回預約頁面
-        if ($bookingCount > 1) {
-            $_SESSION['booking_success'] = "預約成功！已創建 {$bookingCount} 筆預約，您可以在「我的預約」中查看詳情。";
-        } else {
-            $_SESSION['booking_success'] = "預約成功！您可以在「我的預約」中查看詳情。";
-        }
-        header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate&success=1");
-        exit;
-        
-    } catch (PDOException $e) {
-        // 如果有交易正在進行，回滾
-        if (isset($pdo) && $pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        
-        // 記錄錯誤
-        error_log("處理預約時出錯: " . $e->getMessage(), 0);
-        $_SESSION['booking_errors'] = ["處理預約時發生錯誤，請稍後再試"];
-        header("Location: booking.php?classroom_id=$classroomId&date=$bookingDate");
-        exit;
     }
-} else {
-    // 非POST請求，重定向到預約頁面
-    header("Location: booking.php");
-    exit;
+
+    $pdo->commit();
+
+    if ($bookingCount > 1) {
+        redirect_success($bookingDate, "預約成功！已創建 {$bookingCount} 筆預約，您可以在「我的預約」中查看詳情。");
+    } else {
+        redirect_success($bookingDate, "預約成功！您可以在「我的預約」中查看詳情。");
+    }
+
+} catch (PDOException $e) {
+    if (isset($pdo) && $pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log('處理預約時出錯: ' . $e->getMessage(), 0);
+    redirect_with_errors($bookingDate, ['處理預約時發生錯誤，請稍後再試']);
 }

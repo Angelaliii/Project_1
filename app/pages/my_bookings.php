@@ -97,11 +97,13 @@ include_once '../components/header.php';
                                 載入失敗: <?php echo htmlspecialchars($error); ?>
                             </div>
                         <?php elseif (empty($bookings)): ?>
-                            <div class="no-bookings">
-                                <i class="fas fa-calendar-times"></i>
-                                <h3>沒有找到預約</h3>
-                                <p>您目前沒有任何預約，立即創建一個新的預約吧!</p>
-                                <a href="booking.php" class="booking-btn booking-btn-primary">新增預約</a>
+                            <div class="no-bookings text-center p-5 mt-4">
+                                <i class="fas fa-calendar-times fa-4x mb-4 text-muted"></i>
+                                <h3 class="mb-3">沒有找到預約記錄</h3>
+                                <p class="lead mb-4">您目前沒有任何預約，立即創建一個新的預約吧!</p>
+                                <a href="booking.php" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-plus-circle me-2"></i>新增預約
+                                </a>
                             </div>
                         <?php else: ?>
                             <?php foreach ($bookings as $booking): ?>

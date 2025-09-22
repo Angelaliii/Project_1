@@ -1,0 +1,43 @@
+# 忽略 .env 檔案（包含敏感資訊）
+.env
+
+# 忽略日誌檔案
+/logs/*
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 忽略 PHP 相關檔案
+/vendor/
+composer.lock
+
+# 忽略 IDE 和編輯器相關檔案
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# 忽略作業系統相關檔案
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 忽略備份檔案
+*.bak
+*.backup
+*.tmp
+*.temp
+
+# 忽略用戶上傳的檔案（如果有）
+/uploads/*
+!/uploads/.gitkeep
+
+# 忽略快取和暫存檔案
+/cache/*
+!/cache/.gitkeep
+/temp/*
+!/temp/.gitkeep
