@@ -2,10 +2,9 @@
 // login.php - 用戶登入頁面
 session_start();
 
-// 如果已經登入，重定向到儀表板
+// 如果已經登入，重定向到教室租借頁面
 if (isset($_SESSION['user_id'])) {
-    $redirectUrl = ($_SESSION['role'] === 'teacher') ? 'classroom.php' : 'booking.php';
-    header("Location: $redirectUrl");
+    header("Location: booking.php");
     exit;
 }
 

@@ -23,7 +23,7 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  box-sizing: border-box; /* 確保padding不會增加整體高度 */
+  box-sizing: border-box;
 }
 
 .content-container {

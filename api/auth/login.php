@@ -40,16 +40,8 @@ try {
         $_SESSION['email'] = $user['mail'];
         $_SESSION['role'] = $user['role'];
         
-        // 根據角色重定向到對應頁面
-        if ($user['role'] === 'admin' || $user['role'] === 'teacher') {
-            // 管理員和教師進入教室管理頁面
-            $redirectUrl = 'classroom.php';
-        } else {
-            // 學生進入預約頁面
-            $redirectUrl = 'booking.php';
-        }
-        
-        header("Location: ../../app/pages/{$redirectUrl}");
+        // 不論角色，所有用戶都導向到教室租借頁面
+        header("Location: ../../app/pages/booking.php");
         exit;
     } else {
         // 登入失敗
