@@ -341,6 +341,5 @@ try {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../public/js/notification.js"></script>
-<script src="../../public/js/profile.js"></script>
-
+<script src="C:\xampp\htdocs\dashboard\Project_1.5\public\js\profile.js"></script>
 <?php include_once '../components/footer.php'; ?>

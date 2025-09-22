@@ -109,7 +109,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <li><a href="<?php echo $rootPath; ?>app/pages/booking.php" class="<?php echo ($current_page == 'booking.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-plus"></i> 教室預約
                     </a></li>
-                    <li><a href="<?php echo $rootPath; ?>app/pages/my_bookings.php" class="<?php echo ($current_page == 'my_bookings.php') ? 'active' : ''; ?>">
+                    <li><a href="<?php echo $rootPath; ?>app/pages/my_bookings_new.php" class="<?php echo ($current_page == 'my_bookings_new.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i> 我的預約
                     </a></li>
                     <?php if ($_SESSION['role'] == 'teacher'): ?>
