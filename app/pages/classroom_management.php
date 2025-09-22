@@ -159,7 +159,7 @@ if (!empty($message) && !headers_sent()) {
 ?>
 
 <main class="content-container p-4">
-    <div class="booking-container mx-auto" style="max-width: 1200px;">
+    <div class="mx-auto" style="max-width: 1200px;">
         <div class="content-header">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h1><i class="fas fa-cogs"></i> 教室管理</h1>
@@ -172,10 +172,12 @@ if (!empty($message) && !headers_sent()) {
             <form action="" method="get" class="search-form flex-grow-1 me-2">
                 <div class="input-group">
                     <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
+                    <?php if (!empty($search)): ?>
+                    <button type="button" class="search-clear-btn" aria-label="清除搜尋">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <?php endif; ?>
                 </div>
-                <?php if (!empty($search)): ?>
-                <a href="classroom_management.php" class="btn btn-link p-0 mt-1">清除搜尋</a>
-                <?php endif; ?>
             </form>
             <button class="btn btn-success" id="openAddClassroomBtn">
                 <i class="fas fa-plus"></i> 新增教室

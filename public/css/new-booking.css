@@ -9,8 +9,6 @@
 /* 日期和類型選擇區域 */
 .booking-filters {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
   margin-bottom: 20px;
   padding: 15px;
   background-color: #f8f9fa;
@@ -21,7 +19,7 @@
 .filter-group {
   display: flex;
   flex-direction: column;
-  min-width: 200px;
+  flex: 1;
 }
 
 .filter-group label {
@@ -248,13 +246,20 @@
 
 /* 行動裝置樣式 */
 @media (max-width: 768px) {
-  .booking-filters {
+  .booking-filters form {
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
   }
 
   .filter-group {
     width: 100%;
+    margin-right: 0 !important;
+    margin-bottom: 15px;
+  }
+
+  .filter-group:last-child {
+    margin-bottom: 0;
   }
 
   .timetable th,

@@ -53,10 +53,10 @@ include_once '../components/header.php';
 ?>
 
 
-<main class="content-container">
+<main class="content-container p-4">
 
  <div class="col-md-9">
-                <main class="content p-4">
+                <main class="content">
                     <div class="content-header">
                         <h1><i class="fas fa-calendar-alt"></i> 我的預約</h1>
                         <p>查看和管理您的所有教室預約</p>

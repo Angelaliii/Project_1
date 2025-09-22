@@ -3,8 +3,8 @@
 /* 儀表板容器 */
 .dashboard {
   background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
   padding: 25px;
   position: relative;
 }
@@ -14,53 +14,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eaeaea;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .dashboard-header h1 {
   font-size: 24px;
-  color: #333;
+  color: var(--color-text);
   margin: 0;
   font-weight: 600;
 }
 
 .dashboard-date {
   font-size: 14px;
-  color: #666;
+  color: var(--color-text-secondary);
   background-color: #f8f9fa;
-  padding: 8px 15px;
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 儀表板區塊佈局 */
 .dashboard-sections {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 /* 主要內容區域 */
 .dashboard-main {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 /* 側邊欄 */
 .dashboard-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 
 /* 卡片樣式 */
 
 .dashboard-card-header {
-  padding: 15px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -69,31 +69,31 @@
 .dashboard-card-header h2 {
   font-size: 18px;
   margin: 0;
-  color: #333;
+  color: var(--color-text);
   font-weight: 600;
   display: flex;
   align-items: center;
 }
 
 .dashboard-card-header h2 i {
-  margin-right: 8px;
-  color: #0056b3;
+  margin-right: var(--spacing-sm);
+  color: var(--color-primary);
 }
 
 .dashboard-card-header .view-all {
-  color: #0056b3;
+  color: var(--color-primary);
   font-size: 14px;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .dashboard-card-header .view-all:hover {
-  color: #003d7a;
+  color: var(--color-primary-dark);
   text-decoration: underline;
 }
 
 .dashboard-card-content {
-  padding: 20px;
+  padding: var(--spacing-lg);
   min-height: 150px;
 }
 
@@ -102,7 +102,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 0;
+  padding: var(--spacing-sm) 0;
 }
 
 .stat-item {
@@ -115,27 +115,27 @@
 .stat-value {
   font-size: 28px;
   font-weight: bold;
-  color: #0056b3;
+  color: var(--color-primary);
 }
 
 .stat-label {
   font-size: 14px;
-  color: #666;
-  margin-top: 5px;
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
 }
 
 /* 最近預約樣式 */
 .recent-bookings {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--spacing-md);
 }
 
 .booking-item {
   display: flex;
   background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm);
   transition: background-color 0.2s;
   position: relative;
 }
@@ -146,9 +146,9 @@
 
 .booking-date {
   min-width: 100px;
-  border-right: 1px solid #e0e0e0;
-  padding-right: 15px;
-  margin-right: 15px;
+  border-right: 1px solid var(--color-border);
+  padding-right: var(--spacing-md);
+  margin-right: var(--spacing-md);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -158,14 +158,14 @@
 .booking-day {
   font-weight: 500;
   font-size: 14px;
-  color: #555;
+  color: var(--color-text-secondary);
 }
 
 .booking-weekday {
   font-size: 15px;
   font-weight: 600;
-  color: #0056b3;
-  margin-top: 5px;
+  color: var(--color-primary);
+  margin-top: var(--spacing-xs);
 }
 
 .booking-details {
@@ -173,17 +173,17 @@
 }
 
 .booking-details h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 var(--spacing-sm) 0;
   font-size: 16px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .booking-location,
 .booking-time,
 .booking-purpose {
-  margin-bottom: 5px;
+  margin-bottom: var(--spacing-xs);
   font-size: 13px;
-  color: #666;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
 }
@@ -191,7 +191,7 @@
 .booking-location i,
 .booking-time i,
 .booking-purpose i {
-  margin-right: 5px;
+  margin-right: var(--spacing-xs);
   width: 16px;
 }
 
@@ -209,14 +209,14 @@
 .announcements {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-sm);
 }
 
 .announcement-item {
   display: flex;
   align-items: center;
-  padding: 12px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
   transition: background-color 0.2s;
 }
 
@@ -231,7 +231,7 @@
 .announcement-date {
   min-width: 80px;
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-tertiary);
 }
 
 .announcement-title {
@@ -240,13 +240,13 @@
 }
 
 .announcement-title a {
-  color: #333;
+  color: var(--color-text);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .announcement-title a:hover {
-  color: #0056b3;
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
@@ -281,9 +281,9 @@
 }
 
 .modal-content {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
 }
 
 .modal-header {
@@ -298,7 +298,7 @@
   margin: 0;
   font-size: 18px;
   line-height: 1.5;
-  color: #333;
+  color: var(--color-text);
 }
 
 .modal-body {
@@ -328,7 +328,7 @@
 }
 
 .announcement-content {
-  margin-top: 15px;
+  margin-top: var(--spacing-md);
   line-height: 1.6;
 }
 
@@ -336,15 +336,15 @@
 .favorite-classrooms {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .classroom-item {
   display: flex;
   align-items: center;
   background-color: #f9f9f9;
-  border-radius: 8px;
-  padding: 10px 15px;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   transition: background-color 0.2s;
 }
 
@@ -355,17 +355,17 @@
 .classroom-icon {
   min-width: 40px;
   height: 40px;
-  background-color: #e3f2fd;
+  background-color: var(--color-primary-light);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 15px;
+  margin-right: var(--spacing-md);
 }
 
 .classroom-icon i {
   font-size: 20px;
-  color: #1976d2;
+  color: var(--color-primary);
 }
 
 .classroom-details {
@@ -373,55 +373,55 @@
 }
 
 .classroom-details h3 {
-  margin: 0 0 5px 0;
+  margin: 0 0 var(--spacing-xs) 0;
   font-size: 15px;
-  color: #333;
+  color: var(--color-text);
 }
 
 .classroom-location {
   font-size: 13px;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .booking-count {
   font-size: 12px;
-  color: #888;
-  margin-top: 3px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--spacing-xs);
 }
 
 .btn-outline {
   background-color: transparent;
-  border: 1px solid #0056b3;
-  color: #0056b3;
-  padding: 8px 15px;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
   font-size: 14px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   text-align: center;
   text-decoration: none;
   display: inline-block;
   transition: background-color 0.2s, color 0.2s;
-  margin-top: 10px;
+  margin-top: var(--spacing-sm);
   cursor: pointer;
 }
 
 .btn-outline:hover {
-  background-color: #0056b3;
+  background-color: var(--color-primary);
   color: #fff;
 }
 
 .btn-sm {
-  padding: 5px 10px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 12px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  background-color: #0056b3;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   transition: background-color 0.2s;
 }
 
 .btn-sm:hover {
-  background-color: #003d7a;
+  background-color: var(--color-primary-dark);
 }
 
 /* 響應式設計 */
@@ -438,7 +438,7 @@
   }
 
   .dashboard-date {
-    margin-top: 10px;
+    margin-top: var(--spacing-sm);
   }
 
   .dashboard-sections {
@@ -446,11 +446,11 @@
   }
 
   .dashboard-card-header {
-    padding: 12px 15px;
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
   .dashboard-card-content {
-    padding: 15px;
+    padding: var(--spacing-md);
   }
 }
 
@@ -461,24 +461,24 @@
 
   .booking-date {
     border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-border);
     padding-right: 0;
-    padding-bottom: 10px;
+    padding-bottom: var(--spacing-sm);
     margin-right: 0;
-    margin-bottom: 10px;
+    margin-bottom: var(--spacing-sm);
     flex-direction: row;
     width: 100%;
   }
 
   .booking-day {
-    margin-right: 10px;
+    margin-right: var(--spacing-sm);
   }
 
   .booking-status {
     position: relative;
     top: auto;
     right: auto;
-    margin-top: 10px;
+    margin-top: var(--spacing-sm);
     display: inline-block;
   }
 }

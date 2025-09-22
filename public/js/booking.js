@@ -237,12 +237,14 @@ document.addEventListener('DOMContentLoaded', function () {
       const hour = parseInt(cell.dataset.hour, 10);
       if (isNaN(hour)) return;
 
-      // 已預約時段標記為禁用
+      // 已預約時段標記為禁用（但要顯示提示框）
       if (
         cell.classList.contains('time-slot-booked') ||
         cell.classList.contains('booked')
       ) {
         cell.classList.add('slot-disabled');
+        // 設置幫助游標，表示有更多信息可查看
+        cell.style.cursor = 'help';
         return;
       }
 
@@ -459,75 +461,81 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 為已預約時段初始化提示框
+  // 為已預約時段初始化 Bootstrap 提示框
   function initializeTooltips() {
+    console.log('初始化 Bootstrap 提示框...');
     const bookedCells = document.querySelectorAll(
       '.time-slot-booked, .time-cell.booked'
     );
+    console.log('找到已預約單元格數量:', bookedCells.length);
     if (!bookedCells.length) return;
 
-    // 創建提示框元素
-    const tooltip = document.createElement('div');
-    tooltip.className = 'custom-tooltip';
-    tooltip.innerHTML = `
-      <div class="tooltip-header">預約資訊</div>
-      <div class="tooltip-content">
-        <div class="tooltip-row"><strong>租借人:</strong> <span data-field="user"></span></div>
-        <div class="tooltip-row"><strong>聯絡方式:</strong> <span data-field="email"></span></div>
-        <div class="tooltip-row"><strong>用途:</strong> <span data-field="purpose"></span></div>
-      </div>
-    `;
-    document.body.appendChild(tooltip);
-
-    // 顯示提示框函數
-    function showTooltip(cell) {
-      tooltip.querySelector('[data-field="user"]').textContent =
-        cell.getAttribute('data-user') || '';
-      tooltip.querySelector('[data-field="email"]').textContent =
-        cell.getAttribute('data-email') || '';
-      tooltip.querySelector('[data-field="purpose"]').textContent =
-        cell.getAttribute('data-purpose') || '';
-
-      const rect = cell.getBoundingClientRect();
-      tooltip.style.left = Math.round(rect.left) + 'px';
-      tooltip.style.top = Math.round(rect.bottom + 10) + 'px';
-      tooltip.classList.add('visible');
+    // 檢查是否已加載 Bootstrap tooltip 功能
+    if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) {
+      console.error(
+        'Bootstrap tooltip 功能未載入！請確認已正確引入 Bootstrap JS'
+      );
+      return;
     }
 
-    // 隱藏提示框函數
-    function hideTooltip() {
-      tooltip.classList.remove('visible');
-    }
-
-    // 為每個已預約單元格添加事件
+    // 為每個已預約單元格設置 Bootstrap tooltip
     bookedCells.forEach((cell) => {
-      // 桌面：鼠標懸停顯示提示框，加入延遲以避免意外觸發
-      let tooltipTimeout;
-      cell.addEventListener('mouseenter', () => {
-        tooltipTimeout = setTimeout(() => {
-          showTooltip(cell);
-        }, 200); // 200ms延遲，避免意外觸發
-      });
+      // 移除可能存在的禁止樣式，設置為幫助游標
+      cell.style.cursor = 'help';
 
-      cell.addEventListener('mouseleave', () => {
-        clearTimeout(tooltipTimeout);
-        // 增加小延遲，使鼠標可以移動到提示框上
-        setTimeout(hideTooltip, 100);
-      });
+      // 檢查是否有預約數據
+      const userName = cell.getAttribute('data-user');
+      const userEmail = cell.getAttribute('data-email');
+      const purpose = cell.getAttribute('data-purpose');
+
+      if (!userName && !userEmail) {
+        console.log('單元格缺少預約數據:', cell);
+        return;
+      }
+
+      // 創建 tooltip 內容，使用 HTML 格式化
+      const tooltipContent = `
+        <div class="booking-tooltip">
+          <div class="booking-tooltip-header">預約資訊</div>
+          <div class="booking-tooltip-content">
+            <div class="booking-tooltip-row"><strong>租借人:</strong> ${
+              userName || '未指定'
+            }</div>
+            <div class="booking-tooltip-row"><strong>聯絡方式:</strong> ${
+              userEmail || '未指定'
+            }</div>
+            <div class="booking-tooltip-row"><strong>用途:</strong> ${
+              purpose || '未指定'
+            }</div>
+          </div>
+        </div>
+      `;
+
+      // 檢查是否已經具有 data-bs-toggle 屬性
+      if (!cell.hasAttribute('data-bs-toggle')) {
+        cell.setAttribute('data-bs-toggle', 'tooltip');
+        cell.setAttribute('data-bs-html', 'true');
+        cell.setAttribute('data-bs-title', tooltipContent);
+        cell.setAttribute('data-bs-placement', 'auto');
+        cell.setAttribute('data-bs-container', 'body');
+      }
+
+      // 只有當還沒有初始化過 tooltip 時才初始化
+      if (!bootstrap.Tooltip.getInstance(cell)) {
+        // 初始化 Bootstrap tooltip
+        new bootstrap.Tooltip(cell, {
+          trigger: 'hover focus',
+          html: true,
+          delay: { show: 200, hide: 100 },
+          placement: 'auto',
+          container: 'body',
+          template:
+            '<div class="tooltip booking-custom-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+        });
+      }
     });
 
-    // 允許在提示框上移動鼠標而不隱藏
-    tooltip.addEventListener('mouseenter', () => {
-      clearTimeout(tooltipTimeout);
-    });
-
-    tooltip.addEventListener('mouseleave', hideTooltip);
-
-    // 點擊其他地方隱藏提示框
-    document.addEventListener('click', hideTooltip);
-
-    // 滾動時隱藏提示框
-    window.addEventListener('scroll', hideTooltip, { passive: true });
+    console.log('Bootstrap 提示框初始化完成');
   }
 
   // 拖曳結束處理（在 document 上監聽，以確保即使滑鼠移出表格也能觸發）
@@ -833,10 +841,29 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    console.log('=== 初始化桌面版預約系統 ===');
+
+    // 檢查 Bootstrap 是否可用
+    if (typeof bootstrap === 'undefined') {
+      console.warn('警告: Bootstrap JS 未載入，某些功能可能無法正常運作');
+    } else {
+      console.log(
+        'Bootstrap 已載入，版本:',
+        bootstrap.Tooltip.VERSION || '未知'
+      );
+    }
+
     // 標記禁用單元格
     markDisabledCells();
 
-    // 初始化提示框
+    // 確保所有已預約單元格的游標樣式是幫助形式
+    document
+      .querySelectorAll('.time-slot-booked, .time-cell.booked')
+      .forEach((cell) => {
+        cell.style.cursor = 'help';
+      });
+
+    // 初始化 Bootstrap 提示框
     initializeTooltips();
 
     // 還原已選取的時段
@@ -853,6 +880,64 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 初始更新表單顯示
     updateFormDisplay();
+
+    // 延遲檢查並確保 tooltip 正確初始化
+    setTimeout(() => {
+      // 檢查 Bootstrap 是否可用
+      if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) {
+        console.warn('警告: Bootstrap Tooltip 功能不可用，嘗試使用舊版提示框');
+        return;
+      }
+
+      // 檢查是否有未初始化的已預約單元格
+      document
+        .querySelectorAll('.time-slot-booked, .time-cell.booked')
+        .forEach((cell) => {
+          if (!bootstrap.Tooltip.getInstance(cell)) {
+            console.log('發現未初始化的單元格，重新應用 tooltip');
+
+            // 重新設置數據屬性
+            const userName = cell.getAttribute('data-user') || '未指定';
+            const userEmail = cell.getAttribute('data-email') || '未指定';
+            const purpose = cell.getAttribute('data-purpose') || '未指定';
+
+            const tooltipContent = `
+              <div class="booking-tooltip">
+                <div class="booking-tooltip-header">預約資訊</div>
+                <div class="booking-tooltip-content">
+                  <div class="booking-tooltip-row"><strong>租借人:</strong> ${userName}</div>
+                  <div class="booking-tooltip-row"><strong>聯絡方式:</strong> ${userEmail}</div>
+                  <div class="booking-tooltip-row"><strong>用途:</strong> ${purpose}</div>
+                </div>
+              </div>
+            `;
+
+            // 設置 Bootstrap tooltip 屬性
+            cell.setAttribute('data-bs-toggle', 'tooltip');
+            cell.setAttribute('data-bs-html', 'true');
+            cell.setAttribute('data-bs-title', tooltipContent);
+            cell.setAttribute('data-bs-placement', 'auto');
+
+            // 初始化 Bootstrap tooltip
+            new bootstrap.Tooltip(cell, {
+              trigger: 'hover focus',
+              html: true,
+              delay: { show: 200, hide: 100 },
+              placement: 'auto',
+              container: 'body',
+              template:
+                '<div class="tooltip booking-custom-tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+            });
+          }
+
+          // 確保游標樣式為 help
+          if (cell.style.cursor !== 'help') {
+            cell.style.cursor = 'help';
+          }
+        });
+
+      console.log('Bootstrap Tooltips 檢查完成');
+    }, 1000);
   }
 
   // 全局清除選擇函數，供「清除選擇」按鈕調用

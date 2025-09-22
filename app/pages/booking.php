@@ -125,13 +125,13 @@ if (isset($_SESSION['booking_success'])) {
 $hours = range(8, 21);
 ?>
 
-<main class="content-container p-4">
+<main class="content-container p-4 ">
     <?php if (!empty($errors)): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>預約失敗!</strong>
             <ul class="mb-0">
                 <?php foreach ($errors as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
+                    <li><?= htmlspecialchars($error ?? '') ?></li>
                 <?php endforeach; ?>
             </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button>
@@ -140,7 +140,7 @@ $hours = range(8, 21);
 
     <?php if (!empty($success)): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>成功!</strong> <?= htmlspecialchars($success) ?>
+            <strong>成功!</strong> <?= htmlspecialchars($success ?? '') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="關閉"></button>
         </div>
     <?php endif; ?>
@@ -155,22 +155,22 @@ $hours = range(8, 21);
     <div class="booking-container">
         <!-- 篩選條件區域 -->
         <div class="booking-filters card shadow-sm">
-            <form id="filter-form" method="GET" action="" class="d-flex flex-wrap gap-3">
+            <form id="filter-form" method="GET" action="" class="d-flex align-items-end">
                 <!-- 日期選擇 -->
-                <div class="filter-group">
+                <div class="filter-group me-3">
                     <label for="date-filter"><i class="fas fa-calendar"></i> 選擇日期</label>
                     <input type="date" id="date-filter" name="date" class="form-control auto-submit" 
                         value="<?= $selectedDate ?>" min="<?= date('Y-m-d') ?>">
                 </div>
                 
                 <!-- 建築物篩選 -->
-                <div class="filter-group">
+                <div class="filter-group me-3">
                     <label for="building-filter"><i class="fas fa-building"></i> 建築物</label>
                     <select id="building-filter" name="building" class="form-select auto-submit">
-                        <option value="all" <?= ($buildingFilter === 'all') ? 'selected' : '' ?>>全部建築物</option>
+                        <option value="all" <?= ($buildingFilter === 'all') ? 'selected' : '' ?>>全部</option>
                         <?php foreach ($buildings as $building): ?>
-                            <option value="<?= htmlspecialchars($building) ?>" <?= ($buildingFilter === $building) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($building) ?>
+                            <option value="<?= htmlspecialchars($building ?? '') ?>" <?= ($buildingFilter === $building) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($building ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -180,10 +180,10 @@ $hours = range(8, 21);
                 <div class="filter-group">
                     <label for="classroom-type-filter"><i class="fas fa-chalkboard"></i> 教室類型</label>
                     <select id="classroom-type-filter" name="classroom_type" class="form-select auto-submit">
-                        <option value="all" <?= ($classroomType === 'all') ? 'selected' : '' ?>>全部類型</option>
+                        <option value="all" <?= ($classroomType === 'all') ? 'selected' : '' ?>>全部</option>
                         <?php foreach ($classroomTypes as $type): ?>
-                            <option value="<?= htmlspecialchars($type) ?>" <?= ($classroomType === $type) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($type) ?>
+                            <option value="<?= htmlspecialchars($type ?? '') ?>" <?= ($classroomType === $type) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($type ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -239,8 +239,8 @@ $hours = range(8, 21);
                             <tr data-classroom-id="<?= $classroom['classroom_ID'] ?>">
                                 <td>
                                     <div class="classroom-info">
-                                        <span class="classroom-name"><?= htmlspecialchars($classroom['classroom_name']) ?></span>
-                                        <span class="classroom-location"><?= htmlspecialchars($classroom['building'] . ' ' . $classroom['room']) ?></span>
+                                        <span class="classroom-name"><?= htmlspecialchars($classroom['classroom_name'] ?? '') ?></span>
+                                        <span class="classroom-location"><?= htmlspecialchars(($classroom['building'] ?? '') . ' ' . ($classroom['room'] ?? '')) ?></span>
                                     </div>
                                 </td>
                                 <?php foreach ($hours as $hour): ?>
@@ -250,15 +250,15 @@ $hours = range(8, 21);
                                         $cellData = '';
                                         
                                         // 無論是否已預約都添加data屬性，這樣JS可以正確識別
-                                        $cellData = 'data-classroom-id="' . $classroom['classroom_ID'] . '" data-hour="' . $hour . '" data-classroom-name="' . htmlspecialchars($classroom['classroom_name']) . '" data-classroom-location="' . htmlspecialchars($classroom['building'] . ' ' . $classroom['room']) . '"';
+                                        $cellData = 'data-classroom-id="' . $classroom['classroom_ID'] . '" data-hour="' . $hour . '" data-classroom-name="' . htmlspecialchars($classroom['classroom_name'] ?? '') . '" data-classroom-location="' . htmlspecialchars(($classroom['building'] ?? '') . ' ' . ($classroom['room'] ?? '')) . '"';
                                         
                                         $tooltipData = '';
                                         if ($isBooked) {
                                             $userInfo = $bookingsMap[$classroom['classroom_ID']][$hour];
-                                            $tooltipData = 'data-toggle="tooltip" data-user="' . htmlspecialchars($userInfo['user_name']) . 
-                                                         '" data-email="' . htmlspecialchars($userInfo['mail']) . 
-                                                         '" data-booking-id="' . htmlspecialchars($userInfo['booking_id']) . 
-                                                         '" data-purpose="' . htmlspecialchars($userInfo['purpose']) . '"';
+                                            $tooltipData = 'data-bs-toggle="tooltip" data-user="' . htmlspecialchars($userInfo['user_name'] ?? '') .
+                                                        '" data-email="' . htmlspecialchars($userInfo['mail'] ?? '') .
+                                                        '" data-booking-id="' . htmlspecialchars($userInfo['booking_id'] ?? '') .
+                                                        '" data-purpose="' . htmlspecialchars($userInfo['purpose'] ?? '') . '"';
                                         }
                                     ?>
                                     <td class="<?= $isBooked ? 'booked-cell' : 'available-cell' ?>">

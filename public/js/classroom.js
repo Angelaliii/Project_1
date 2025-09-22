@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', function () {
         addClassWithTimeout(this, 'table-active', 200);
       });
     });
+
+    // 處理搜尋框清除按鈕功能
+    const clearSearchBtn = document.querySelector('.search-clear-btn');
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', function () {
+        window.location.href = 'classroom_management.php';
+      });
+    }
   } catch (error) {
     console.error('初始化教室管理頁面時發生錯誤:', error);
   }

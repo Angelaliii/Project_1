@@ -30,6 +30,13 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <link rel="shortcut icon" href="<?php echo $rootPath; ?>public/img/FJU_logo.png" type="image/png">
     <link rel="apple-touch-icon" href="<?php echo $rootPath; ?>public/img/FJU_logo.png">
     
+    <!-- 第三方庫 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <!-- Bootstrap JS (放在頭部確保所有頁面都能使用 tooltips) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- 自定義 CSS -->
     <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/main.css">
     <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/header.css">
@@ -40,11 +47,44 @@ $isLoggedIn = isset($_SESSION['user_id']);
             <link rel="stylesheet" href="<?php echo $rootPath . 'public/css/' . $style; ?>">
         <?php endforeach; ?>
     <?php endif; ?>
-    
-    <!-- 第三方庫 CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
+    <!-- 全局腳本：初始化所有 tooltips -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化所有具有 data-bs-toggle="tooltip" 屬性的元素
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    html: true,
+                    container: 'body',
+                    delay: { show: 200, hide: 100 }
+                });
+            });
+            
+            console.log('全局 tooltips 已初始化');
+            
+            // 監聽動態添加的元素
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                        mutation.addedNodes.forEach(function(node) {
+                            if (node.nodeType === 1 && node.hasAttribute && node.hasAttribute('data-bs-toggle')) {
+                                if (node.getAttribute('data-bs-toggle') === 'tooltip' && !bootstrap.Tooltip.getInstance(node)) {
+                                    new bootstrap.Tooltip(node, {
+                                        html: true,
+                                        container: 'body',
+                                        delay: { show: 200, hide: 100 }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            
+            observer.observe(document.body, { childList: true, subtree: true });
+        });
+    </script>
 </head>
 <body>
 <div class="page-wrapper"><!-- 開始 page-wrapper -->

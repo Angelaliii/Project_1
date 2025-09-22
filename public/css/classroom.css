@@ -1,29 +1,55 @@
 /* classroom.css - 教室瀏覽頁面的樣式 */
 
-.booking-container {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 25px;
-  margin-top: 20px;
-}
-
-.booking-container h1 {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #f0f0f0;
-  padding-bottom: 10px;
-}
-
 .action-buttons {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
 .search-container {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 搜尋欄位和按鈕樣式優化 */
+.search-form {
+  position: relative;
+  max-width: 70%;
+}
+
+.search-form .input-group {
+  position: relative;
+}
+
+.search-form .form-control {
+  padding-right: 40px; /* 為清除按鈕留出空間 */
+  height: 42px;
+}
+
+/* 清除搜尋按鈕樣式 */
+.search-clear-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  z-index: 5;
+  padding: 5px;
+}
+
+.search-clear-btn:hover {
+  color: var(--color-danger);
+}
+
+/* 新增教室按鈕統一寬度 */
+#openAddClassroomBtn {
+  min-width: 140px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .row-disabled {
@@ -38,7 +64,7 @@
 }
 
 .admin-row:hover {
-  background-color: #e8f0fe;
+  background-color: var(--color-primary-light);
 }
 
 /* 指示點擊有操作的視覺效果 */
@@ -53,7 +79,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(66, 133, 244, 0.05);
+  background-color: rgba(
+    0,
+    86,
+    179,
+    0.05
+  ); /* 使用與 --color-primary 相似的顏色但透明度降低 */
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
@@ -66,7 +97,12 @@
 /* 行點擊效果 */
 @keyframes row-click-effect {
   0% {
-    background-color: rgba(66, 133, 244, 0.2);
+    background-color: rgba(
+      0,
+      86,
+      179,
+      0.2
+    ); /* 使用與 --color-primary 相似的顏色 */
   }
   100% {
     background-color: transparent;
@@ -79,24 +115,49 @@
 
 /* 管理員提示信息 */
 .admin-tip {
-  background-color: #f8f9fa;
-  border-left: 4px solid #4285f4;
-  padding: 10px 15px;
-  margin-bottom: 15px;
+  background-color: var(--color-info-bg);
+  border-left: 4px solid var(--color-info);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   font-size: 14px;
-  color: #555;
-  border-radius: 3px;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
 }
 
 .admin-tip i {
-  margin-right: 5px;
-  color: #4285f4;
+  margin-right: var(--spacing-xs);
+  color: var(--color-info);
+}
+
+/* 表格卡片樣式 */
+.table-responsive.card {
+  border: none;
+  margin-bottom: var(--spacing-lg);
+}
+
+.table-responsive.card .table {
+  margin-bottom: 0;
 }
 
 /* 響應式調整 */
 @media (max-width: 768px) {
   .booking-container {
-    padding: 15px;
+    padding: 0;
+  }
+
+  .search-container {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .search-form {
+    max-width: 100%;
+    margin-bottom: var(--spacing-md);
+  }
+
+  #openAddClassroomBtn {
+    width: 100%;
+    margin-top: var(--spacing-sm);
   }
 
   .action-buttons {
@@ -114,6 +175,6 @@
 
   th,
   td {
-    padding: 8px;
+    padding: var(--spacing-sm);
   }
 }
