@@ -28,8 +28,8 @@
                         <label for="edit_permissions" class="form-label">租借權限設置</label>
                         <div class="d-flex align-items-center mb-2">
                             <span class="me-3">學生租借權限：</span>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="edit_perm_student" name="allowed_roles[]" value="student" style="width: 3em; height: 1.5em;">
+                            <div class="form-check form-switch d-flex align-items-center">
+                                <input class="form-check-input me-2" type="checkbox" id="edit_perm_student" name="allowed_roles[]" value="student" style="width: 3em; height: 1.5em;">
                                 <label class="form-check-label" for="edit_perm_student" id="student_status">關閉</label>
                             </div>
                         </div>

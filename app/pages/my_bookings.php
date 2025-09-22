@@ -83,7 +83,7 @@ include_once '../components/header.php';
                     </div>
                     
                     <div class="booking-filters">
-                        <div class="btn-group" aria-label="預約篩選">
+                        <div class="" aria-label="預約篩選">
                             <a href="my_bookings.php?filter=all" class="btn btn-filter <?php echo $filterStatus == 'all' ? 'active' : ''; ?>">全部</a>
                             <a href="my_bookings.php?filter=upcoming" class="btn btn-filter <?php echo $filterStatus == 'upcoming' ? 'active' : ''; ?>">即將到來</a>
                             <a href="my_bookings.php?filter=past" class="btn btn-filter <?php echo $filterStatus == 'past' ? 'active' : ''; ?>">已結束</a>
@@ -101,9 +101,12 @@ include_once '../components/header.php';
                                 <i class="fas fa-calendar-times fa-4x mb-4 text-muted"></i>
                                 <h3 class="mb-3">沒有找到預約記錄</h3>
                                 <p class="lead mb-4">您目前沒有任何預約，立即創建一個新的預約吧!</p>
-                                <a href="booking.php" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-plus-circle me-2"></i>新增預約
-                                </a>
+                                <a href="booking.php"
+                                    class="btn btn-primary btn-lg"
+                                    style="display:inline-flex; align-items:center; gap:10px; padding:8px 16px;">
+                                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
+                                    新增預約
+                                    </a>
                             </div>
                         <?php else: ?>
                             <?php foreach ($bookings as $booking): ?>
@@ -157,7 +160,43 @@ include_once '../components/header.php';
                                             
                                             <div class="info-row">
                                                 <span class="info-label"><i class="far fa-clock"></i> 時間：</span>
-                                                <span class="info-value"><?php echo $startDate->format('H:i'); ?> - <?php echo $endDate->format('H:i'); ?></span>
+                                                <span class="info-value">
+                                                    <?php
+                                                    $startHour = (int)$startDate->format('H');
+                                                    $startMinute = $startDate->format('i');
+                                                    $endHour = (int)$endDate->format('H');
+                                                    $endMinute = $endDate->format('i');
+                                                    
+                                                    $startTimeStr = $startDate->format('H:i');
+                                                    $endTimeStr = $endDate->format('H:i');
+                                                    
+                                                    // 處理特殊時間段
+                                                    if ($startTimeStr == '12:00' && $endTimeStr == '13:30') {
+                                                        echo '12:00-13:30';
+                                                    } 
+                                                    // 處理 13:30 之後的時段
+                                                    elseif ($startHour >= 13 && $startHour <= 20) {
+                                                        // 確保顯示為 XX:30-YY:30 格式
+                                                        echo $startHour . ':30-' . ($startHour+1) . ':30';
+                                                    }
+                                                    // 處理舊數據
+                                                    elseif (($startHour == 13 && $startMinute == '00') || 
+                                                            ($startHour == 14 && $startMinute == '00') || 
+                                                            ($startHour == 15 && $startMinute == '00') || 
+                                                            ($startHour == 16 && $startMinute == '00') ||
+                                                            ($startHour == 17 && $startMinute == '00') ||
+                                                            ($startHour == 18 && $startMinute == '00') ||
+                                                            ($startHour == 19 && $startMinute == '00') ||
+                                                            ($startHour == 20 && $startMinute == '00')) {
+                                                        // 將整點開始的調整為半點開始
+                                                        echo $startHour . ':30-' . ($startHour+1) . ':30';
+                                                    }
+                                                    else {
+                                                        // 其他情況保持原格式
+                                                        echo $startTimeStr . '-' . $endTimeStr;
+                                                    }
+                                                    ?>
+                                                </span>
                                             </div>
                                             
                                             <div class="info-row">

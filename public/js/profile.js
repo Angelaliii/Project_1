@@ -62,6 +62,28 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // 處理顯示/隱藏密碼功能
+  const togglePasswordButtons = document.querySelectorAll('.toggle-password');
+  if (togglePasswordButtons) {
+    togglePasswordButtons.forEach(function (toggle) {
+      toggle.addEventListener('click', function () {
+        const targetId = this.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+
+        // 切換密碼顯示/隱藏
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          this.querySelector('i').classList.remove('fa-eye');
+          this.querySelector('i').classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          this.querySelector('i').classList.remove('fa-eye-slash');
+          this.querySelector('i').classList.add('fa-eye');
+        }
+      });
+    });
+  }
+
   // 處理密碼表單提交
   if (passwordForm) {
     passwordForm.addEventListener('submit', function (e) {

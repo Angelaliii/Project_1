@@ -46,20 +46,6 @@
   box-shadow: var(--shadow-md);
 }
 
-/* 篩選按鈕圖標 */
-.btn-filter[href*="completed"]::before {
-  content: "✓";
-}
-.btn-filter[href*="upcoming"]::before {
-  content: "⏳";
-}
-.btn-filter[href*="past"]::before {
-  content: "🕓";
-}
-.btn-filter[href*="all"]::before {
-  content: "•";
-}
-
 /* ===== 預約卡片列表 ===== */
 .booking-list {
   padding: var(--spacing-xs) 0 var(--spacing-lg);
@@ -385,7 +371,6 @@
   position: sticky; /* 捲動時貼頂 */
   top: 10px;
   z-index: 1050;
-  max-width: 420px;
   margin-left: auto;
 }
 

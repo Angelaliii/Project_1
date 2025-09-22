@@ -229,6 +229,9 @@ try {
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
+                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="current_password">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
                                             </div>
                                         </div>
                                         
@@ -237,6 +240,9 @@ try {
                                             <div class="input-group mb-2">
                                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                                                 <input type="password" class="form-control" id="new_password" name="new_password" required>
+                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="new_password">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
                                             </div>
                                             <small class="form-text text-muted">密碼必須至少8個字符，包含大小寫字母和數字</small>
                                         </div>
@@ -246,6 +252,9 @@ try {
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="confirm_password">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
                                             </div>
                                         </div>
                                         

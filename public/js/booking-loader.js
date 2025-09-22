@@ -1,35 +1,51 @@
-// booking-loader.js - 根據裝置類型載入適合的教室預約系統腳本
-document.addEventListener('DOMContentLoaded', function () {
-  console.log('初始化教室預約系統載入器');
+// booking-loader.js
+(function () {
+  // 粗略偵測行動裝置
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 
-  // 檢測是否為移動裝置
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    );
-
-  // 動態載入適合的腳本文件
+  // 動態載入 script
   function loadScript(src) {
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = (e) => reject(e);
+      document.head.appendChild(s);
     });
   }
 
-  // 根據裝置類型載入不同的腳本
-  if (isMobile) {
-    console.log('偵測到移動裝置，載入移動版腳本');
-    loadScript('/public/js/booking-mobile.js')
-      .then(() => console.log('移動版腳本載入完成'))
-      .catch((err) => console.error('移動版腳本載入失敗', err));
-  } else {
-    console.log('偵測到桌面裝置，載入桌面版腳本');
-    loadScript('/public/js/booking.js')
-      .then(() => console.log('桌面版腳本載入完成'))
-      .catch((err) => console.error('桌面版腳本載入失敗', err));
+  function getRootPath() {
+    const currentScript =
+      document.currentScript || document.querySelector('script[src*="booking-loader"]');
+    const dataRoot = currentScript && currentScript.dataset && currentScript.dataset.root;
+    if (dataRoot) return dataRoot.replace(/\/+$/, '') + '/';
+    // 退而求其次：以當前 loader 所在路徑為基底
+    const src = currentScript && currentScript.getAttribute('src');
+    if (!src) return './';
+    const parts = src.split('/');
+    parts.pop(); // 去檔名
+    return parts.join('/') + '/';
   }
-});
+
+  const root = getRootPath();
+
+  // 依裝置載入對應檔案
+  const entry = isMobile ? 'booking-mobile.js' : 'booking.js';
+
+  loadScript(root + entry)
+    .then(() => {
+      // 防呆旗標，禁止重複初始化
+      if (window.__bookingInitialized) return;
+      window.__bookingInitialized = true;
+
+      if (window.Booking && typeof window.Booking.initialize === 'function') {
+        window.Booking.initialize();
+      } else {
+        console.error('[booking-loader] Booking.initialize() 不存在，請確認腳本載入順序。');
+      }
+    })
+    .catch((err) => console.error('[booking-loader] 載入腳本失敗：', err));
+})();

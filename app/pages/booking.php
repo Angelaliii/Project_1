@@ -122,7 +122,7 @@ if (isset($_SESSION['booking_success'])) {
 }
 
 // 定義時間範圍 (小時)
-$hours = range(8, 21);
+$hours = range(8, 20);
 ?>
 
 <main class="content-container p-4 ">
@@ -218,7 +218,13 @@ $hours = range(8, 21);
                         <tr>
                             <th>教室 / 時間</th>
                             <?php foreach ($hours as $hour): ?>
-                                <th><?= $hour ?>:00</th>
+                                <?php if ($hour == 12): ?>
+                                <th>12:00-13:30</th>
+                                <?php elseif ($hour >= 13): ?>
+                                <th><?= $hour ?>:30-<?= $hour+1 ?>:30</th>
+                                <?php else: ?>
+                                <th><?= $hour ?>:00-<?= $hour+1 ?>:00</th>
+                                <?php endif; ?>
                             <?php endforeach; ?>
                         </tr>
                     </thead>
@@ -310,5 +316,5 @@ $hours = range(8, 21);
 
 <?php include_once '../components/footer.php'; ?>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="<?= $rootPath ?>public/js/booking-new.js"></script>
+<!-- 裝置適應載入器，會根據裝置類型動態載入適合的腳本和樣式表 -->
+<script src="<?= $rootPath ?>public/js/booking-loader.js"></script>

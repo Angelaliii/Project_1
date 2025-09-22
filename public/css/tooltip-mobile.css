@@ -1,0 +1,82 @@
+/* tooltip-mobile.css - 移動裝置版 Bootstrap Tooltip 樣式客製化 */
+
+/* 自訂 Tooltip 樣式 */
+.booking-custom-tooltip {
+  max-width: 300px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  opacity: 1 !important;
+  padding: 0;
+  z-index: 9999;
+}
+
+/* Tooltip 箭頭樣式 */
+.booking-custom-tooltip .tooltip-arrow {
+  display: none; /* 隱藏原始箭頭 */
+}
+
+/* Tooltip 內容樣式 */
+.booking-custom-tooltip .tooltip-inner {
+  max-width: 100%;
+  padding: 0;
+  text-align: left;
+  background-color: transparent;
+  color: #333;
+}
+
+/* 預約資訊容器 */
+.booking-tooltip {
+  width: 100%;
+}
+
+/* 預約資訊標題 */
+.booking-tooltip-header {
+  background-color: #f8f9fa;
+  color: #212529;
+  padding: 8px 12px;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 5px 5px 0 0;
+  font-weight: 600;
+}
+
+/* 預約資訊內容區域 */
+.booking-tooltip-content {
+  padding: 10px 12px;
+}
+
+/* 預約資訊每一行 */
+.booking-tooltip-row {
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 確保已預約格子樣式突出 */
+.time-slot-booked,
+.time-cell.booked {
+  background-color: #f8d7da !important;
+  cursor: help !important;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.time-slot-booked:hover,
+.time-cell.booked:hover {
+  background-color: #f5c6cb !important;
+}
+
+/* 針對大螢幕優化 tooltip 位置 */
+@media (min-width: 768px) {
+  .booking-custom-tooltip {
+    max-width: 350px;
+  }
+}
+
+/* 針對小螢幕優化 tooltip 位置和大小 */
+@media (max-width: 767px) {
+  .booking-custom-tooltip {
+    max-width: 280px;
+  }
+}

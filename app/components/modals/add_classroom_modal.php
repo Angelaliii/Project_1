@@ -10,7 +10,7 @@
                 <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="關閉"></button>
             </div>
             <div class="modal-body">
-                <form action="" method="post" enctype="multipart/form-data">
+                <form method="post" id="add-classroom-form" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
                         <input type="text" id="classroom_name" name="classroom_name" class="form-control" required>
@@ -24,12 +24,12 @@
                         <input type="text" id="room" name="room" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">租借權限設置</label>
+                        <p class="form-label mb-2">租借權限設置</p>
                         <div class="d-flex align-items-center mb-2">
                             <span class="me-3">學生租借權限：</span>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" name="allowed_roles[]" value="student" checked id="role-student" style="width: 3em; height: 1.5em;">
-                                <label class="form-check-label" for="role-student" id="add_student_status">開啟</label>
+                            <div class="form-check form-switch d-flex align-items-center">
+                                <input class="form-check-input me-2" type="checkbox" name="allowed_roles[]" value="student" checked id="role-student" style="width: 3em; height: 1.5em;">
+                                <label class="form-check-label" for="role-student">開啟</label>
                             </div>
                         </div>
                     </div>
