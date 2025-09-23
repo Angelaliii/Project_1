@@ -4,7 +4,6 @@ if (!isset($pageTitle)) {
     $pageTitle = '教室租借系統';
 }
 
-// 取得網站根目錄路徑 (相對於當前頁面)
 if (!isset($rootPath)) {
     $scriptPath = $_SERVER['SCRIPT_NAME'];
 
@@ -13,7 +12,6 @@ if (!isset($rootPath)) {
 }
 
 
-// 檢查用戶是否已登入
 $isLoggedIn = isset($_SESSION['user_id']);
 ?>
 <!DOCTYPE html>
@@ -34,7 +32,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     
-    <!-- Bootstrap JS (放在頭部確保所有頁面都能使用 tooltips) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- 自定義 CSS -->
@@ -89,6 +87,11 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <body>
 <div class="page-wrapper"><!-- 開始 page-wrapper -->
 
+<?php
+// 判斷當前頁面是否為登入或註冊頁面
+$current_page = basename($_SERVER['PHP_SELF']);
+if ($current_page != 'login.php' && $current_page != 'register.php') { // 只在非登入/註冊頁面顯示 header
+?>
 <header class="main-header">
     <div class="header-container">
         <div class="logo">
@@ -121,12 +124,6 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <li><a href="<?php echo $rootPath; ?>index.php">
                         <i class="fas fa-home"></i> 首頁
                     </a></li>
-                    <li><a href="<?php echo $rootPath; ?>app/pages/about.php">
-                        <i class="fas fa-info-circle"></i> 關於我們
-                    </a></li>
-                    <li><a href="<?php echo $rootPath; ?>app/pages/contact.php">
-                        <i class="fas fa-envelope"></i> 聯絡我們
-                    </a></li>
                 <?php endif; ?>
             </ul>
         </nav>
@@ -147,12 +144,14 @@ $isLoggedIn = isset($_SESSION['user_id']);
                             <i class="fas fa-sign-out-alt"></i> 登出
                         </a>
                     </div>
-                </div>                <?php else: ?>
+                </div>
+            <?php else: ?>
                 <div class="auth-buttons">
                     <a href="<?php echo $rootPath; ?>app/pages/login.php" class="btn btn-outline">登入</a>
                     <a href="<?php echo $rootPath; ?>app/pages/register.php" class="btn btn-primary">註冊</a>
                 </div>
-                <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
 </header>
+<?php } // 結束 header 條件顯示 ?>

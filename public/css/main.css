@@ -261,7 +261,6 @@ a:hover {
 
 /* ===== 通用Logo樣式 ===== */
 .logo {
-  display: flex;
   align-items: center;
   transition: transform 0.3s ease;
 }

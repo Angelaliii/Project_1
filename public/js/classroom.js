@@ -17,7 +17,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const clearSearchBtn = document.querySelector('.search-clear-btn');
     if (clearSearchBtn) {
       clearSearchBtn.addEventListener('click', function () {
-        window.location.href = 'classroom_management.php';
+        // 添加點擊動畫效果
+        this.classList.add('pressed');
+
+        // 重置搜尋欄位
+        const searchInput = document.getElementById('auto-search-input');
+        if (searchInput) {
+          searchInput.value = '';
+          // 聚焦到搜尋欄位
+          searchInput.focus();
+        }
+
+        // 短暫延遲後跳轉，讓使用者能看到動畫效果
+        setTimeout(() => {
+          window.location.href = 'classroom_management.php';
+        }, 150);
       });
     }
   } catch (error) {

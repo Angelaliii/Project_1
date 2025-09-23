@@ -26,9 +26,9 @@ function setupLogoutButtons() {
 
       // 顯示確認對話框
       if (confirm('確定要登出嗎？')) {
-        // 如果 api.js 已載入且有定義 logout 函數則使用 API
-        if (typeof logout === 'function') {
-          logout().catch((error) => {
+        // 如果 window.api 存在且有定義 logout 函數則使用 API
+        if (window.api && typeof window.api.logout === 'function') {
+          window.api.logout().catch((error) => {
             console.error('登出失敗:', error);
             // 失敗也跳轉到登入頁面
             window.location.href = this.getAttribute('href');

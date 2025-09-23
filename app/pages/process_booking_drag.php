@@ -10,13 +10,13 @@ date_default_timezone_set('Asia/Taipei');
 // 小工具：導向
 function redirect_with_errors(string $bookingDate, array $errors) {
     $_SESSION['booking_errors'] = $errors;
-    $q = $bookingDate !== '' ? ('?date=' . urlencode($bookingDate)) : '';
+    $q = $bookingDate !== '' ? ('?booking_date=' . urlencode($bookingDate)) : '';
     header("Location: booking.php{$q}");
     exit;
 }
 function redirect_success(string $bookingDate, string $msg) {
     $_SESSION['booking_success'] = $msg;
-    header("Location: booking.php?date=" . urlencode($bookingDate) . "&success=1");
+    header("Location: booking.php?booking_date=" . urlencode($bookingDate) . "&success=1");
     exit;
 }
 
@@ -45,8 +45,19 @@ $purposeRaw = isset($_POST['purpose']) ? (string)$_POST['purpose'] : '';
 $tz = new DateTimeZone('Asia/Taipei');
 $dtCheck = DateTime::createFromFormat('Y-m-d', $bookingDate, $tz);
 $validDate = $dtCheck && $dtCheck->format('Y-m-d') === $bookingDate;
+
+// 增加詳細診斷信息
 if (!$validDate) {
-    redirect_with_errors($bookingDate, ['日期格式不正確（需為 YYYY-MM-DD）']);
+    $errorMsg = '日期格式不正確（需為 YYYY-MM-DD）';
+    // 添加更多診斷信息
+    $errorMsg .= "，收到的值為: '" . $bookingDate . "'";
+    if (!$dtCheck) {
+        $errorMsg .= "，日期解析失敗";
+    } elseif ($dtCheck->format('Y-m-d') !== $bookingDate) {
+        $errorMsg .= "，格式化後不匹配: " . $dtCheck->format('Y-m-d');
+    }
+    
+    redirect_with_errors($bookingDate, [$errorMsg]);
 }
 
 // 處理 purpose（純文字、≤ 100）

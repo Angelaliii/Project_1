@@ -171,16 +171,17 @@ class UserModel {
     public function getUserBookings($userId, $filter = 'all') {
         try {
             $sql = "SELECT b.booking_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, 
-                    c.classroom_name, c.building, c.room
+                    c.classroom_name, c.building, c.room,
+                    CURRENT_TIMESTAMP AS server_time
                     FROM bookings b
                     INNER JOIN classrooms c ON b.classroom_ID = c.classroom_ID
                     WHERE b.user_ID = ?";
             
             // 根據篩選條件添加WHERE子句
             if ($filter === 'upcoming') {
-                $sql .= " AND b.start_datetime > NOW() AND b.status != 'cancelled'";
+                $sql .= " AND b.start_datetime > CURRENT_TIMESTAMP AND b.status = 'booked'";
             } elseif ($filter === 'past') {
-                $sql .= " AND b.end_datetime <= NOW() AND b.status != 'cancelled'";
+                $sql .= " AND b.end_datetime <= CURRENT_TIMESTAMP AND b.status != 'cancelled'";
             } elseif ($filter === 'cancelled') {
                 $sql .= " AND b.status = 'cancelled'";
             }

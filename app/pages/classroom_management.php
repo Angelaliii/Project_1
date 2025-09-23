@@ -174,7 +174,8 @@ if (!empty($message) && !headers_sent()) {
                     <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
                     <?php if (!empty($search)): ?>
                     <button type="button" class="search-clear-btn" aria-label="清除搜尋">
-                        <i class="fas fa-times"></i>
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                        <span class="visually-hidden">清除搜尋</span>
                     </button>
                     <?php endif; ?>
                 </div>

@@ -2,6 +2,9 @@
 // 啟動 session
 session_start();
 
+// 設定時區，確保與資料庫時間一致
+date_default_timezone_set('Asia/Taipei');
+
 // 檢查用戶是否已登入
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -35,6 +38,7 @@ $error = null;
 $upcomingCount = 0;
 $pastCount = 0;
 $cancelledCount = 0;
+$totalCount = 0;
 
 try {
     // 初始化UserModel
@@ -43,14 +47,22 @@ try {
     // 獲取用戶預約記錄
     $bookings = $userModel->getUserBookings($userId, 'all'); // 取得所有預約以便計算數量
     
+    // 獲取伺服器時間
+    $serverTime = null;
+    if (!empty($bookings) && isset($bookings[0]['server_time'])) {
+        $serverTime = new DateTime($bookings[0]['server_time']);
+    } else {
+        $serverTime = new DateTime();
+    }
+    
     // 計算各狀態數量
     foreach ($bookings as $booking) {
         $startDate = new DateTime($booking['start_datetime']);
-        $now = new DateTime();
+        $totalCount++;
         
         if ($booking['status'] == 'cancelled') {
             $cancelledCount++;
-        } elseif ($startDate > $now) {
+        } elseif ($startDate > $serverTime && $booking['status'] == 'booked') {
             $upcomingCount++;
         } else {
             $pastCount++;
@@ -67,9 +79,18 @@ try {
 // 按日期對預約進行分組
 $bookingGroups = [];
 
+// 獲取伺服器時間（如果從資料庫返回）
+$serverTime = null;
+if (!empty($bookings) && isset($bookings[0]['server_time'])) {
+    $serverTime = new DateTime($bookings[0]['server_time']);
+} else {
+    // 如果沒有伺服器時間，使用PHP時間
+    $serverTime = new DateTime();
+}
+
 foreach ($bookings as $booking) {
     $startDate = new DateTime($booking['start_datetime']);
-    $now = new DateTime();
+    $now = $serverTime; // 使用伺服器時間
     
     // 確定日期分組
     $today = new DateTime('today');
@@ -101,7 +122,7 @@ foreach ($bookings as $booking) {
 
 // 設定頁面標題和樣式
 $pageTitle = '我的預約';
-$pageStyles = ['my-bookings-new.css'];
+$pageStyles = ['my-bookings.css'];
 
 // 引入頭部組件（包含導航）
 include_once '../components/header.php';
@@ -122,7 +143,7 @@ include_once '../components/header.php';
                             <div class="alert alert-danger">
                                 <?php 
                                     echo htmlspecialchars($_SESSION['error_message']);
-                                    unset($_SESSION['error_message']); 
+                                    unset($_SESSION['error_message']);
                                 ?>
                             </div>
                         <?php endif; ?>
@@ -131,7 +152,7 @@ include_once '../components/header.php';
                             <div class="alert alert-success">
                                 <?php 
                                     echo htmlspecialchars($_SESSION['success_message']);
-                                    unset($_SESSION['success_message']); 
+                                    unset($_SESSION['success_message']);
                                 ?>
                             </div>
                         <?php endif; ?>
@@ -143,69 +164,24 @@ include_once '../components/header.php';
                             <div class="" aria-label="預約篩選">
                                 <a href="my_bookings_new.php?filter=all" class="btn btn-filter <?php echo $filterStatus == 'all' ? 'active' : ''; ?>">
                                     全部
+                                    <span class="badge<?php echo $totalCount == 0 ? ' badge-empty' : ''; ?>"><?php echo $totalCount; ?></span>
                                 </a>
                                 <a href="my_bookings_new.php?filter=upcoming" class="btn btn-filter <?php echo $filterStatus == 'upcoming' ? 'active' : ''; ?>">
                                     即將到來
-                                    <?php if($upcomingCount > 0): ?>
-                                    <span class="badge"><?php echo $upcomingCount; ?></span>
-                                    <?php endif; ?>
+                                    <span class="badge<?php echo $upcomingCount == 0 ? ' badge-empty' : ''; ?>"><?php echo $upcomingCount; ?></span>
                                 </a>
                                 <a href="my_bookings_new.php?filter=past" class="btn btn-filter <?php echo $filterStatus == 'past' ? 'active' : ''; ?>">
                                     已結束
-                                    <?php if($pastCount > 0): ?>
-                                    <span class="badge"><?php echo $pastCount; ?></span>
-                                    <?php endif; ?>
+                                    <span class="badge<?php echo $pastCount == 0 ? ' badge-empty' : ''; ?>"><?php echo $pastCount; ?></span>
                                 </a>
                                 <a href="my_bookings_new.php?filter=cancelled" class="btn btn-filter <?php echo $filterStatus == 'cancelled' ? 'active' : ''; ?>">
                                     已取消
-                                    <?php if($cancelledCount > 0): ?>
-                                    <span class="badge"><?php echo $cancelledCount; ?></span>
-                                    <?php endif; ?>
+                                    <span class="badge<?php echo $cancelledCount == 0 ? ' badge-empty' : ''; ?>"><?php echo $cancelledCount; ?></span>
                                 </a>
                             </div>
                             
-                            <!-- 已移除視圖切換功能 -->
                         </div>
-                        
-                        <!-- 進階篩選 -->
-                        <div class="filter-row">
-                            <!-- 日期範圍選擇 -->
-                            <div class="date-range">
-                                <label for="date-range-selector">日期範圍：</label>
-                                <select id="date-range-selector" class="form-select form-select-sm">
-                                    <option value="all">全部日期</option>
-                                    <option value="today">今天</option>
-                                    <option value="week">本週</option>
-                                    <option value="month">本月</option>
-                                    <option value="custom">自訂範圍</option>
-                                </select>
-                                
-                                <!-- 自訂日期選擇器（預設隱藏） -->
-                                <div id="custom-date-range" style="display: none; flex-wrap: nowrap; align-items: center; margin-top: 8px; gap: 8px;">
-                                    <input type="date" id="custom-start-date" class="form-control form-control-sm" aria-label="起始日期">
-                                    <span class="date-separator">至</span>
-                                    <input type="date" id="custom-end-date" class="form-control form-control-sm" aria-label="結束日期">
-                                </div>
-                            </div>
-                            
-                            <!-- 關鍵字搜尋 -->
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="booking-search" placeholder="搜尋教室名稱、用途..." 
-                                       class="form-control form-control-sm">
-                            </div>
-                            
-                            <!-- 排序控制 -->
-                            <div class="sort-dropdown">
-                                <label for="sort-select">排序：</label>
-                                <select id="sort-select" class="form-select form-select-sm">
-                                    <option value="date-asc">日期（舊 → 新）</option>
-                                    <option value="date-desc" selected>日期（新 → 舊）</option>
-                                    <option value="classroom-asc">教室 A→Z</option>
-                                    <option value="building-asc">建物 A→Z</option>
-                                </select>
-                            </div>
-                        </div>
+                    
                     </div>
                     
                     <div id="booking-list" class="booking-list mt-4">
@@ -348,5 +324,6 @@ include_once '../components/header.php';
 <?php include_once '../components/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="<?= $rootPath ?>public/js/notification.js"></script>
 <script src="<?= $rootPath ?>public/js/my-bookings-new.js"></script>
