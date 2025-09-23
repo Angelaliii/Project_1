@@ -24,33 +24,34 @@ $rootPath = '/' . $parts[1] . '/' . $parts[2] . '/';
 // 包含頁頭
 include_once '../components/header.php';
 ?>
-<div class="content-container">
-    <div class="d-flex justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="container shadow">
-                <div class="container-body p-5">
-                    <div class="text-center mb-4">
-                        <img src="<?php echo $rootPath; ?>public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
-                        <h2>教室租借系統</h2>
-                        <p class="text-muted">請登入您的帳戶</p>
-                    </div>
-                    
-                    <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                    <?php endif; ?>
-                    
-                    <?php if (!empty($success)): ?>
-                        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
-                    <?php endif; ?>
-                    
-                    <form id="loginForm" action="<?php echo $rootPath; ?>api/auth/login.php" method="POST">
+<div class="content-container d-flex align-items-center justify-content-center" style="min-height: 90vh;">
+    <div class="d-flex justify-content-center w-100">
+        <div class="col-md-12 col-lg-10">
+            <div class="container shadow auth-container">
+                <div class="container-body p-4">
+                    <div class="row">
+                        <div class="col-md-5 d-flex flex-column justify-content-center align-items-center border-end py-4">
+                            <img src="<?php echo $rootPath; ?>public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
+                            <h2 class="text-center">教室租借系統</h2>
+                            <p class="text-muted text-center">請登入您的帳戶</p>
+                        </div>
+                        <div class="col-md-7 py-4">
+                            <?php if (!empty($error)): ?>
+                                <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($success)): ?>
+                                <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+                            <?php endif; ?>
+                            
+                            <form id="loginForm" action="<?php echo $rootPath; ?>api/auth/login.php" method="POST">
                         <div class="mb-3">
                             <label for="username" class="form-label">電子郵件信箱</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                 <input type="email" class="form-control" id="username" name="username" placeholder="your.email@example.com" required>
                             </div>
-                            <div class="form-text">請使用您的電子郵件地址登入</div>
+                            <div class="form-text text-wrap">請使用您的電子郵件地址登入</div>
                         </div>
                         
                         <div class="mb-3">
@@ -76,7 +77,6 @@ include_once '../components/header.php';
     </div>
 </div>
 
-<?php include_once '../components/footer.php'; ?>
 
 <script>
     // 切換密碼顯示

@@ -7,7 +7,18 @@
 :root {
   /* 主要顏色 */
   --color-primary: #0056b3;
-  --color-primary-dark: #004494;
+  /* Bootstrap 相容的容器樣式 */
+  .container {
+    margin-top: 0; /* 移除上邊距，由Flexbox控制垤直居中 */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--color-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    width: auto; /* 確保寬度自動適應內容 */
+    max-width: 100%; /* 確保不超過父元素寬度 */
+  }
+  -primary-dark: #004494;
   --color-primary-light: #e3f2fd;
 
   /* 狀態顏色 */
@@ -94,6 +105,12 @@ body {
   box-sizing: border-box;
 }
 
+/* 專為登入/註冊頁面的垂直居中 */
+.content-container.d-flex.align-items-center {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 /* ===== 標題與內容樣式 ===== */
 .content-header {
   margin-bottom: var(--spacing-xl);
@@ -132,8 +149,7 @@ body {
 
 /* Bootstrap 相容的容器樣式 */
 .container {
-  max-width: 450px;
-  margin-top: 5%;
+  margin: auto; /* 改為自動邊距，垂直與水平方向都居中 */
   background-color: var(--color-card);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -582,13 +598,15 @@ a:hover {
 @media (max-width: 992px) {
   .content-container {
     padding: var(--spacing-lg) var(--spacing-sm);
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .container {
-    margin-top: 2%;
-    max-width: 90%;
+    margin-top: 0;
+    width: 95%; /* 在手機上使用更大的寬度比例 */
+    max-width: none; /* 覆蓋原本的限制 */
   }
 
   .form-group input {

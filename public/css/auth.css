@@ -1,5 +1,75 @@
 /* auth.css - 登入和註冊頁面樣式 */
 
+/* 認證頁面容器樣式 */
+.auth-container {
+  max-width: 1100px !important; /* 增加最大寬度 */
+  width: 100%;
+  margin: 0 auto; /* 水平居中 */
+  box-sizing: border-box; /* 確保內邊距不會增加寬度 */
+}
+
+/* 覆蓋main.css中.container的設定 */
+.container.auth-container {
+  max-width: 1100px !important; /* 覆蓋main.css中的限制 */
+  width: 100%;
+  margin: auto; /* 自動邊距，實現垂直和水平居中 */
+  padding: 0; /* 移除內邊距，由內部元素控制 */
+}
+
+/* 覆蓋輸入框和表單控制元件樣式 */
+.auth-container .form-control {
+  width: 100%;
+  padding: 8px 12px;
+}
+
+/* 讓表單和內容適合不滾動 */
+.auth-container .container-body {
+  padding: 0 !important; /* 覆蓋內部填充，由內容元素控制填充 */
+}
+
+/* 增加表單內部的間距 */
+.auth-container form {
+  padding: 0 5px; /* 增加水平內間距 */
+}
+
+/* 確保左側標題區域夠寬，能容納「教室租借系統」六個字在同一行 */
+.auth-container h2 {
+  font-size: 1.5rem; /* 適當的字體大小 */
+  white-space: nowrap; /* 防止文字換行 */
+  margin: 0.5rem 0; /* 上下間距 */
+}
+
+/* 在小螢幕上調整為垂直佈局 */
+@media (max-width: 767.98px) {
+  .auth-container .border-end {
+    border-right: none !important;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-container .row {
+    flex-direction: column;
+  }
+
+  .auth-container h2 {
+    font-size: 1.5rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .auth-container .col-md-5,
+  .auth-container .col-md-7 {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .content-container.d-flex {
+    padding: 10px;
+  }
+}
+
 /* 密碼切換按鈕樣式 */
 .password-toggle {
   background-color: #e9ecef;
@@ -11,4 +81,107 @@
 
 .password-toggle:hover {
   background-color: #d5d8dc;
+}
+
+/* 表單區域滾動樣式 */
+.auth-container .col-md-5 {
+  max-height: 70vh; /* 限制最大高度，但給予更多空間 */
+  overflow-y: auto; /* 內容太多時允許滾動 */
+  padding-left: 15px; /* 適當的填充 */
+  padding-right: 15px; /* 適當的填充 */
+  flex-shrink: 0; /* 防止縮小 */
+}
+
+.auth-container .col-md-7 {
+  max-height: 70vh; /* 限制最大高度，但給予更多空間 */
+  overflow-y: auto; /* 內容太多時允許滾動 */
+  padding-left: 25px; /* 增加左側填充 */
+  padding-right: 25px; /* 增加右側填充 */
+  flex-grow: 1; /* 讓右側區域佔據更多空間 */
+}
+
+/* 確保輸入欄位有足夠的寬度 */
+.auth-container .input-group {
+  width: 100%;
+}
+
+/* 確保提示文字完整顯示 */
+.auth-container .form-text,
+.auth-container small.form-text {
+  display: block;
+  width: 100%;
+  white-space: normal; /* 允許文字換行 */
+  overflow: visible; /* 確保文字不會被截斷 */
+  text-overflow: clip; /* 不使用省略號 */
+  word-wrap: break-word; /* 允許單詞內斷行 */
+  word-break: normal; /* 正常斷詞 */
+}
+
+/* 確保輸入框內的佔位符文字可見 */
+.auth-container .form-control::placeholder {
+  opacity: 0.7;
+  color: #999;
+  overflow: visible;
+}
+
+/* 確保輸入欄位和按鈕在小螢幕上仍然美觀 */
+@media (max-width: 768px) {
+  .container.auth-container {
+    margin: auto; /* 保持居中 */
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px;
+  }
+
+  .auth-container .form-text,
+  .auth-container small.form-text {
+    font-size: 0.85rem;
+  }
+
+  .auth-container .input-group-text {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .auth-container .container-body {
+    padding: 0 !important;
+  }
+
+  .auth-container .py-4 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .content-container {
+    min-height: 85vh !important; /* 在小螢幕上稍微減少最小高度 */
+    padding: 10px !important;
+  }
+
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* 覆蓋main.css中對container在不同螢幕尺寸的設定 */
+@media (max-width: 992px) {
+  .container.auth-container {
+    max-width: 90% !important;
+    margin: auto; /* 保持居中 */
+  }
+}
+
+@media (max-width: 576px) {
+  .container.auth-container {
+    margin: auto; /* 保持居中 */
+    max-width: 98% !important;
+  }
+
+  /* 調整內間距在小螢幕上更緊湊 */
+  .auth-container .row > div {
+    padding: 10px;
+  }
+
+  .content-container {
+    min-height: 80vh !important; /* 在更小螢幕上進一步減少最小高度 */
+  }
 }

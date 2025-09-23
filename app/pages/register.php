@@ -26,32 +26,34 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
     <link rel="icon" href="../../public/img/FJU_logo.png" type="image/png">
 </head>
 <body>
-        <div class="row justify-content-center">
-            <div class="col">
-                <div class="container shadow">
-                    <div class="container-body p-5">
-                        <div class="text-center mb-4">
-                            <img src="../../public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
-                            <h2>教室租借系統</h2>
-                            <p class="text-muted">註冊新的帳戶</p>
-                        </div>
-                        
-                        <?php if (!empty($error)): ?>
-                            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-                        <?php endif; ?>
-                        
-                        <?php if (!empty($success)): ?>
-                            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
-                        <?php endif; ?>
-                        
-                        <form id="registerForm" action="../../api/auth/register.php" method="POST">
+    <div class="content-container d-flex align-items-center justify-content-center" style="min-height: 90vh;">
+        <div class="d-flex justify-content-center w-100">
+            <div class="col-md-12 col-lg-10 p-4">
+                <div class="container shadow auth-container">
+                    <div class="container-body p-4">
+                        <div class="row">
+                            <div class="col-md-5 d-flex flex-column justify-content-center align-items-center border-end py-4">
+                                <img src="../../public/img/FJU_logo.png" alt="輔仁大學" class="logo mb-4" height="80">
+                                <h2 class="text-center">教室租借系統</h2>
+                                <p class="text-muted text-center">註冊新的帳戶</p>
+                            </div>
+                            <div class="col-md-7 py-4">
+                                <?php if (!empty($error)): ?>
+                                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($success)): ?>
+                                    <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+                                <?php endif; ?>
+                                
+                                <form id="registerForm" action="../../api/auth/register.php" method="POST">
                             <div class="mb-3">
                                 <label for="username" class="form-label">用戶名</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
                                     <input type="text" class="form-control" id="username" name="username" required>
                                 </div>
-                                <small class="form-text text-muted">設置您的顯示名稱</small>
+                                <small class="form-text text-muted text-wrap">設置您的顯示名稱</small>
                             </div>
                             
                             <div class="mb-3">
@@ -60,7 +62,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                     <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     <input type="email" class="form-control" id="email" name="email" placeholder="your.email@example.com" required>
                                 </div>
-                                <small class="form-text text-muted">請使用有效的電子郵件地址註冊</small>
+                                <small class="form-text text-muted text-wrap">請使用有效的電子郵件地址註冊</small>
                             </div>
                             
                             <div class="mb-3">
@@ -72,7 +74,7 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
-                                <small class="form-text text-muted">密碼必須至少8個字符，包含大小寫字母和數字</small>
+                                <small class="form-text text-muted text-wrap">密碼必須至少8個字符，包含大小寫字母和數字</small>
                             </div>
                             
                             <div class="mb-3">
@@ -107,8 +109,11 @@ $success = isset($_GET['success']) ? $_GET['success'] : '';
                         </form>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
+    </div>
+</div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../public/js/main.js"></script>
