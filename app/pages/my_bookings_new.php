@@ -105,9 +105,9 @@ foreach ($bookings as $booking) {
     } elseif ($bookingDate == $tomorrow) {
         $group = '明天';
     } elseif ($bookingDate >= $thisWeekStart && $bookingDate < $nextWeekStart) {
-        $group = '本週';
+        $group = '本周';
     } elseif ($bookingDate >= $nextWeekStart && $bookingDate < (clone $nextWeekStart)->modify('+7 days')) {
-        $group = '下週';
+        $group = '下周';
     } else {
         // 依照月份分組
         $group = $startDate->format('Y年m月');
@@ -326,4 +326,4 @@ include_once '../components/header.php';
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="<?= $rootPath ?>public/js/notification.js"></script>
-<script src="<?= $rootPath ?>public/js/my-bookings-new.js"></script>
+<script src="<?= $rootPath ?>public/js/my-bookings.js"></script>

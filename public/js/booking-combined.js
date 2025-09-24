@@ -1,4 +1,6 @@
 // booking-combined.js - 整合後的教室預約邏輯
+console.log('[Booking] booking-combined.js loaded');
+
 (function () {
   const HOURS_START = 8;
   const HOURS_END = 21;
@@ -8,12 +10,6 @@
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
     );
-
-  // DOM載入完成後執行初始化
-  document.addEventListener('DOMContentLoaded', function () {
-    // 初始化教室預約系統
-    initBookingSystem();
-  });
 
   // 初始化預約系統
   function initBookingSystem() {
@@ -52,6 +48,22 @@
       today.getMonth() === bookingDate.getMonth() &&
       today.getDate() === bookingDate.getDate()
     );
+  }
+
+  // 輔助函式：判斷日期是否早於今天
+  function isBookingDateBeforeToday(dateStr) {
+    if (!dateStr) return false;
+    const [y, m, d] = dateStr.split('-').map((x) => parseInt(x, 10));
+    if (!y || !m || !d) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 設置為今天0點
+
+    // 注意: 月份從0開始，所以要減1
+    const bookingDate = new Date(y, m - 1, d);
+    bookingDate.setHours(0, 0, 0, 0); // 設置為預約日0點
+
+    return bookingDate < today;
   }
 
   // 初始化篩選系統
@@ -136,15 +148,20 @@
 
   // 標記已過時間與已預約格子
   function markDisabledCells() {
-    // 檢查是否為今天
+    // 檢查預約日期
     const timetable =
       document.getElementById('booking-timetable') ||
       document.getElementById('time-grid');
     if (!timetable) return;
 
     const bookingDate = timetable.dataset.bookingDate || '';
+    const isBeforeToday = isBookingDateBeforeToday(bookingDate);
     const isToday = isBookingDateToday(bookingDate);
-    const currentHour = new Date().getHours();
+
+    // 獲取當前時間，確保精確到分鐘
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
 
     // 處理已預約格子
     const bookedCells = document.querySelectorAll('div.time-slot-booked');
@@ -153,19 +170,47 @@
       cell.style.cursor = 'not-allowed';
     });
 
-    // 處理已過時間格子
+    // 處理過去日期：所有時間格全部禁用
+    if (isBeforeToday) {
+      const allCells = document.querySelectorAll('div.time-slot-available');
+      allCells.forEach((cell) => {
+        cell.classList.remove('time-slot-available');
+        cell.classList.add('time-slot-past', 'slot-disabled');
+        cell.style.pointerEvents = 'none';
+        cell.style.backgroundColor = '#e0e0e0';
+        cell.setAttribute('title', '此日期已過期，無法預約');
+
+        // 清除任何現有的文字內容
+        const contentElements = cell.querySelectorAll('.cell-content');
+        contentElements.forEach((el) => el.remove());
+      });
+      return;
+    }
+
+    // 處理今天已過時間格子
     if (isToday) {
       const availableCells = document.querySelectorAll(
         'div.time-slot-available'
       );
       availableCells.forEach((cell) => {
         const hour = parseInt(cell.dataset.hour || '0', 10);
-        if (!isNaN(hour) && hour <= currentHour) {
+        // 當前小時已過，或當前小時且已過30分鐘（針對下午的時段）
+        const isPastHour =
+          !isNaN(hour) &&
+          (hour < currentHour ||
+            (hour === currentHour && currentMinute >= 30 && hour >= 13) || // 13:30以後的時段，過了30分就不能預約
+            (hour === currentHour && hour < 13)); // 上午時段，當前小時就不能預約
+
+        if (isPastHour) {
           cell.classList.remove('time-slot-available');
           cell.classList.add('time-slot-past', 'slot-disabled');
           cell.style.pointerEvents = 'none';
           cell.style.backgroundColor = '#e0e0e0';
           cell.setAttribute('title', '此時段已過期');
+
+          // 清除任何現有的文字內容
+          const contentElements = cell.querySelectorAll('.cell-content');
+          contentElements.forEach((el) => el.remove());
         }
       });
     }
@@ -177,40 +222,8 @@
       'div.time-slot-booked, div.time-cell.booked'
     );
 
-    if (window.bootstrap && typeof window.bootstrap.Tooltip === 'function') {
-      // 使用Bootstrap工具提示
-      bookedCells.forEach((cell) => {
-        const html = `
-          <div class="booking-tooltip">
-            <div class="booking-tooltip-header">預約資訊</div>
-            <div class="booking-tooltip-content">
-              <div class="booking-tooltip-row"><strong>租借人</strong>${
-                cell.getAttribute('data-user') || ''
-              }</div>
-              <div class="booking-tooltip-row"><strong>聯絡</strong>${
-                cell.getAttribute('data-email') || ''
-              }</div>
-              <div class="booking-tooltip-row"><strong>用途</strong>${
-                cell.getAttribute('data-purpose') || ''
-              }</div>
-            </div>
-          </div>`;
-        cell.setAttribute('data-bs-toggle', 'tooltip');
-        cell.setAttribute('data-bs-html', 'true');
-        cell.setAttribute('title', html);
-        try {
-          new bootstrap.Tooltip(cell, {
-            customClass: 'booking-custom-tooltip',
-            placement: 'bottom',
-            // 行動版使用點擊觸發，桌面版使用懸停觸發
-            trigger: isMobile ? 'click' : 'hover focus',
-          });
-        } catch (e) {
-          // Bootstrap tooltip初始化失敗
-        }
-      });
-      return;
-    }
+    // 始終使用自定義CSS tooltip樣式
+    // 移除Bootstrap tooltip的實現，改為一律使用自定義的原生tooltip
 
     // 後備原生提示工具
     let tip;
@@ -219,26 +232,277 @@
       if (tip) tip.remove();
 
       tip = document.createElement('div');
-      tip.className =
-        'tooltip-container visible' + (isMobile ? ' mobile-tooltip' : '');
+      tip.className = 'tooltip-container visible';
+
+      // 如果是行動裝置，添加特定類別
+      if (isMobile) {
+        tip.classList.add('mobile-tooltip');
+      }
+      // 取得資料
+      const userName = cell.getAttribute('data-user') || '';
+      const userEmail = cell.getAttribute('data-email') || '';
+      const purpose = cell.getAttribute('data-purpose') || '';
+
+      let tooltipContentHTML = '';
+      tooltipContentHTML += `
+          <div class="tooltip-row">
+              <strong>租借人：</strong><span class="content-text">${userName}</span>
+          </div>
+          <div class="tooltip-row">
+              <strong>聯絡方式：</strong>
+              <div class="content-text" style="display: block; margin-top: 5px;">${userEmail}</div>
+          </div>
+          <div class="tooltip-row">
+              <strong>用途：</strong><span class="content-text">${purpose}</span>
+          </div>
+      `;
+
       tip.innerHTML = `
         <div class="tooltip-header">預約資訊</div>
         <div class="tooltip-content">
-          <div class="tooltip-row"><strong>租借人:</strong> ${
-            cell.getAttribute('data-user') || ''
-          }</div>
-          <div class="tooltip-row"><strong>聯絡方式:</strong> ${
-            cell.getAttribute('data-email') || ''
-          }</div>
-          <div class="tooltip-row"><strong>用途:</strong> ${
-            cell.getAttribute('data-purpose') || ''
-          }</div>
+          ${tooltipContentHTML}
         </div>`;
 
+      // 先將 tooltip 添加到文檔中，但設為不可見，以便測量尺寸
+      tip.style.visibility = 'hidden';
       document.body.appendChild(tip);
+
+      // 獲取點擊的格子位置和尺寸
       const rect = cell.getBoundingClientRect();
-      tip.style.left = Math.max(10, rect.left) + 'px';
-      tip.style.top = rect.bottom + 10 + 'px';
+
+      // 獲取 tooltip 尺寸
+      const tipWidth = tip.offsetWidth;
+      const tipHeight = tip.offsetHeight;
+
+      // 獲取視窗尺寸
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // 獲取滾動位置
+      const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+      // 計算最佳位置
+      if (isMobile) {
+        // 行動版根據格子位置顯示 tooltip
+        tip.style.visibility = '';
+        tip.style.position = 'fixed'; // 使用 fixed 定位避免滑動影響
+        tip.style.pointerEvents = 'auto'; // 確保可以點擊
+
+        // 檢查是否有 footer 元素
+        const footer = document.querySelector('.main-footer');
+        const footerRect = footer ? footer.getBoundingClientRect() : null;
+        const footerTop = footerRect ? footerRect.top : windowHeight;
+        const safeBottomMargin = 10; // 確保與 footer 有足夠間距
+
+        // 計算可視範圍（考慮 footer 位置）
+        const visibleBottom = footerTop - safeBottomMargin;
+
+        // 判斷格子在螢幕上的位置
+        const cellCenterX = rect.left + rect.width / 2;
+        const cellCenterY = rect.top + rect.height / 2;
+        const isInUpperHalf = cellCenterY < visibleBottom / 2;
+        let leftPos, topPos, arrowClass;
+
+        // 計算水平位置，確保不超出屏幕
+        leftPos = Math.max(
+          10,
+          Math.min(cellCenterX - tipWidth / 2, windowWidth - tipWidth - 10)
+        );
+
+        if (isInUpperHalf) {
+          // 格子在上半部，優先顯示在下方
+          if (rect.bottom + tipHeight + 10 < visibleBottom) {
+            // 下方有足夠空間
+            topPos = rect.bottom + 10;
+            arrowClass = 'arrow-top';
+
+            // 設定箭頭水平位置
+            const arrowLeftOffset = Math.min(
+              Math.max(20, cellCenterX - leftPos),
+              tipWidth - 30
+            );
+            tip.style.setProperty(
+              '--arrow-left-position',
+              `${arrowLeftOffset}px`
+            );
+          } else {
+            // 下方空間不足，顯示在上方
+            topPos = Math.max(10, rect.top - tipHeight - 10);
+            arrowClass = 'arrow-bottom';
+
+            // 設定箭頭水平位置
+            const arrowLeftOffset = Math.min(
+              Math.max(20, cellCenterX - leftPos),
+              tipWidth - 30
+            );
+            tip.style.setProperty(
+              '--arrow-left-position',
+              `${arrowLeftOffset}px`
+            );
+          }
+        } else {
+          // 格子在下半部，優先顯示在上方
+          if (rect.top - tipHeight - 10 >= 10) {
+            // 上方有足夠空間
+            topPos = rect.top - tipHeight - 10;
+            arrowClass = 'arrow-bottom';
+
+            // 設定箭頭水平位置
+            const arrowLeftOffset = Math.min(
+              Math.max(20, cellCenterX - leftPos),
+              tipWidth - 30
+            );
+            tip.style.setProperty(
+              '--arrow-left-position',
+              `${arrowLeftOffset}px`
+            );
+          } else if (rect.bottom + tipHeight + 10 < visibleBottom) {
+            // 上方空間不足，但下方有足夠空間
+            topPos = rect.bottom + 10;
+            arrowClass = 'arrow-top';
+
+            // 設定箭頭水平位置
+            const arrowLeftOffset = Math.min(
+              Math.max(20, cellCenterX - leftPos),
+              tipWidth - 30
+            );
+            tip.style.setProperty(
+              '--arrow-left-position',
+              `${arrowLeftOffset}px`
+            );
+          } else {
+            // 上下都沒有足夠空間，顯示在中間位置
+            topPos = Math.max(
+              10,
+              Math.min(
+                windowHeight / 2 - tipHeight / 2,
+                visibleBottom - tipHeight - 10
+              )
+            );
+            arrowClass = ''; // 不顯示箭頭
+          }
+        }
+
+        // 確保 tooltip 不超出 footer
+        if (topPos + tipHeight + safeBottomMargin > visibleBottom) {
+          topPos = visibleBottom - tipHeight - safeBottomMargin;
+        }
+
+        tip.style.visibility = '';
+        tip.style.left = leftPos + 'px';
+        tip.style.top = topPos + 'px';
+        if (arrowClass) tip.classList.add(arrowClass);
+      } else {
+        // 檢查是否有 footer 元素
+        const footer = document.querySelector('.main-footer');
+        const footerRect = footer ? footer.getBoundingClientRect() : null;
+        const footerTop = footerRect
+          ? footerRect.top + scrollY
+          : windowHeight + scrollY;
+        const safeBottomMargin = 10; // 確保與 footer 有足夠間距
+
+        // 首先嘗試將 tooltip 放在右側
+        let leftPos = rect.right + scrollX + 10;
+        let topPos = rect.top + scrollY;
+
+        // 檢查右側是否有足夠空間
+        if (leftPos + tipWidth > scrollX + windowWidth - 10) {
+          // 右側空間不足，嘗試左側
+          leftPos = rect.left + scrollX - tipWidth - 10;
+
+          // 檢查左側是否有足夠空間
+          if (leftPos < scrollX + 10) {
+            // 左側也沒有足夠空間，放在下方或上方
+            leftPos = Math.max(
+              scrollX + 10,
+              Math.min(
+                scrollX + rect.left,
+                scrollX + windowWidth - tipWidth - 10
+              )
+            );
+
+            // 檢查下方是否有足夠空間，同時考慮 footer 位置
+            if (
+              rect.bottom + scrollY + tipHeight + 10 <=
+              footerTop - safeBottomMargin
+            ) {
+              // 下方有足夠空間
+              topPos = rect.bottom + scrollY + 10;
+            } else {
+              // 上方放置
+              topPos = Math.max(
+                scrollY + 10,
+                rect.top + scrollY - tipHeight - 10
+              );
+
+              // 確認上方也沒有足夠空間的情況
+              if (topPos < scrollY + 10) {
+                // 上下都沒有足夠空間，選擇最佳位置
+                topPos = Math.max(
+                  scrollY + 10,
+                  Math.min(
+                    scrollY + windowHeight / 2 - tipHeight / 2,
+                    footerTop - tipHeight - safeBottomMargin
+                  )
+                );
+              }
+            }
+          }
+        }
+
+        // 判斷箭頭位置
+        let arrowClass = '';
+
+        // 根據放置位置決定箭頭方向
+        if (leftPos > rect.right + scrollX) {
+          // tooltip 在格子右側
+          arrowClass = 'arrow-right';
+          // 調整箭頭垂直位置與格子中心對齊
+          const arrowTopOffset = Math.min(
+            Math.max(20, rect.top + rect.height / 2 - topPos),
+            tipHeight - 30
+          );
+          tip.style.setProperty('--arrow-top-position', `${arrowTopOffset}px`);
+        } else if (leftPos + tipWidth < rect.left + scrollX) {
+          // tooltip 在格子左側
+          arrowClass = 'arrow-left';
+          const arrowTopOffset = Math.min(
+            Math.max(20, rect.top + rect.height / 2 - topPos),
+            tipHeight - 30
+          );
+          tip.style.setProperty('--arrow-top-position', `${arrowTopOffset}px`);
+        } else if (topPos > rect.bottom + scrollY) {
+          // tooltip 在格子下方
+          arrowClass = 'arrow-top';
+          const arrowLeftOffset = Math.min(
+            Math.max(20, rect.left + rect.width / 2 - leftPos),
+            tipWidth - 30
+          );
+          tip.style.setProperty(
+            '--arrow-left-position',
+            `${arrowLeftOffset}px`
+          );
+        } else {
+          // tooltip 在格子上方
+          arrowClass = 'arrow-bottom';
+          const arrowLeftOffset = Math.min(
+            Math.max(20, rect.left + rect.width / 2 - leftPos),
+            tipWidth - 30
+          );
+          tip.style.setProperty(
+            '--arrow-left-position',
+            `${arrowLeftOffset}px`
+          );
+        }
+
+        // 應用計算後的位置和箭頭樣式
+        tip.style.visibility = '';
+        tip.style.position = 'absolute';
+        tip.style.left = leftPos + 'px';
+        tip.style.top = topPos + 'px';
+        tip.classList.add(arrowClass);
+      }
 
       // 行動版自動隱藏
       if (isMobile) {
@@ -247,7 +511,7 @@
             tip.remove();
             tip = null;
           }
-        }, 3000);
+        }, 5000);
       }
     }
 
@@ -262,9 +526,28 @@
       if (isMobile) {
         // 行動版只使用點擊
         cell.addEventListener('click', (e) => {
-          showTip(cell);
+          // 如果有開啟的提示先關閉它
+          if (tip) {
+            hideTip();
+          } else {
+            showTip(cell);
+          }
           e.stopPropagation();
         });
+
+        // 簡化行動版長按顯示提示的邏輯
+        let touchTimeout;
+
+        function handleTouchStart() {
+          touchTimeout = setTimeout(() => showTip(cell), 500);
+        }
+
+        function handleTouchEnd() {
+          clearTimeout(touchTimeout);
+        }
+
+        cell.addEventListener('touchstart', handleTouchStart);
+        cell.addEventListener('touchend', handleTouchEnd);
       } else {
         // 桌面版使用懸停和點擊
         cell.addEventListener('mouseenter', () => showTip(cell));
@@ -277,8 +560,16 @@
       }
     });
 
-    // 點擊其他地方關閉提示
-    document.addEventListener('click', hideTip);
+    // 點擊其他地方或tooltip本身(行動版)關閉提示
+    document.addEventListener('click', (e) => {
+      if (
+        tip &&
+        (e.target.closest('.tooltip-container') ||
+          !e.target.closest('.time-slot-booked, .time-cell.booked'))
+      ) {
+        hideTip();
+      }
+    });
   }
 
   // 綁定點擊事件
@@ -286,8 +577,9 @@
     // 點擊選取
     document.addEventListener('click', function (e) {
       const cell = e.target.closest(
-        '.time-slot-available:not(.slot-disabled), .time-cell:not(.booked):not(.slot-disabled)'
+        '.time-slot.time-slot-available:not(.slot-disabled)'
       );
+
       if (!cell) return;
 
       // 切換選取狀態
@@ -311,15 +603,25 @@
         }, 500);
       }
 
-      // 更新表單顯示
+      // 立即更新表單顯示
       updateFormVisibility();
+
+      // 確保表單可見性正確
+      const formContainer = document.getElementById('booking-form-container');
+      if (
+        document.querySelectorAll('.time-slot-selected').length > 0 &&
+        formContainer
+      ) {
+        formContainer.style.display = 'block';
+        formContainer.classList.add('visible');
+      }
     });
 
     // 行動版點擊其他區域隱藏表單
     if (isMobile) {
       document.addEventListener('click', function (e) {
         const formArea = e.target.closest(
-          '#booking-form-container, #booking-form, .time-slot-available, .time-cell:not(.booked)'
+          '#booking-form-container, #booking-form, .timetable, .time-slot.time-slot-available, .time-info'
         );
         const formBox =
           document.getElementById('booking-form-container') ||
@@ -353,10 +655,8 @@
   // 更新表單顯示
   function updateFormVisibility() {
     const selectedSlots = document.querySelectorAll('div.time-slot-selected');
-    const formContainer =
-      document.getElementById('booking-form-container') ||
-      document.getElementById('booking-form');
-    const purposeInput = document.getElementById('booking-purpose-input');
+    const formContainer = document.getElementById('booking-form-container');
+    const purposeInput = document.getElementById('booking-purpose');
     const selectedTimeRange = document.getElementById('selected-time-range');
     const timetable = document.getElementById('booking-timetable');
     const selectedDate = timetable ? timetable.dataset.bookingDate : '';
@@ -398,29 +698,33 @@
           // 整理顯示格式
           let displayText = selectedDate + ' ';
           let currentClassroom = null;
+          let currentClassroomName = '';
           let timeRanges = [];
 
-          // 整理每個教室的時段
-          selectedData.forEach((slot) => {
+          selectedData.forEach((slot, idx) => {
             if (currentClassroom !== slot.classroomId) {
+              // 先收尾上個教室
               if (currentClassroom !== null) {
-                displayText += `${slot.classroomName}(${formatTimeRanges(
+                displayText += `${currentClassroomName}(${formatTimeRanges(
                   timeRanges
-                )})`;
+                )}) `;
                 timeRanges = [];
               }
               currentClassroom = slot.classroomId;
-              displayText += `${slot.classroomName || slot.classroomLocation}(`;
+              currentClassroomName =
+                slot.classroomName || slot.classroomLocation || '';
             }
             timeRanges.push(slot.hour);
+
+            // 最後一筆時收尾
+            if (idx === selectedData.length - 1) {
+              displayText += `${currentClassroomName}(${formatTimeRanges(
+                timeRanges
+              )})`;
+            }
           });
 
-          // 添加最後一個教室的時段
-          if (timeRanges.length > 0) {
-            displayText += `${formatTimeRanges(timeRanges)})`;
-          }
-
-          selectedTimeRange.textContent = displayText;
+          selectedTimeRange.textContent = displayText.trim();
         }
       }
     } else {

@@ -171,27 +171,108 @@
 
 @media (max-width: 768px) {
   .header-container {
-    flex-direction: column;
     height: auto;
     padding: var(--spacing-md);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .logo {
+    order: 1;
+    flex: 1;
   }
 
   .main-nav {
-    margin: var(--spacing-md) 0;
+    order: 3;
+    flex: 100%;
+    margin: 0;
+    padding-top: var(--spacing-sm);
   }
 
   .nav-list {
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-xs);
+    -webkit-overflow-scrolling: touch;
   }
 
   .user-menu {
-    margin-top: var(--spacing-xs);
+    order: 2;
+    margin-top: 0;
   }
 
   .dropdown-content {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+}
+
+/* 在更小的螢幕尺寸下，將導航和用戶選單放在一排 */
+@media (max-width: 576px) {
+  .header-container {
+    padding: var(--spacing-sm);
+  }
+
+  .logo {
+    order: 1;
+    flex: 0 1 auto;
+  }
+
+  .logo span {
+    font-size: 1rem;
+  }
+
+  .logo img {
+    height: 28px;
+  }
+
+  .main-nav {
+    order: 2;
+    flex: 1;
+    margin: 0;
+    padding-top: 0;
+  }
+
+  .nav-list {
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .nav-list li a {
+    padding: var(--spacing-xs);
+    font-size: 0.8rem;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-list li a i {
+    margin-right: 0;
+    margin-bottom: 2px;
+    font-size: 1rem;
+  }
+
+  .user-menu {
+    order: 3;
+    margin-left: 5px;
+  }
+
+  .dropbtn {
+    padding: var(--spacing-xs);
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .auth-buttons .btn {
+    padding: 3px 8px;
+    font-size: 0.8rem;
+  }
+
+  .dropdown-content {
+    min-width: 150px;
   }
 }

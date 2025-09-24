@@ -148,9 +148,4 @@
   .footer-section {
     min-width: 100%;
   }
-
-  /* 對應調整頁面包裝器 */
-  .page-wrapper {
-    padding-bottom: 50px;
-  }
 }

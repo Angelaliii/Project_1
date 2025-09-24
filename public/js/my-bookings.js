@@ -8,23 +8,15 @@ document.addEventListener('DOMContentLoaded', function () {
   initSearchFilter();
   initSortControl();
   initCardExpansion();
-  initGroupHeaders(); // 保留呼叫但移除收合功能
-
-  // 顯示初始化完成訊息
-  console.log('My Bookings initialized');
+  initGroupHeaders();
 });
 
-/**
- * 初始化視圖切換功能 - 已移除精簡視圖功能
- */
 function initViewToggle() {
-  // 已移除視圖切換功能，直接使用卡片視圖
   const bookingList = document.querySelector('.booking-list');
   if (bookingList) {
     bookingList.classList.remove('list-view');
   }
 
-  // 清除本地儲存的視圖模式設置
   localStorage.removeItem('booking-view-mode');
 }
 
@@ -394,6 +386,9 @@ function initGroupHeaders() {
     container.style.overflow = 'visible';
     container.style.maxHeight = 'none';
   });
+
+  // 重新排序群組：「今天」「本周」「其他」
+  reorderGroups();
 }
 
 /**
@@ -437,6 +432,48 @@ function updateGroupsVisibility() {
 function organizeBookingsByGroups() {
   // 這個函數會在未來實作，根據日期或其他條件將預約分組
   console.log('Organizing bookings by groups - to be implemented');
+}
+
+/**
+ * 重新排序群組：今天、本周、其他
+ */
+function reorderGroups() {
+  const bookingList = document.getElementById('booking-list');
+  if (!bookingList) return;
+
+  // 獲取所有群組
+  const groups = Array.from(bookingList.querySelectorAll('.booking-group'));
+  if (groups.length <= 1) return;
+
+  // 定義排序順序
+  const orderPriority = {
+    今天: 1,
+    本周: 2,
+    明天: 3,
+    下周: 4,
+  };
+
+  // 排序群組
+  groups.sort((a, b) => {
+    const aName = a
+      .querySelector('.booking-group-title')
+      .textContent.trim()
+      .split(' ')[0];
+    const bName = b
+      .querySelector('.booking-group-title')
+      .textContent.trim()
+      .split(' ')[0];
+
+    const aPriority = orderPriority[aName] || 100;
+    const bPriority = orderPriority[bName] || 100;
+
+    return aPriority - bPriority;
+  });
+
+  // 重新附加排序後的群組
+  groups.forEach((group) => {
+    bookingList.appendChild(group);
+  });
 }
 
 /**

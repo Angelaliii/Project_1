@@ -36,20 +36,19 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- 自定義 CSS -->
-    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/main.css">
-    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/header.css">
-    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/footer.css">
+    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/main.css?v=<?=@filemtime($_SERVER['DOCUMENT_ROOT'].$rootPath.'public/css/main.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/header.css?v=<?=@filemtime($_SERVER['DOCUMENT_ROOT'].$rootPath.'public/css/header.css'); ?>">
+    <link rel="stylesheet" href="<?php echo $rootPath; ?>public/css/footer.css?v=<?=@filemtime($_SERVER['DOCUMENT_ROOT'].$rootPath.'public/css/footer.css'); ?>">
+
     
     <?php if (isset($pageStyles) && is_array($pageStyles)): ?>
         <?php foreach ($pageStyles as $style): ?>
-            <link rel="stylesheet" href="<?php echo $rootPath . 'public/css/' . $style; ?>">
+            <link rel="stylesheet" href="<?php echo $rootPath.'public/css/'.$style; ?>?v=<?=@filemtime($_SERVER['DOCUMENT_ROOT'].$rootPath.'public/css/'.$style); ?>">
         <?php endforeach; ?>
     <?php endif; ?>
 
-    <!-- 全局腳本：初始化所有 tooltips -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 初始化所有具有 data-bs-toggle="tooltip" 屬性的元素
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl, {
@@ -59,7 +58,6 @@ $isLoggedIn = isset($_SESSION['user_id']);
                 });
             });
             
-            console.log('全局 tooltips 已初始化');
             
             // 監聽動態添加的元素
             const observer = new MutationObserver(function(mutations) {

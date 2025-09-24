@@ -15,7 +15,16 @@ $conn = getDbConnection();
 // 處理篩選參數
 $buildingFilter = $_GET['building'] ?? 'all';
 $classroomType = $_GET['classroom_type'] ?? 'all';
-$selectedDate = $_GET['booking_date'] ?? $_GET['date'] ?? date('Y-m-d'); // 接受兩種參數名稱，兼容舊版本
+
+// 接受兩種參數名稱，兼容舊版本
+$requestedDate = $_GET['booking_date'] ?? $_GET['date'] ?? date('Y-m-d'); 
+
+// 確保日期有效且不早於今天
+$today = date('Y-m-d');
+$dateTime = DateTime::createFromFormat('Y-m-d', $requestedDate);
+$selectedDate = ($dateTime && $dateTime->format('Y-m-d') === $requestedDate && $requestedDate >= $today) 
+    ? $requestedDate 
+    : $today;
 
 // 獲取建築物清單
 $buildingStmt = $conn->query("SELECT DISTINCT building FROM classrooms ORDER BY building");
@@ -148,7 +157,7 @@ $hours = range(8, 20);
                     </label>
                     <input type="date" id="date-filter" name="booking_date"
                            class="form-control auto-submit"
-                           value="<?= $selectedDate ?>"
+                           value="<?= $selectedDate < date('Y-m-d') ? date('Y-m-d') : $selectedDate ?>"
                            min="<?= date('Y-m-d') ?>">
                 </div>
                 
@@ -191,7 +200,7 @@ $hours = range(8, 20);
             <div>
                 <strong>使用說明：</strong>
                 點擊選擇時段，再次點擊可取消選擇。
-                灰色為已過時間，紅色為已預約時段（可懸停查看詳情）。
+                灰色為已過時間，紅色為已預約時段（懸停可查看詳情）。
             </div>
         </div>
 
@@ -316,8 +325,7 @@ $hours = range(8, 20);
 </main>
 
 <!-- 引入整合後的JavaScript -->
-<script src="<?= $rootPath ?>public/js/booking-combined.js"></script>
-
+<script src="<?= $rootPath ?>public/js/booking-combined.js?v=dev" defer></script>
 <!-- 表單驗證 -->
 <script>
 (function() {
@@ -336,7 +344,26 @@ $hours = range(8, 20);
                     alert('請至少選擇一個時段');
                     return false;
                 }
+                
+                // 檢查日期是否有效
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const [y, m, d] = bookingDate.split('-').map(x => parseInt(x, 10));
+                const selectedDate = new Date(y, m - 1, d);
+                selectedDate.setHours(0, 0, 0, 0);
+                
+                if (selectedDate < today) {
+                    e.preventDefault();
+                    alert('不能預約過去的日期');
+                    return false;
+                }
             });
+        }
+        
+        // 確保在頁面載入後立即標記已過時間
+        if (window.Booking && typeof window.Booking.initialize === 'function') {
+            window.Booking.initialize();
         }
     });
 })();

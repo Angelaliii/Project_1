@@ -100,17 +100,32 @@ if (empty($groupedByClassroom)) {
     redirect_with_errors($bookingDate, ['所有欄位都是必填的']);
 }
 
-// 允許今天，但不可包含已過去的小時
+// 不允許過去的日期，也不允許當天已過的時段
 $now = new DateTime('now', $tz);
 $baseDay = DateTime::createFromFormat('Y-m-d H:i:s', $bookingDate . ' 00:00:00', $tz);
 if (!$baseDay) {
     redirect_with_errors($bookingDate, ['日期解析錯誤']);
 }
+
+// 檢查是否是過去的日期
+$today = new DateTime('today', $tz);
+if ($baseDay < $today) {
+    redirect_with_errors($bookingDate, ['不能預約過去的日期']);
+}
+
 $pastHours = [];
 if ($baseDay->format('Y-m-d') === $now->format('Y-m-d')) {
+    $currentHour = (int)$now->format('H');
+    $currentMinute = (int)$now->format('i');
+    
     foreach (array_unique($allHoursFlat) as $h) {
-        $slotStart = (clone $baseDay)->modify("+{$h} hours");
-        if ($slotStart <= $now) {
+        // 檢查是否為已過時間
+        $isPastHour = 
+            $h < $currentHour || 
+            ($h === $currentHour && $currentMinute >= 30 && $h >= 13) || // 13:30以後的時段，過了30分就不能預約
+            ($h === $currentHour && $h < 13); // 上午時段，當前小時就不能預約
+            
+        if ($isPastHour) {
             $pastHours[] = $h;
         }
     }
