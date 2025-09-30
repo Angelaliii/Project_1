@@ -5,6 +5,19 @@
 require_once '../../app/config/database.php';
 require_once '../../app/models/UserModel.php';
 
+// 啟用 session（以便檢查 CSRF token）
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// CSRF 驗證
+require_once __DIR__ . '/../../app/helpers/security.php';
+$csrf = $_POST['csrf_token'] ?? '';
+if (!verify_csrf($csrf)) {
+    header('Location: ../../app/pages/register.php?error=無效的請求 (CSRF 驗證失敗)');
+    exit;
+}
+
 // 檢查請求方法
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../../app/pages/register.php?error=不允許的請求方法');

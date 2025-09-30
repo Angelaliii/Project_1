@@ -3,6 +3,7 @@
 session_start();
 
 require_once dirname(__DIR__) . '/config/database.php';
+require_once dirname(__DIR__) . '/models/UserModel.php';
 
 // 建議設時區，與 DB 保持一致
 date_default_timezone_set('Asia/Taipei');
@@ -22,7 +23,7 @@ function redirect_success(string $bookingDate, string $msg) {
 
 // 需登入
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // 同層
+    header("Location: login.php");
     exit;
 }
 $sessionRole = isset($_SESSION['role']) ? strtolower(trim((string)$_SESSION['role'])) : '';
@@ -136,10 +137,32 @@ if (!empty($pastHours)) {
     redirect_with_errors($bookingDate, ["以下時段已經過去，無法預約：{$txt}"]);
 }
 
+// 檢查預約月份的租借限制
+try {
+    // 初始化UserModel
+    $userModel = new UserModel();
+    
+    // 從預約日期中獲取年月
+    $yearMonth = substr($bookingDate, 0, 7); // 格式 YYYY-MM
+    
+    // 檢查預約月份的租借次數
+    $monthBookingCount = $userModel->getMonthBookingCount($_SESSION['user_id'], $yearMonth);
+    
+    // 如果該月預約已經達到或超過3個，則禁止再預約
+    if ($monthBookingCount >= 3) {
+        // 顯示年月
+        $dateObj = DateTime::createFromFormat('Y-m-d', $bookingDate);
+        $formattedMonth = $dateObj->format('Y年m月');
+        redirect_with_errors($bookingDate, ["您在{$formattedMonth}的預約已達到上限（每月最多3個），請選擇其他月份或取消一些該月的預約"]);
+    }
+} catch (Exception $e) {
+    error_log('檢查預約限制時出錯: ' . $e->getMessage(), 0);
+    redirect_with_errors($bookingDate, ['檢查預約限制時發生錯誤，請稍後再試']);
+}
+
 // 執行交易
 try {
     $pdo = getDbConnection();
-    // 建議在 getDbConnection() 設定：$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $pdo->beginTransaction();
     $bookingCount = 0;

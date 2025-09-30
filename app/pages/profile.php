@@ -324,7 +324,7 @@ try {
                                     
                                     <?php if (!empty($activities)): ?>
                                         <div class="activity-actions text-center mt-3">
-                                            <a href="my_bookings.php" class="btn btn-sm btn-primary">
+                                            <a href="my_bookings_new.php" class="btn btn-sm btn-primary">
                                                 <i class="fas fa-calendar-check me-1"></i>查看預約紀錄
                                             </a>
                                         </div>

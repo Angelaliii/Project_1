@@ -11,6 +11,7 @@ require_once '../config/database.php';
 require_once '../models/UserModel.php';
 
 $conn = getDbConnection();
+$userModel = new UserModel();
 
 // 處理篩選參數
 $buildingFilter = $_GET['building'] ?? 'all';
@@ -25,6 +26,11 @@ $dateTime = DateTime::createFromFormat('Y-m-d', $requestedDate);
 $selectedDate = ($dateTime && $dateTime->format('Y-m-d') === $requestedDate && $requestedDate >= $today) 
     ? $requestedDate 
     : $today;
+
+// 獲取所選日期的月份預約數量
+$selectedYearMonth = substr($selectedDate, 0, 7); // 格式 YYYY-MM
+$selectedMonthBookingCount = $userModel->getMonthBookingCount($_SESSION['user_id'], $selectedYearMonth);
+$remainingBookings = 3 - $selectedMonthBookingCount;
 
 // 獲取建築物清單
 $buildingStmt = $conn->query("SELECT DISTINCT building FROM classrooms ORDER BY building");
@@ -143,6 +149,21 @@ $hours = range(8, 20);
             <h1 class="display-5 fw-bold">
                 <i class="fas fa-calendar-plus text-primary me-2"></i> 教室預約
             </h1>
+            <div class="booking-limit-info">
+                <?php 
+                    // 格式化所選月份為易讀格式
+                    $formattedMonth = date('Y年m月', strtotime($selectedDate));
+                ?>
+                <?php if ($remainingBookings > 0): ?>
+                <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle"></i> <?= $formattedMonth ?>剩餘可預約次數: <strong><?= $remainingBookings ?></strong>
+                </div>
+                <?php else: ?>
+                <div class="alert alert-warning mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> 您在<?= $formattedMonth ?>的預約已達上限
+                </div>
+                <?php endif; ?>
+            </div>
         </div>
         <p class="lead text-muted">選擇日期和教室類型，點擊時間格以選擇預約時段</p>
     </div>
@@ -299,10 +320,9 @@ $hours = range(8, 20);
                 <input type="hidden" id="selected_slots" name="selected_slots" value="">
                 
                 <div class="form-group mb-3">
-                    <label for="booking-purpose">預約用途</label>
+                    <label for="booking-purpose">預約用途*</label>
                     <input type="text" class="form-control" id="booking-purpose" name="purpose" 
                            placeholder="請輸入預約用途" required>
-                    <small class="form-text text-muted">將自動同步至篩選區的預約目的輸入框</small>
                 </div>
                 
                 <div class="form-group mb-3">

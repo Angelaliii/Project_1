@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
   try {
     console.log('初始化教室管理頁面...');
 
-    // 通用功能
-
     // 點擊行時的視覺反饋 (保留通用功能)
     const tableRows = document.querySelectorAll('tbody tr');
     tableRows.forEach((row) => {

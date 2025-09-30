@@ -223,6 +223,62 @@ class UserModel {
     }
     
     /**
+     * 獲取用戶當月即將到來的預約數量
+     * 
+     * @param int $userId 用戶ID
+     * @return int 當月即將到來的預約數量
+     */
+    public function getCurrentMonthUpcomingBookingCount($userId) {
+        try {
+            $sql = "SELECT COUNT(*) 
+                    FROM bookings 
+                    WHERE user_ID = ? 
+                    AND YEAR(start_datetime) = YEAR(CURRENT_DATE) 
+                    AND MONTH(start_datetime) = MONTH(CURRENT_DATE) 
+                    AND start_datetime > CURRENT_TIMESTAMP 
+                    AND status = 'booked'";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId]);
+            return (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            throw new Exception("獲取用戶當月預約數量時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * 獲取用戶特定月份的預約數量
+     * 
+     * @param int $userId 用戶ID
+     * @param string $yearMonth 年月格式 (YYYY-MM)
+     * @return int 特定月份的預約數量
+     */
+    public function getMonthBookingCount($userId, $yearMonth) {
+        try {
+            $parts = explode('-', $yearMonth);
+            if (count($parts) !== 2) {
+                throw new Exception("無效的年月格式，應為 YYYY-MM");
+            }
+            
+            $year = (int)$parts[0];
+            $month = (int)$parts[1];
+            
+            $sql = "SELECT COUNT(*) 
+                    FROM bookings 
+                    WHERE user_ID = ? 
+                    AND YEAR(start_datetime) = ? 
+                    AND MONTH(start_datetime) = ? 
+                    AND status = 'booked'";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$userId, $year, $month]);
+            return (int)$stmt->fetchColumn();
+        } catch (PDOException $e) {
+            throw new Exception("獲取用戶特定月份預約數量時出錯: " . $e->getMessage());
+        }
+    }
+    
+    /**
      * 獲取用戶的活動記錄
      * 
      * @param int $userId 用戶ID

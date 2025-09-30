@@ -13,6 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// 載入共用 security helper 並驗證 CSRF
+require_once __DIR__ . '/../../app/helpers/security.php';
+$csrf = $_POST['csrf_token'] ?? '';
+if (!verify_csrf($csrf)) {
+    header('Location: ../../app/pages/login.php?error=無效的請求 (CSRF 驗證失敗)');
+    exit;
+}
+
 // 接收表單數據
 $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_EMAIL);
 $password = $_POST['password'];
@@ -35,6 +43,9 @@ try {
     $user = $userModel->authenticate($username, $password);
     
     if ($user) {        // 登入成功，設置 session
+        // 重新產生 session id 以防止 session fixation
+        session_regenerate_id(true);
+
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['user_name'];
         $_SESSION['email'] = $user['mail'];

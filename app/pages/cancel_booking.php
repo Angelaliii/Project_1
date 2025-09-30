@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // 獲取預約ID和重定向URL
 $bookingId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$redirectUrl = isset($_GET['redirect']) ? $_GET['redirect'] : 'my_bookings.php';
+$redirectUrl = isset($_GET['redirect']) ? $_GET['redirect'] : 'my_bookings_new.php';
 
 // 驗證預約ID
 if (!$bookingId) {

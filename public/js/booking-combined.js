@@ -5,6 +5,12 @@ console.log('[Booking] booking-combined.js loaded');
   const HOURS_START = 8;
   const HOURS_END = 21;
 
+  // 獲取當月預約剩餘數量
+  const bookingLimitInfoElement = document.querySelector('.booking-limit-info');
+  const hasReachedMonthlyLimit =
+    bookingLimitInfoElement &&
+    bookingLimitInfoElement.querySelector('.alert-warning') !== null;
+
   // 檢測行動裝置
   const isMobile =
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -581,6 +587,24 @@ console.log('[Booking] booking-combined.js loaded');
       );
 
       if (!cell) return;
+
+      // 檢查是否已達所選月份的預約上限
+      if (
+        hasReachedMonthlyLimit &&
+        !cell.classList.contains('time-slot-selected')
+      ) {
+        // 獲取預約月份的顯示信息
+        const alertWarning =
+          bookingLimitInfoElement.querySelector('.alert-warning');
+        const monthText = alertWarning
+          ? alertWarning.textContent.trim()
+          : '您所選月份';
+
+        alert(
+          `${monthText}的預約已達到上限（每月最多3個），請選擇其他月份或取消一些該月的預約`
+        );
+        return;
+      }
 
       // 切換選取狀態
       if (cell.classList.contains('time-slot-selected')) {

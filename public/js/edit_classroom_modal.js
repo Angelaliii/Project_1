@@ -2,15 +2,12 @@
 
 document.addEventListener('DOMContentLoaded', function () {
   try {
-    console.log('初始化編輯教室模態框...');
-
     // 初始化模態框
     let editClassroomModal;
 
     const editClassroomModalEl = document.getElementById('editClassroomModal');
     if (editClassroomModalEl) {
       editClassroomModal = new bootstrap.Modal(editClassroomModalEl);
-      console.log('編輯教室模態框初始化成功');
     } else {
       console.error('找不到編輯教室模態框元素');
     }
@@ -29,11 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // 編輯教室按鈕點擊事件
     const editBtns = document.querySelectorAll('.edit-classroom-btn');
     if (editBtns.length > 0) {
-      console.log(`找到 ${editBtns.length} 個編輯按鈕`);
       editBtns.forEach((btn) => {
         btn.addEventListener('click', function (e) {
           e.stopPropagation();
-          console.log('編輯按鈕被點擊');
 
           // 獲取資料
           const classroomId = this.getAttribute('data-id');
@@ -42,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
           const building = this.getAttribute('data-building');
           const room = this.getAttribute('data-room');
 
-          console.log(`編輯教室：ID=${classroomId}, 名稱=${name}`);
+          // 已取得教室資料
 
           try {
             // 設置表單值
@@ -61,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
             // 顯示彈窗
             if (editClassroomModal) {
               editClassroomModal.show();
-              console.log('顯示編輯教室模態框');
             } else {
               console.error('無法顯示編輯教室模態框：模態框未初始化');
             }
@@ -116,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const updateForm = document.querySelector('#editClassroomModal form');
     if (updateForm) {
       updateForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // 阻止表單的默認提交行為
+
         // 檢查必填欄位
         const classroomName = document
           .getElementById('edit_classroom_name')
@@ -123,13 +119,71 @@ document.addEventListener('DOMContentLoaded', function () {
         const building = document.getElementById('edit_building').value.trim();
 
         if (classroomName === '') {
-          e.preventDefault();
           notificationSystem.showError('教室名稱為必填欄位', '表單驗證失敗');
+          return;
         } else if (building === '') {
-          e.preventDefault();
           notificationSystem.showError('樓宇為必填欄位', '表單驗證失敗');
+          return;
         }
-        // 成功時由伺服器端透過 notificationSystem 顯示成功訊息
+
+        // 使用 fetch API 提交表單
+        const formData = new FormData(this);
+        console.log('提交編輯教室表單，資料：', Object.fromEntries(formData));
+
+        fetch(window.location.href, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+        })
+          .then((response) => {
+            console.log('收到回應：', response.status, response.statusText);
+
+            if (!response.ok && !response.redirected) {
+              return response.text().then((text) => {
+                throw new Error(`伺服器錯誤 (${response.status}): ${text}`);
+              });
+            }
+
+            return response.text().then((text) => {
+              return {
+                text,
+                redirected: response.redirected,
+                url: response.url,
+              };
+            });
+          })
+          .then((result) => {
+            if (result) {
+              console.log('表單提交成功');
+
+              // 關閉模態視窗
+              const editModalEl = document.getElementById('editClassroomModal');
+              const editModal = bootstrap.Modal.getInstance(editModalEl);
+              if (editModal) {
+                editModal.hide();
+              }
+
+              // 顯示成功通知
+              if (window.notificationSystem) {
+                window.notificationSystem.showSuccess('教室資訊已成功更新！');
+              }
+
+              // 重新載入頁面以顯示更新後的資料
+              setTimeout(() => {
+                location.reload();
+              }, 500);
+            }
+          })
+          .catch((error) => {
+            console.error('提交表單出錯:', error);
+            if (window.notificationSystem) {
+              window.notificationSystem.showError(
+                '更新教室資訊時發生錯誤: ' + error.message
+              );
+            } else {
+              alert('更新教室資訊時發生錯誤\n' + error.message);
+            }
+          });
       });
     }
   } catch (error) {

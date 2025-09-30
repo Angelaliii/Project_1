@@ -2,11 +2,9 @@
 // edit_profile.php - 用戶編輯個人資料頁面
 session_start();
 
-// 引入必要文件
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/models/UserModel.php';
 
-// 確定使用者已登入
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit;
@@ -19,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $userModel->findById($_SESSION['user_id']);
         
         if (!$user) {
-            // 如果找不到用戶，則可能是session過期或用戶被刪除
             session_destroy();
             header("Location: login.php?error=您的帳戶不再存在");
             exit;

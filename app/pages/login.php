@@ -1,6 +1,18 @@
 <?php
 // login.php - 用戶登入頁面
+// 設定更安全的 session cookie 參數並啟動 session
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'domain' => '',
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
+
+// 載入共用 security helper（會確保 CSRF token）
+require_once __DIR__ . '/../helpers/security.php';
 
 // 如果已經登入，重定向到教室租借頁面
 if (isset($_SESSION['user_id'])) {
@@ -45,6 +57,7 @@ include_once '../components/header.php';
                             <?php endif; ?>
                             
                             <form id="loginForm" action="<?php echo $rootPath; ?>api/auth/login.php" method="POST">
+                                <?= csrf_field() ?>
                         <div class="mb-3">
                             <label for="username" class="form-label">電子郵件信箱</label>
                             <div class="input-group">

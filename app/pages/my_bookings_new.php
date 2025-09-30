@@ -243,16 +243,14 @@ include_once '../components/header.php';
                                             $endHour = (int)$endDate->format('H');
                                             $timeFormatted = '';
                                             
-                                            // 處理特殊時間段
-                                            if ($startDate->format('H:i') == '12:00' && $endDate->format('H:i') == '13:30') {
-                                                $timeFormatted = '12:00-13:30';
-                                            } 
-                                            // 處理 13:30 之後的時段
-                                            elseif ($startHour >= 13 && $startHour <= 20) {
-                                                $timeFormatted = $startHour . ':30-' . ($startHour+1) . ':30';
-                                            } else {
-                                                $timeFormatted = $startDate->format('H:i') . '-' . $endDate->format('H:i');
-                                            }
+                                            // 直接使用實際的開始和結束時間
+                                            $timeFormatted = $startDate->format('H:i') . '-' . $endDate->format('H:i');
+                                            
+                                            // 計算總時長（小時），無小數點
+                                            $duration = ($endDate->getTimestamp() - $startDate->getTimestamp()) / 3600;
+                                            
+                                                $timeFormatted .= ' （' . ceil($duration) . '小時）';
+                                            
                                         ?>
                                         <div class="booking-card" data-status="<?php echo htmlspecialchars($booking['status']); ?>" data-start-time="<?php echo htmlspecialchars($booking['start_datetime']); ?>" data-group="<?php echo htmlspecialchars($groupName); ?>">
                                             <div class="booking-header">

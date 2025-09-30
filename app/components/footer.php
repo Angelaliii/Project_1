@@ -1,5 +1,4 @@
 <?php
-// 設置根路徑（如果未定義）
 $rootPath = isset($rootPath) ? $rootPath : '../../';
 ?>
 
@@ -11,7 +10,7 @@ $rootPath = isset($rootPath) ? $rootPath : '../../';
     </div>
 </footer>
 
-<!-- Bootstrap JS 由各頁面自行引入，避免重複 -->
+<!-- Bootstrap JS 由各頁面自行引入 -->
 
 </body>
 </html>

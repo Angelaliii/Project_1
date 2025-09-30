@@ -1,5 +1,6 @@
 <?php
 // 新增教室的模態視窗組件
+require_once __DIR__ . '/../../helpers/security.php';
 ?>
 <!-- 新增教室的彈出窗口 -->
 <div id="addClassroomModal" class="modal fade" tabindex="-1" aria-labelledby="addClassroomModalLabel" aria-hidden="true">
@@ -11,6 +12,7 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="add-classroom-form" enctype="multipart/form-data">
+                    <?= csrf_field() ?>
                     <div class="mb-3">
                         <label for="classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
                         <input type="text" id="classroom_name" name="classroom_name" class="form-control" required>
@@ -32,6 +34,8 @@
                                 <label class="form-check-label" for="role-student">開啟</label>
                             </div>
                         </div>
+                        <!-- 隱藏的除錯欄位 -->
+                        <input type="hidden" name="debug_info" value="表單提交時間: <?= date('Y-m-d H:i:s') ?>">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">取消</button>

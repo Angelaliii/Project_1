@@ -13,6 +13,8 @@ if (!isset($rootPath)) {
 
 
 $isLoggedIn = isset($_SESSION['user_id']);
+// Include security helper (safe to include; it ensures session exists)
+require_once __DIR__ . '/../helpers/security.php';
 ?>
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -83,12 +85,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
     </script>
 </head>
 <body>
-<div class="page-wrapper"><!-- 開始 page-wrapper -->
+<div class="page-wrapper">
 
 <?php
 // 判斷當前頁面是否為登入或註冊頁面
 $current_page = basename($_SERVER['PHP_SELF']);
-if ($current_page != 'login.php' && $current_page != 'register.php') { // 只在非登入/註冊頁面顯示 header
+if ($current_page != 'login.php' && $current_page != 'register.php') {
 ?>
 <header class="main-header">
     <div class="header-container">
@@ -152,4 +154,4 @@ if ($current_page != 'login.php' && $current_page != 'register.php') { // 只在
         </div>
     </div>
 </header>
-<?php } // 結束 header 條件顯示 ?>
+<?php } ?>

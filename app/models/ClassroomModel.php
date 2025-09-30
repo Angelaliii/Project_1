@@ -106,25 +106,25 @@ class ClassroomModel {
         try {
             $this->db->beginTransaction();
             
-            // 圖片處理
-            $picture = null;
-            if (isset($data['picture']) && $data['picture']['error'] == 0) {
-                $picture = file_get_contents($data['picture']['tmp_name']);
-            }
+            // 輸出接收到的數據，以供調試
+            error_log("接收到的教室數據: " . print_r($data, true));
             
-            // 準備 SQL 語句插入教室
-            $sql = "INSERT INTO classrooms (classroom_name, building, room, picture) VALUES (?, ?, ?, ?)";
+            // 準備 SQL 語句插入教室 - 只使用存在的欄位
+            $sql = "INSERT INTO classrooms (classroom_name, building, room, classroom_type) VALUES (?, ?, ?, 'standard')";
             $stmt = $this->db->prepare($sql);
             
             // 綁定參數並執行
             $stmt->bindParam(1, $data['classroom_name']);
             $stmt->bindParam(2, $data['building']);
             $stmt->bindParam(3, $data['room']);
-            $stmt->bindParam(4, $picture, PDO::PARAM_LOB);
+            
+            error_log("執行 SQL: $sql");
+            error_log("參數: " . $data['classroom_name'] . ", " . $data['building'] . ", " . $data['room']);
             
             if ($stmt->execute()) {
                 // 獲取新插入的教室 ID
                 $classroom_id = $this->db->lastInsertId();
+                error_log("新教室 ID: $classroom_id");
                 
                 // 處理權限 - 尊重使用者選擇的權限
                 $allowed_roles = [];
@@ -135,9 +135,13 @@ class ClassroomModel {
                 // 只有在用戶明確選擇了學生權限時才添加
                 if (isset($data['allowed_roles']) && is_array($data['allowed_roles']) && in_array('student', $data['allowed_roles'])) {
                     $allowed_roles[] = 'student';
+                    error_log("學生權限已加入");
+                } else {
+                    error_log("學生權限未加入，allowed_roles: " . (isset($data['allowed_roles']) ? print_r($data['allowed_roles'], true) : "未設置"));
                 }
                 
                 $allowed_roles_string = implode(',', $allowed_roles);
+                error_log("最終權限字符串: $allowed_roles_string");
                 
                 // 插入教室權限
                 $sql = "INSERT INTO classroom_permissions (classroom_id, allowed_roles) VALUES (?, ?)";
@@ -145,21 +149,30 @@ class ClassroomModel {
                 $stmt->bindParam(1, $classroom_id);
                 $stmt->bindParam(2, $allowed_roles_string);
                 
+                error_log("執行權限 SQL: $sql");
+                error_log("參數: $classroom_id, $allowed_roles_string");
+                
                 if ($stmt->execute()) {
                     $this->db->commit();
+                    error_log("教室創建成功，ID: $classroom_id");
                     return $classroom_id;
                 } else {
                     $this->db->rollBack();
-                    throw new Exception("教室權限設置失敗");
+                    $errorInfo = $stmt->errorInfo();
+                    error_log("權限設置失敗: " . print_r($errorInfo, true));
+                    throw new Exception("教室權限設置失敗: " . ($errorInfo[2] ?? "未知錯誤"));
                 }
             } else {
                 $this->db->rollBack();
-                throw new Exception("教室新增失敗");
+                $errorInfo = $stmt->errorInfo();
+                error_log("教室新增失敗: " . print_r($errorInfo, true));
+                throw new Exception("教室新增失敗: " . ($errorInfo[2] ?? "未知錯誤"));
             }
         } catch (PDOException $e) {
             if ($this->db->inTransaction()) {
                 $this->db->rollBack();
             }
+            error_log("PDO 異常: " . $e->getMessage() . "\n" . $e->getTraceAsString());
             throw new Exception("創建教室時出錯: " . $e->getMessage());
         }
     }
@@ -175,7 +188,7 @@ class ClassroomModel {
         try {
             $this->db->beginTransaction();
 
-            // 更新教室信息
+            // 更新教室信息 - 只更新存在的欄位
             $updateClassroomSql = "UPDATE classrooms SET classroom_name = ?, building = ?, room = ? WHERE classroom_ID = ?";
             $updateClassroomStmt = $this->db->prepare($updateClassroomSql);
             $updateResult = $updateClassroomStmt->execute([

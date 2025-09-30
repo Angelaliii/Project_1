@@ -1,58 +1,60 @@
 <?php
 session_start();
 
-// 檢查用戶是否已登入且為教師
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
     header('Location: login.php');
     exit;
 }
 
-// 引入資料庫配置文件和模型
 require_once '../config/database.php';
 require_once '../models/ClassroomModel.php';
+require_once '../helpers/security.php';
 
 $classroomModel = new ClassroomModel();
 
 // 處理新增教室表單提交
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_classroom'])) {
-    $classroom_name = $_POST['classroom_name'] ?? '';
-    $building = $_POST['building'] ?? '';
-    $room = $_POST['room'] ?? '';
-    $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['student', 'teacher'];
-    
-    // 確保教師永遠有權限
-    if (!in_array('teacher', $allowed_roles)) {
-        $allowed_roles[] = 'teacher';
-    }
-    
-    // 檢查必填欄位
-    if (empty($classroom_name)) {
-        $message = '教室名稱為必填欄位';
+    // 驗證 CSRF Token
+    if (!isset($_POST['csrf_token']) || !verify_csrf($_POST['csrf_token'])) {
+        $message = '安全驗證失敗，請重新操作';
     } else {
-        try {
+        $classroom_name = $_POST['classroom_name'] ?? '';
+        $building = $_POST['building'] ?? '';
+        $room = $_POST['room'] ?? '';
+        $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['student', 'teacher'];
+        
+        // 教師永遠有權限
+        if (!in_array('teacher', $allowed_roles)) {
+            $allowed_roles[] = 'teacher';
+        }
+        
+        // 檢查必填欄位
+        if (empty($classroom_name)) {
+            $message = '教室名稱為必填欄位';
+        } else {
+            try {
             // 創建新教室數據
             $classroomData = [
                 'classroom_name' => $classroom_name,
                 'building' => $building,
                 'room' => $room,
-                'allowed_roles' => $allowed_roles,
-                'picture' => isset($_FILES['picture']) ? $_FILES['picture'] : null
+                'allowed_roles' => $allowed_roles
             ];
             
-            // 使用模型創建教室
             $classroomId = $classroomModel->create($classroomData);
             
             if ($classroomId) {
                 $message = '教室新增成功';
-                // 重新導向以避免重複提交
-                header('Location: ' . $_SERVER['PHP_SELF']);
-                exit;
+                // 移除重定向，讓通知系統有機會顯示訊息
+                // header('Location: ' . $_SERVER['PHP_SELF']);
+                // exit;
             } else {
                 $message = '教室新增失敗';
             }
         } catch (Exception $e) {
             $message = '數據庫錯誤：' . $e->getMessage();
+        }
         }
     }
 }
@@ -65,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_classroom'])) {
     $room = $_POST['room'] ?? '';
     $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : [];
     
-    // 確保教師永遠有權限
+    // 教師永遠有權限
     if (!in_array('teacher', $allowed_roles)) {
         $allowed_roles[] = 'teacher';
     }
@@ -86,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_classroom'])) {
             
             // 使用模型更新教室
             if ($classroomModel->update($classroom_id, $classroomData)) {
-                $message = '教室資訊和權限已更新';
+                $message = '教室資訊已更新';
             } else {
                 $message = '更新教室失敗';
             }
@@ -118,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_classroom'])) {
 
 // 設置每頁顯示的教室數量
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$perPage = 10; // 每頁顯示 10 條記錄
+$perPage = 10;
 
 // 搜尋功能
 $search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -153,7 +155,19 @@ include_once '../components/header.php';
 if (!empty($message) && !headers_sent()) {
     $messageType = strpos($message, '成功') !== false ? 'success' : 'error';
     $functionName = $messageType === 'success' ? 'showSuccess' : 'showError';
-    echo '<script>document.addEventListener("DOMContentLoaded", () => notificationSystem.' . $functionName . '("' . addslashes($message) . '"));</script>';
+    echo '<script>document.addEventListener("DOMContentLoaded", () => {
+        console.log("顯示通知: ' . addslashes($message) . '");
+        if (window.notificationSystem) {
+            window.notificationSystem.' . $functionName . '("' . addslashes($message) . '");
+        } else {
+            console.error("通知系統未初始化");
+            setTimeout(() => {
+                if (window.notificationSystem) {
+                    window.notificationSystem.' . $functionName . '("' . addslashes($message) . '");
+                }
+            }, 1000);
+        }
+    });</script>';
 }
 
 ?>
@@ -307,6 +321,16 @@ if (!empty($message) && !headers_sent()) {
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="../../public/js/notification.js"></script>
+<script>
+// 確保通知系統已初始化
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('確認通知系統初始化狀態:', window.notificationSystem ? '已初始化' : '未初始化');
+    if (!window.notificationSystem) {
+        console.log('手動初始化通知系統');
+        window.notificationSystem = new NotificationSystem();
+    }
+});
+</script>
 <script src="../../public/js/classroom.js"></script>
 <script src="../../public/js/add_classroom_modal.js"></script>
 <script src="../../public/js/edit_classroom_modal.js"></script>

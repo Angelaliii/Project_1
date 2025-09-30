@@ -1,5 +1,6 @@
 <?php
 // 編輯教室的模態視窗組件
+require_once __DIR__ . '/../../helpers/security.php';
 ?>
 <!-- 編輯教室的彈出窗口 -->
 <div id="editClassroomModal" class="modal fade" tabindex="-1" aria-labelledby="editClassroomModalLabel" aria-hidden="true">
@@ -11,6 +12,7 @@
             </div>
             <div class="modal-body">
                 <form action="" method="post">
+                    <?= csrf_field() ?>
                     <input type="hidden" id="edit_classroom_id" name="classroom_id">
                     <div class="mb-3">
                         <label for="edit_classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
@@ -25,7 +27,7 @@
                         <input type="text" id="edit_room" name="room" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="edit_permissions" class="form-label">租借權限設置</label>
+                        <p class="form-label mb-2">租借權限設置</p>
                         <div class="d-flex align-items-center mb-2">
                             <span class="me-3">學生租借權限：</span>
                             <div class="form-check form-switch d-flex align-items-center">
