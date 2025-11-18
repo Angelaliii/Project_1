@@ -316,6 +316,7 @@ $hours = range(8, 20);
             
             <!-- 表單內容會在booking-combined.js中動態添加 -->
             <form id="booking-form" action="process_booking_drag.php" method="post">
+                <?= csrf_field() ?>
                 <input type="hidden" name="booking_date" value="<?= $selectedDate ?>">
                 <input type="hidden" id="selected_slots" name="selected_slots" value="">
                 

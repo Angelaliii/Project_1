@@ -14,6 +14,14 @@ if (!isset($_SESSION['user_id'])) {
 
 // 處理表單提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 包含 CSRF helper 並驗證
+    require_once dirname(__DIR__) . '/helpers/security.php';
+    $csrf = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf($csrf)) {
+        $_SESSION['error_message'] = '無效的請求 (CSRF 驗證失敗)';
+        header('Location: profile.php');
+        exit;
+    }
     $currentPassword = $_POST['current_password'] ?? '';
     $newPassword = $_POST['new_password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';

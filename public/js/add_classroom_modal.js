@@ -58,6 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('提交新增教室表單，資料：', Object.fromEntries(formData));
 
         // 使用 fetch 提交表單，並傳遞 cookie 以維持 session
+        // attach CSRF token from meta if not present
+        const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+        if (metaCsrf && !formData.has('csrf_token')) {
+          formData.append('csrf_token', metaCsrf.getAttribute('content'));
+        }
+
         fetch(window.location.href, {
           method: 'POST',
           body: formData,

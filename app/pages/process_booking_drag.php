@@ -4,6 +4,11 @@ session_start();
 
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/models/UserModel.php';
+// CSRF protection
+require_once dirname(__DIR__) . '/helpers/security.php';
+if (!isset($_POST['csrf_token']) || !verify_csrf($_POST['csrf_token'])) {
+    redirect_with_errors('', ['無效的請求 (CSRF 驗證失敗)']);
+}
 
 // 建議設時區，與 DB 保持一致
 date_default_timezone_set('Asia/Taipei');

@@ -99,6 +99,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
           form.appendChild(input);
           form.appendChild(submitBtn);
+          // attach csrf token from meta
+          const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+          if (metaCsrf) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = metaCsrf.getAttribute('content');
+            form.appendChild(csrfInput);
+          }
+
           document.body.appendChild(form);
 
           form.submit();
@@ -128,6 +138,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 使用 fetch API 提交表單
         const formData = new FormData(this);
+        // attach CSRF token for fetch submissions
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta && !formData.has('csrf_token')) {
+          formData.append('csrf_token', meta.getAttribute('content'));
+        }
         console.log('提交編輯教室表單，資料：', Object.fromEntries(formData));
 
         fetch(window.location.href, {

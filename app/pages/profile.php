@@ -2,6 +2,11 @@
 // profile.php - 用戶個人資料頁面
 session_start();
 
+// 添加快取控制頭，防止瀏覽器快取頁面
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 // 引入必要文件
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/models/UserModel.php';
@@ -152,6 +157,7 @@ try {
                             
                             <div class="profile-body">
                                 <form action="edit_profile.php" method="POST" id="profile-edit-form">
+                                    <?= csrf_field() ?>
                                     <div class="profile-section">
                                         <h3><i class="fas fa-info-circle me-2"></i>個人資料</h3>
                                         
@@ -224,14 +230,15 @@ try {
                                 <div class="profile-section mt-4">
                                     <h3><i class="fas fa-key me-2"></i>修改密碼</h3>
                                     <form action="change_password.php" method="POST" id="change-password-form">
+                                        <?= csrf_field() ?>
                                         <div class="mb-3">
                                             <label for="current_password" class="form-label">當前密碼 <span class="text-danger">*</span></label>
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="current_password">
+                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('current_password')" onKeyDown="handleKeyDown(event, 'current_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
-                                                </span>
+                                                </button>
                                             </div>
                                         </div>
                                         
@@ -240,9 +247,9 @@ try {
                                             <div class="input-group mb-2">
                                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                                                 <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="new_password">
+                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('new_password')" onKeyDown="handleKeyDown(event, 'new_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
-                                                </span>
+                                                </button>
                                             </div>
                                             <small class="form-text text-muted">密碼必須至少8個字符，包含大小寫字母和數字</small>
                                         </div>
@@ -252,9 +259,9 @@ try {
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                                <span class="input-group-text toggle-password" style="cursor:pointer; border-left:0;" data-target="confirm_password">
+                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('confirm_password')" onKeyDown="handleKeyDown(event, 'confirm_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
-                                                </span>
+                                                </button>
                                             </div>
                                         </div>
                                         
@@ -340,6 +347,34 @@ try {
 </div> <!-- 結束 page-wrapper -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../public/js/notification.js"></script>
-<script src="C:\xampp\htdocs\dashboard\Project_1.5\public\js\profile.js"></script>
+<script src="../../public/js/notification.js?v=<?php echo time(); ?>"></script>
+<script>
+    // 切換密碼顯示
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = event.currentTarget.querySelector('i');
+        
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+        
+        // 讓焦點回到輸入框，提升體驗
+        field.focus({ preventScroll: true });
+    }
+    
+    // 鍵盤事件處理
+    function handleKeyDown(event, fieldId) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            togglePassword(fieldId);
+        }
+    }
+</script>
+<script src="../../public/js/profile.js?v=<?php echo time(); ?>"></script>
 <?php include_once '../components/footer.php'; ?>

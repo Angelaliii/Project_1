@@ -4,6 +4,13 @@ session_start();
 
 // 引入必要文件
 require_once dirname(__DIR__) . '/config/database.php';
+require_once dirname(__DIR__) . '/helpers/security.php';
+
+// 僅允許 POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: my_bookings_new.php');
+    exit;
+}
 
 // 確定使用者已登入
 if (!isset($_SESSION['user_id'])) {
@@ -11,9 +18,17 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// CSRF 驗證
+$csrf = $_POST['csrf_token'] ?? '';
+if (!verify_csrf($csrf)) {
+    $_SESSION['error_message'] = '無效的請求 (CSRF 驗證失敗)';
+    header('Location: my_bookings_new.php');
+    exit;
+}
+
 // 獲取預約ID和重定向URL
-$bookingId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$redirectUrl = isset($_GET['redirect']) ? $_GET['redirect'] : 'my_bookings_new.php';
+$bookingId = isset($_POST['booking_id']) ? (int)$_POST['booking_id'] : 0;
+$redirectUrl = isset($_POST['redirect']) ? $_POST['redirect'] : 'my_bookings_new.php';
 
 // 驗證預約ID
 if (!$bookingId) {

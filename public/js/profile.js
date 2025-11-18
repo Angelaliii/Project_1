@@ -1,10 +1,21 @@
 // profile.js - 個人資料頁面邏輯
+console.log('Profile.js loaded - ' + new Date().toISOString()); // 確認腳本載入
+
 document.addEventListener('DOMContentLoaded', function () {
   // ====== 工具函式 ======
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const show = (el, display = 'block') => {
-    if (el) el.style.display = display;
+    if (!el) return;
+
+    if (
+      el.classList.contains('profile-field') ||
+      el.classList.contains('profile-field-display')
+    ) {
+      el.style.removeProperty('display');
+    } else {
+      el.style.display = display;
+    }
   };
   const hide = (el) => {
     if (el) el.style.display = 'none';
@@ -18,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
       alert(msg);
     }
   }
+  // 雖然目前未使用，但保留供未來可能的成功訊息顯示
   function toastSuccess(msg) {
     if (typeof window.notificationSystem !== 'undefined') {
       window.notificationSystem.showSuccess(msg);
@@ -41,16 +53,38 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   // ====== 初始狀態：檢視模式 ======
+  console.log('Initializing profile display mode');
+
+  // 確保所有元素都移除可能的內嵌樣式（例如：從先前頁面載入的內嵌樣式）
+  document
+    .querySelectorAll('.profile-field, .profile-field-display')
+    .forEach((el) => {
+      el.style.removeProperty('display');
+    });
+
+  // 正常設置初始顯示
   editFields.forEach((f) => hide(f));
+  viewFields.forEach((f) => {
+    // 移除內嵌樣式，讓 CSS 樣式自動生效
+    f.style.removeProperty('display');
+  });
   hide(saveButton);
   hide(cancelButton);
+
+  // 設置可見性，確保元素按需顯示
+  if (editButton) editButton.style.visibility = 'visible';
 
   // ====== 切換到編輯模式 ======
   if (editButton) {
     editButton.addEventListener('click', function (e) {
       e.preventDefault();
+      // 隱藏檢視欄位
       viewFields.forEach((f) => hide(f));
-      editFields.forEach((f) => show(f));
+      // 顯示編輯欄位
+      editFields.forEach((f) => {
+        // 編輯欄位使用 block 顯示即可
+        f.style.display = 'block';
+      });
       hide(editButton);
       show(saveButton, 'inline-block');
       show(cancelButton, 'inline-block');
@@ -70,7 +104,10 @@ document.addEventListener('DOMContentLoaded', function () {
       if (userInput) userInput.value = initialValues.username;
 
       // 顯示檢視區、隱藏編輯區
-      viewFields.forEach((f) => show(f));
+      viewFields.forEach((f) => {
+        // 直接清除內嵌樣式，讓 CSS 樣式生效
+        f.style.removeProperty('display');
+      });
       editFields.forEach((f) => hide(f));
 
       show(editButton, 'inline-block');
@@ -107,48 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
-  // ====== 眼睛按鈕：事件委派（點 <span> 或 <i> 都可） + 鍵盤可操作 ======
-  function setIcon(iconEl, show) {
-    if (!iconEl) return;
-    iconEl.classList.remove('fa', 'fas', 'far', 'fa-eye', 'fa-eye-slash');
-    iconEl.classList.add(show ? 'fa-eye-slash' : 'fa-eye');
-  }
-
-  document.addEventListener('click', function (e) {
-    const toggle = e.target.closest('.toggle-password');
-    if (!toggle) return;
-
-    const targetId = toggle.getAttribute('data-target');
-    const input = document.getElementById(targetId);
-    if (!input) return;
-
-    const icon = toggle.querySelector('i');
-    const willShow = input.type === 'password';
-
-    input.type = willShow ? 'text' : 'password';
-    setIcon(icon, willShow);
-
-    // 讓焦點回到輸入框，提升體驗
-    input.focus({ preventScroll: true });
-  });
-
-  document.addEventListener('keydown', function (e) {
-    const toggle = e.target.closest('.toggle-password');
-    if (!toggle) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggle.click();
-    }
-  });
-
-  // 建議：為每個 toggle 加上 role / tabindex（若 HTML 未加）
-  $$('.toggle-password').forEach((el) => {
-    if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
-    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
-    if (!el.hasAttribute('aria-label'))
-      el.setAttribute('aria-label', '顯示/隱藏密碼');
-  });
 
   // ====== 修改密碼表單提交驗證 ======
   if (passwordForm) {

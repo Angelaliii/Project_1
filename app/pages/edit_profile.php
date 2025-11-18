@@ -4,6 +4,8 @@ session_start();
 
 require_once dirname(__DIR__) . '/config/database.php';
 require_once dirname(__DIR__) . '/models/UserModel.php';
+// include CSRF helper
+require_once dirname(__DIR__) . '/helpers/security.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -12,6 +14,13 @@ if (!isset($_SESSION['user_id'])) {
 
 // 處理表單提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF 檢查
+    $csrf = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf($csrf)) {
+        $_SESSION['error_message'] = '無效的請求 (CSRF 驗證失敗)';
+        header('Location: profile.php');
+        exit;
+    }
     try {
         $userModel = new UserModel();
         $user = $userModel->findById($_SESSION['user_id']);

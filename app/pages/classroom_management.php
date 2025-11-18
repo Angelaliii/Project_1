@@ -182,8 +182,8 @@ if (!empty($message) && !headers_sent()) {
         </div>
         
         <!-- 搜尋表單與新增按鈕 -->
-        <div class="search-container d-flex justify-content-between align-items-center mb-3">
-            <form action="" method="get" class="search-form flex-grow-1 me-2">
+        <div class="search-container d-flex align-items-center mb-3">
+            <form action="" method="get" class="flex-grow-1 me-2">
                 <div class="input-group">
                     <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
                     <?php if (!empty($search)): ?>

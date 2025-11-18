@@ -292,11 +292,13 @@ include_once '../components/header.php';
                                                 
                                                 <div class="booking-actions">
                                                     <?php if ($booking['status'] === 'booked' && $startDate > $now): ?>
-                                                    <a href="cancel_booking.php?id=<?php echo $booking['booking_ID']; ?>" 
-                                                       class="cancel-btn" 
-                                                       onclick="return confirm('您確定要取消此預約嗎？此操作無法撤銷。');">
-                                                        <i class="fas fa-times"></i> 取消預約
-                                                    </a>
+                                                    <form method="POST" action="cancel_booking.php" class="d-inline cancel-form">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="booking_id" value="<?php echo $booking['booking_ID']; ?>">
+                                                        <button type="submit" class="btn btn-link cancel-btn" onclick="return confirm('您確定要取消此預約嗎？此操作無法撤銷。');">
+                                                            <i class="fas fa-times"></i> 取消預約
+                                                        </button>
+                                                    </form>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
