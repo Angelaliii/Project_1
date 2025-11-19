@@ -70,6 +70,15 @@ class ClassroomModel {
                 $whereParts[] = 'c.recording_system = ?';
                 $params[] = (int)$filters['recording_system'];
             }
+            // 處理容量篩選: 支援 capacity_min / capacity_max
+            if (isset($filters['capacity_min']) && is_numeric($filters['capacity_min'])) {
+                $whereParts[] = 'c.capacity >= ?';
+                $params[] = (int)$filters['capacity_min'];
+            }
+            if (isset($filters['capacity_max']) && is_numeric($filters['capacity_max'])) {
+                $whereParts[] = 'c.capacity <= ?';
+                $params[] = (int)$filters['capacity_max'];
+            }
             
             // 組合 WHERE
             $whereSql = '';

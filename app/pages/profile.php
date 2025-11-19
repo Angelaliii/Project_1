@@ -168,7 +168,7 @@ try {
                                         </div>
                                         <div class="profile-field-edit">
                                             <label for="username" class="form-label">用戶名 <span class="text-danger">*</span></label>
-                                            <div class="input-group mb-3">
+                                            <div class="input-group mb-3 flex-nowrap">
                                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
                                                 <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars($user['user_name'] ?? '') ?>" required>
                                             </div>
@@ -236,7 +236,7 @@ try {
                                             <div class="input-group mb-3">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                                 <input type="password" class="form-control" id="current_password" name="current_password" required>
-                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('current_password')" onKeyDown="handleKeyDown(event, 'current_password')" aria-label="切換密碼顯示">
+                                                <button type="button" class="btn btn-outline-secondary" style="border-left:0;" onclick="togglePassword(this, 'current_password')" onkeydown="handleKeyDown(event, 'current_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -244,10 +244,10 @@ try {
                                         
                                         <div class="mb-3">
                                             <label for="new_password" class="form-label">新密碼 <span class="text-danger">*</span></label>
-                                            <div class="input-group mb-2">
+                                            <div class="input-group mb-2 flex-nowrap">
                                                 <span class="input-group-text"><i class="fas fa-key"></i></span>
                                                 <input type="password" class="form-control" id="new_password" name="new_password" required>
-                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('new_password')" onKeyDown="handleKeyDown(event, 'new_password')" aria-label="切換密碼顯示">
+                                                <button type="button" class="btn btn-outline-secondary" style="border-left:0;" onclick="togglePassword(this, 'new_password')" onkeydown="handleKeyDown(event, 'new_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -256,10 +256,10 @@ try {
                                         
                                         <div class="mb-3">
                                             <label for="confirm_password" class="form-label">確認新密碼 <span class="text-danger">*</span></label>
-                                            <div class="input-group mb-3">
+                                            <div class="input-group mb-3 flex-nowrap">
                                                 <span class="input-group-text"><i class="fas fa-check-double"></i></span>
                                                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                                <button type="button" class="input-group-text" style="border-left:0;" onclick="togglePassword('confirm_password')" onKeyDown="handleKeyDown(event, 'confirm_password')" aria-label="切換密碼顯示">
+                                                <button type="button" class="btn btn-outline-secondary" style="border-left:0;" onclick="togglePassword(this, 'confirm_password')" onkeydown="handleKeyDown(event, 'confirm_password')" aria-label="切換密碼顯示">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
                                             </div>
@@ -349,30 +349,32 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../public/js/notification.js?v=<?php echo time(); ?>"></script>
 <script>
-    // 切換密碼顯示
-    function togglePassword(fieldId) {
+    // 切換密碼顯示，btnElem 為觸發按鈕 (可為 null)
+    function togglePassword(btnElem, fieldId) {
         const field = document.getElementById(fieldId);
-        const icon = event.currentTarget.querySelector('i');
-        
+        let icon = null;
+        if (btnElem && typeof btnElem.querySelector === 'function') {
+            icon = btnElem.querySelector('i');
+        }
+
         if (field.type === 'password') {
             field.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+            if (icon) { icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); }
         } else {
             field.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+            if (icon) { icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
         }
-        
+
         // 讓焦點回到輸入框，提升體驗
         field.focus({ preventScroll: true });
     }
-    
-    // 鍵盤事件處理
+
+    // 鍵盤事件處理（在按鈕上按 Enter / Space）
     function handleKeyDown(event, fieldId) {
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            togglePassword(fieldId);
+            // event.currentTarget 為按下的按鈕
+            togglePassword(event.currentTarget, fieldId);
         }
     }
 </script>

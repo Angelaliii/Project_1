@@ -12,6 +12,7 @@ $search = isset($_GET['search']) ? trim((string)$_GET['search']) : '';
 $areaFilter = isset($_GET['area']) ? trim((string)$_GET['area']) : 'all';
 $typeFilter = isset($_GET['type']) ? trim((string)$_GET['type']) : 'all';
 $recordingFilter = isset($_GET['recording']) ? trim((string)$_GET['recording']) : 'all';
+$capacityInput = isset($_GET['capacity']) ? trim((string)$_GET['capacity']) : '';
 
 // 取得可選的 area、type 列表
 $conn = getDbConnection();
@@ -19,10 +20,29 @@ $areas = $conn->query("SELECT DISTINCT area FROM classrooms WHERE area IS NOT NU
 $types = $conn->query("SELECT DISTINCT classroom_type FROM classrooms WHERE classroom_type IS NOT NULL AND classroom_type != '' ORDER BY classroom_type")->fetchAll(PDO::FETCH_COLUMN);
 
 try {
+    // 解析容量輸入：支援 10~20、50以上、20以下、>=50、<=20、單一數字
+    $capacityMin = null;
+    $capacityMax = null;
+    if ($capacityInput !== '') {
+        if (preg_match('/^(\d+)\s*~\s*(\d+)$/', $capacityInput, $m)) {
+            $capacityMin = (int)$m[1];
+            $capacityMax = (int)$m[2];
+        } elseif (preg_match('/^>=\s*(\d+)$/', $capacityInput, $m) || preg_match('/^(\d+)\s*以上$/u', $capacityInput, $m)) {
+            $capacityMin = (int)$m[1];
+        } elseif (preg_match('/^<=\s*(\d+)$/', $capacityInput, $m) || preg_match('/^(\d+)\s*以下$/u', $capacityInput, $m)) {
+            $capacityMax = (int)$m[1];
+        } elseif (preg_match('/^(\d+)$/', $capacityInput, $m)) {
+            $capacityMin = (int)$m[1];
+            $capacityMax = (int)$m[1];
+        }
+    }
+
     $filters = [
         'area' => $areaFilter,
         'classroom_type' => $typeFilter,
-        'recording_system' => $recordingFilter
+        'recording_system' => $recordingFilter,
+        'capacity_min' => $capacityMin,
+        'capacity_max' => $capacityMax
     ];
     $result = $model->getClassrooms($search, $page, $perPage, $filters);
     $classrooms = $result['classrooms'];
@@ -42,7 +62,7 @@ include_once '../components/header.php';
     <div class="mx-auto" style="max-width: 1100px;">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1><i class="fas fa-door-open"></i> 教室清單</h1>
-                <form method="get" class="d-flex gap-2" style="max-width: 820px;">
+                <form method="get" class="d-flex flex-wrap gap-2 align-items-center" style="max-width: 820px;">
                     <input type="search" name="search" class="form-control" placeholder="搜尋教室名稱、區域或代碼" value="<?= htmlspecialchars($search) ?>">
                     <select name="area" class="form-select" style="max-width:160px;">
                         <option value="all">全部場域</option>
@@ -56,6 +76,7 @@ include_once '../components/header.php';
                             <option value="<?= htmlspecialchars($t) ?>" <?= $t === $typeFilter ? 'selected' : '' ?>><?= htmlspecialchars($t) ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <input type="text" name="capacity" class="form-control" style="max-width:140px;" placeholder="人數 例:10~30、50以上" value="<?= htmlspecialchars($capacityInput) ?>">
                     <select name="recording" class="form-select" style="max-width:120px;">
                         <option value="all">不限錄播</option>
                         <option value="yes" <?= $recordingFilter === 'yes' ? 'selected' : '' ?>>有</option>
