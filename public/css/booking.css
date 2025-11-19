@@ -1,3 +1,5 @@
+@import url('main.css');
+
 /* booking.css - 教室預約介面樣式 (合併自 booking.css 和 booking-fix.css) */
 
 /* 預約系統主容器 */
@@ -11,7 +13,7 @@
   display: flex;
   margin-bottom: 20px;
   padding: 15px;
-  background-color: #f8f9fa;
+  background-color: var(--color-surface);
   border-radius: 8px;
 }
 
@@ -41,9 +43,9 @@
 .timetable-container {
   width: 100%;
   overflow-x: auto;
-  background-color: white;
+  background-color: var(--color-card);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   margin-top: 20px;
   position: relative;
   /* 優化滾動效果 */
@@ -69,18 +71,18 @@
 
 /* 確保表格單元格內的時間格子div能完全填充 */
 .timetable td > div.time-slot {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   z-index: 2; /* 確保可互動 */
 }
 
 .timetable th {
-  background-color: #f1f3f5;
+  background-color: var(--color-muted);
   font-weight: 600;
   padding: 10px;
   position: sticky;
@@ -93,11 +95,11 @@
   z-index: 10;
   position: sticky;
   min-width: 100px;
-  background-color: #f1f3f5;
+  background-color: var(--color-muted);
 }
 
 .timetable td:first-child {
-  background-color: #f8f9fa;
+  background-color: var(--color-surface);
   font-weight: 600;
   padding: 5px 10px;
   position: sticky;
@@ -110,9 +112,9 @@
 /* 確保時間單元格正確顯示 */
 .timetable td {
   position: relative;
-  min-height: 45px !important;
-  min-width: 85px !important;
-  padding: 0 !important;
+  min-height: 45px;
+  min-width: 85px;
+  padding: 0;
 }
 
 /* 時間格子樣式 */
@@ -155,27 +157,27 @@
 }
 
 div.time-slot-unavailable {
-  background-color: #c1c3c1;
+  background-color: var(--color-past-bg);
   cursor: not-allowed;
 }
 
 div.time-slot-available {
-  cursor: pointer !important;
-  transition: all 0.25s ease !important;
-  border: 1px solid #c6f6d5 !important;
-  background-color: #e6ffed !important;
-  z-index: 3 !important;
-  pointer-events: auto !important;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 1px solid var(--color-success-bg);
+  background-color: var(--color-success-bg);
+  z-index: 3;
+  pointer-events: auto;
 }
 
 div.time-slot-available:hover {
-  transform: scale(1.05) !important;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
-  z-index: 100 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 }
 
 div.time-slot-available:active {
-  transform: scale(0.95) !important;
+  transform: scale(0.95);
 }
 
 div.time-slot-available::before {
@@ -195,15 +197,15 @@ div.time-slot-available:hover::before {
 }
 
 div.time-slot-booked {
-  background-color: #ffebee !important;
-  cursor: not-allowed !important;
-  border: 1px solid #ffcdd2 !important;
+  background-color: var(--color-danger-bg);
+  cursor: not-allowed;
+  border: 1px solid rgba(245,34,45,0.18);
   background-image: repeating-linear-gradient(
     45deg,
     transparent,
     transparent 5px,
-    rgba(255, 82, 82, 0.1) 5px,
-    rgba(255, 82, 82, 0.1) 10px
+    rgba(245,34,45,0.06) 5px,
+    rgba(245,34,45,0.06) 10px
   );
   position: relative;
 }
@@ -220,12 +222,12 @@ div.time-slot-booked::before {
 }
 
 div.time-slot-selected {
-  background-color: #1e90ff !important;
-  box-shadow: 0 0 8px rgba(30, 144, 255, 0.6) !important;
-  transform: scale(1.05) !important;
-  z-index: 50 !important;
-  border: 2px solid #0056b3 !important;
-  color: white;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 8px rgba(30, 144, 255, 0.25);
+  transform: scale(1.05);
+  z-index: 50;
+  border: 2px solid var(--color-primary-dark);
+  color: var(--color-white);
   position: relative;
 }
 
@@ -244,7 +246,7 @@ div.time-slot-selected::before {
   left: 50%;
   transform: translateX(-50%);
   font-size: 9px;
-  color: white;
+  color: var(--color-white);
   font-weight: bold;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
@@ -254,44 +256,9 @@ div.time-slot-available::before,
 div.time-slot-booked::before,
 div.time-slot-past::before,
 div.time-slot-selected::before {
-  font-size: 11px !important;
-  font-weight: bold !important;
-  text-shadow: 0 0 2px rgba(255, 255, 255, 0.8) !important;
-}
-
-/* 教室信息樣式 */
-
-div.time-slot-past {
-  background-color: #e0e0e0 !important;
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent,
-    transparent 5px,
-    rgba(0, 0, 0, 0.05) 5px,
-    rgba(0, 0, 0, 0.05) 10px
-  ) !important;
-  cursor: not-allowed !important;
-  border: 1px solid #cccccc !important;
-  pointer-events: none !important;
-  position: relative;
-  opacity: 0.8 !important;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-div.time-slot-past::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 10px;
-  color: #757575;
+  font-size: 11px;
   font-weight: bold;
-  opacity: 0.9 !important;
-  content: "已過期";
-  white-space: nowrap;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
 }
 
 /* 教室信息樣式 */
@@ -310,14 +277,14 @@ div.time-slot-past::before {
 .classroom-location {
   font-size: 12px;
   color: #666;
-}
+  color: var(--gray-600);
 
 .time-info {
   font-weight: 600;
   padding: 8px;
   white-space: nowrap;
-  color: #333;
-  background-color: #f8f9fa;
+  color: var(--color-text);
+  background-color: var(--color-surface);
   border-radius: 4px;
   text-align: center;
 }
@@ -326,9 +293,9 @@ div.time-slot-past::before {
 .booking-form-container {
   margin-top: 30px;
   padding: 20px;
-  background-color: white;
+  background-color: var(--color-card);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
   display: none;
 }
 
@@ -339,7 +306,7 @@ div.time-slot-past::before {
 .booking-summary {
   margin-bottom: 15px;
   padding: 15px;
-  background-color: #f1f8ff;
+  background-color: var(--color-info-bg);
   border-radius: 6px;
 }
 
@@ -411,8 +378,8 @@ div.time-slot-past::before {
 }
 
 .tooltip-header {
-  background-color: #1e88e5;
-  color: white;
+  background-color: var(--color-primary);
+  color: #fff;
   padding: 10px;
   border-radius: 4px 4px 0 0;
   font-weight: bold;
@@ -433,13 +400,14 @@ div.time-slot-past::before {
   display: inline-block;
 }
 
-/* 教室分隔行樣式 */
+/* 教室分隔行樣式 - 使用 area (場域) 名稱，保留舊 class 作為別名 */
+.area-separator,
 .building-separator {
   height: 10px;
 }
 
 .separator-cell {
-  background-color: #f0f0f0;
+  background-color: var(--color-muted);
   border: none;
 }
 
@@ -453,7 +421,7 @@ div.time-slot-past::before {
 
   .filter-group {
     width: 100%;
-    margin-right: 0 !important;
+    margin-right: 0;
     margin-bottom: 15px;
   }
 

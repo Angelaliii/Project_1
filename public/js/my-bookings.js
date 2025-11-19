@@ -294,14 +294,15 @@ function initSortControl() {
             };
             return getClassroomName(a).localeCompare(getClassroomName(b));
           }
-          case 'building-asc': {
-            const buildingA =
+          case 'area-asc': {
+            // area (場域) 與教室代碼通常顯示在第一行 info-value，直接比較即可
+            const areaA =
               a.querySelector('.info-row:nth-child(1) .info-value')
                 ?.textContent || '';
-            const buildingB =
+            const areaB =
               b.querySelector('.info-row:nth-child(1) .info-value')
                 ?.textContent || '';
-            return buildingA.localeCompare(buildingB);
+            return areaA.localeCompare(areaB);
           }
           default:
             return 0;
@@ -319,7 +320,7 @@ function initSortControl() {
       'date-asc': '日期（舊 → 新）',
       'date-desc': '日期（新 → 舊）',
       'classroom-asc': '教室名稱 A→Z',
-      'building-asc': '建物名稱 A→Z',
+      'area-asc': '場域 / 代碼 A→Z',
     };
 
     notificationSystem.showSuccess(

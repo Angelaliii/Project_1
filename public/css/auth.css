@@ -1,8 +1,10 @@
+@import url("main.css");
+
 /* auth.css - 登入和註冊頁面樣式 */
 
 /* 認證頁面容器樣式 */
 .auth-container {
-  max-width: 1100px !important; /* 增加最大寬度 */
+  max-width: 1100px; /* 增加最大寬度 */
   width: 100%;
   margin: 0 auto; /* 水平居中 */
   box-sizing: border-box; /* 確保內邊距不會增加寬度 */
@@ -10,7 +12,7 @@
 
 /* 覆蓋main.css中.container的設定 */
 .container.auth-container {
-  max-width: 1100px !important; /* 覆蓋main.css中的限制 */
+  max-width: 1100px; /* 覆蓋main.css中的限制 */
   width: 100%;
   margin: auto; /* 自動邊距，實現垂直和水平居中 */
   padding: 0; /* 移除內邊距，由內部元素控制 */
@@ -24,7 +26,7 @@
 
 /* 讓表單和內容適合不滾動 */
 .auth-container .container-body {
-  padding: 0 !important; /* 覆蓋內部填充，由內容元素控制填充 */
+  padding: 0; /* 覆蓋內部填充，由內容元素控制填充 */
 }
 
 /* 增加表單內部的間距 */
@@ -42,7 +44,7 @@
 /* 在小螢幕上調整為垂直佈局 */
 @media (max-width: 767.98px) {
   .auth-container .border-end {
-    border-right: none !important;
+    border-right: none;
     border-bottom: 1px solid #dee2e6;
     padding-bottom: 1.5rem;
     margin-bottom: 1.5rem;
@@ -103,8 +105,8 @@
 /* 確保輸入欄位有足夠的寬度且在同一行顯示 */
 .auth-container .input-group {
   width: 100%;
-  display: flex !important;
-  flex-wrap: nowrap !important; /* 確保不換行，適用於所有螢幕尺寸 */
+  display: flex;
+  flex-wrap: nowrap; /* 確保不換行，適用於所有螢幕尺寸 */
 }
 
 /* 確保提示文字完整顯示 */
@@ -128,19 +130,19 @@
 
 /* 修正登入/註冊按鈕hover狀態的文字顏色 */
 .btn-primary:hover {
-  color: #616161 !important; /* 確保hover時文字仍為白色 */
+  color: #616161; /* 確保hover時文字仍為白色 */
 }
 
 .btn-secondary:hover {
-  color: #656565 !important; /* 確保hover時文字仍為白色 */
+  color: #656565; /* 確保hover時文字仍為白色 */
 }
 
 /* 確保輸入欄位和按鈕在小螢幕上仍然美觀 */
 @media (max-width: 768px) {
   .container.auth-container {
     margin: auto; /* 保持居中 */
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
     padding: 10px;
   }
 
@@ -151,44 +153,44 @@
 
   /* 修正輸入組在移動設備上的顯示問題 */
   .auth-container .input-group {
-    display: flex !important;
-    flex-wrap: nowrap !important; /* 防止換行 */
+    display: flex;
+    flex-wrap: nowrap; /* 防止換行 */
     width: 100%;
   }
 
   .auth-container .input-group-text {
     padding: 0.25rem 0.5rem;
-    display: flex !important;
+    display: flex;
     flex: 0 0 auto; /* 防止圖示容器縮小 */
-    width: auto !important; /* 圖示容器寬度自適應 */
+    width: auto; /* 圖示容器寬度自適應 */
   }
 
   .auth-container .form-control {
-    display: flex !important;
-    flex: 1 1 auto !important; /* 輸入框佔據剩餘空間 */
+    display: flex;
+    flex: 1 1 auto; /* 輸入框佔據剩餘空間 */
     min-width: 0; /* 允許輸入框縮小到小於內容大小 */
   }
 
   /* 確保密碼顯示切換按鈕也不會換行 */
   .auth-container .password-toggle {
-    display: flex !important;
-    flex: 0 0 auto !important;
-    padding: 0.25rem 0.5rem !important;
-    margin-left: -1px !important; /* 確保與輸入框連接 */
+    display: flex;
+    flex: 0 0 auto;
+    padding: 0.25rem 0.5rem;
+    margin-left: -1px; /* 確保與輸入框連接 */
   }
 
   .auth-container .container-body {
-    padding: 0 !important;
+    padding: 0;
   }
 
   .auth-container .py-4 {
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
   .content-container {
-    min-height: 85vh !important;
-    padding: 10px !important;
+    min-height: 85vh;
+    padding: 10px;
   }
 
   .row {
@@ -200,7 +202,7 @@
 /* 覆蓋main.css中對container在不同螢幕尺寸的設定 */
 @media (max-width: 992px) {
   .container.auth-container {
-    max-width: 90% !important;
+    max-width: 90%;
     margin: auto; /* 保持居中 */
   }
 }
@@ -208,7 +210,7 @@
 @media (max-width: 576px) {
   .container.auth-container {
     margin: auto; /* 保持居中 */
-    max-width: 98% !important;
+    max-width: 98%;
   }
 
   /* 調整內間距在小螢幕上更緊湊 */
@@ -218,12 +220,12 @@
 
   /* 進一步優化極小螢幕上的輸入組 */
   .auth-container .input-group {
-    flex-direction: row !important;
+    flex-direction: row;
   }
 
   .auth-container .input-group-text {
     font-size: 0.8rem;
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.2rem 0.4rem;
   }
 
   .auth-container .form-control {
@@ -232,10 +234,10 @@
   }
 
   .auth-container .password-toggle {
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.2rem 0.4rem;
   }
 
   .content-container {
-    min-height: 80vh !important; /* 在更小螢幕上進一步減少最小高度 */
+    min-height: 80vh; /* 在更小螢幕上進一步減少最小高度 */
   }
 }

@@ -19,21 +19,38 @@ require_once __DIR__ . '/../../helpers/security.php';
                         <input type="text" id="edit_classroom_name" name="classroom_name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_building" class="form-label">樓宇 <span class="text-danger">*</span></label>
-                        <input type="text" id="edit_building" name="building" class="form-control" required>
+                        <label for="edit_area" class="form-label">區域 / 樓宇 <span class="text-danger">*</span></label>
+                        <input type="text" id="edit_area" name="area" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_room" class="form-label">房間號碼</label>
-                        <input type="text" id="edit_room" name="room" class="form-control">
+                        <label for="edit_classroom_code" class="form-label">教室代碼 <span class="text-danger">*</span></label>
+                        <input type="text" id="edit_classroom_code" name="classroom_code" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <p class="form-label mb-2">租借權限設置</p>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="me-3">學生租借權限：</span>
-                            <div class="form-check form-switch d-flex align-items-center">
-                                <input class="form-check-input me-2" type="checkbox" id="edit_perm_student" name="allowed_roles[]" value="student" style="width: 3em; height: 1.5em;">
-                                <label class="form-check-label" for="edit_perm_student" id="student_status">關閉</label>
-                            </div>
+                        <label for="edit_capacity" class="form-label">容納人數</label>
+                        <input type="number" id="edit_capacity" name="capacity" class="form-control" min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_features" class="form-label">設備 / 特性</label>
+                        <input type="text" id="edit_features" name="features" class="form-control">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_recording_system" name="recording_system" value="1">
+                        <label class="form-check-label" for="edit_recording_system">具備錄影/錄音系統</label>
+                    </div>
+                    <div class="mb-3">
+                        <p class="form-label mb-2">租借權限設置（多選）</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="edit_perm_student" name="allowed_roles[]" value="student">
+                            <label class="form-check-label" for="edit_perm_student">學生</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="edit_perm_teacher" name="allowed_roles[]" value="teacher">
+                            <label class="form-check-label" for="edit_perm_teacher">教師</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="edit_perm_dept" name="allowed_roles[]" value="department">
+                            <label class="form-check-label" for="edit_perm_dept">系所 / 單位</label>
                         </div>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">

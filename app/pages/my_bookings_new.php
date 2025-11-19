@@ -268,7 +268,7 @@ include_once '../components/header.php';
                                                 <div class="booking-info">
                                                     <div class="info-row">
                                                         <span class="info-label"><i class="fas fa-map-marker-alt"></i> 位置：</span>
-                                                        <span class="info-value"><?php echo htmlspecialchars($booking['building']); ?> <?php echo htmlspecialchars($booking['room']); ?></span>
+                                                        <span class="info-value"><?php echo htmlspecialchars($booking['area'] ?? ''); ?> <?php echo htmlspecialchars($booking['classroom_code'] ?? ''); ?></span>
                                                     </div>
                                                     
                                             <div class="info-row">

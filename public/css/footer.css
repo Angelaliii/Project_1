@@ -1,8 +1,10 @@
+@import url("main.css");
+
 /* footer.css - 網站頁尾樣式 */
 
 .main-footer {
-  background-color: #222;
-  color: #f8f9fa;
+  background-color: var(--color-footer-bg);
+  color: var(--color-footer-text);
   padding: var(--spacing-sm) 0;
   width: 100%;
   margin-top: auto;
@@ -69,13 +71,13 @@
 }
 
 .footer-section ul li a {
-  color: #adb5bd;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   transition: all 0.3s;
 }
 
 .footer-section ul li a:hover {
-  color: #fff;
+  color: var(--color-footer-text);
   padding-left: var(--spacing-xs);
 }
 

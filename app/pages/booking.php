@@ -32,9 +32,9 @@ $selectedYearMonth = substr($selectedDate, 0, 7); // 格式 YYYY-MM
 $selectedMonthBookingCount = $userModel->getMonthBookingCount($_SESSION['user_id'], $selectedYearMonth);
 $remainingBookings = 3 - $selectedMonthBookingCount;
 
-// 獲取建築物清單
-$buildingStmt = $conn->query("SELECT DISTINCT building FROM classrooms ORDER BY building");
-$buildings = $buildingStmt->fetchAll(PDO::FETCH_COLUMN);
+// 獲取場域/區域清單（schema 已將 building/room 轉為 area/classroom_code）
+$areaStmt = $conn->query("SELECT DISTINCT area FROM classrooms ORDER BY area");
+$areas = $areaStmt->fetchAll(PDO::FETCH_COLUMN);
 
 // 獲取教室類型清單
 $typeStmt = $conn->query("SELECT DISTINCT classroom_type FROM classrooms ORDER BY classroom_type");
@@ -51,9 +51,9 @@ if ($_SESSION['role'] !== 'teacher') {
     $params[] = $_SESSION['role'];
 }
 
-// 建築物篩選
+// 場域（area）篩選 — 保留 GET 參數名稱為 'building' 以兼容既有連結
 if ($buildingFilter !== 'all') {
-    $whereConditions[] = "c.building = ?";
+    $whereConditions[] = "c.area = ?";
     $params[] = $buildingFilter;
 }
 
@@ -67,7 +67,7 @@ if (!empty($whereConditions)) {
     $query .= " WHERE " . implode(" AND ", $whereConditions);
 }
 
-$query .= " ORDER BY c.building, c.room";
+$query .= " ORDER BY c.area, c.classroom_code";
 $stmt = $conn->prepare($query);
 $stmt->execute($params);
 $classrooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -183,18 +183,18 @@ $hours = range(8, 20);
                 </div>
                 
                 <div class="filter-group me-3">
-                    <label for="building-filter">
-                        <i class="fas fa-building"></i> 建築物
-                    </label>
-                    <select id="building-filter" name="building" class="form-select auto-submit">
-                        <option value="all" <?= $buildingFilter === 'all' ? 'selected' : '' ?>>全部</option>
-                        <?php foreach ($buildings as $building): ?>
-                            <option value="<?= htmlspecialchars($building) ?>"
-                                    <?= $buildingFilter === $building ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($building) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                        <label for="area-filter">
+                            <i class="fas fa-building"></i> 場域
+                        </label>
+                        <select id="area-filter" name="building" class="form-select auto-submit">
+                            <option value="all" <?= $buildingFilter === 'all' ? 'selected' : '' ?>>全部</option>
+                            <?php foreach ($areas as $area): ?>
+                                <option value="<?= htmlspecialchars($area) ?>"
+                                        <?= $buildingFilter === $area ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($area) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                 </div>
                 
                 <div class="filter-group me-3">
@@ -277,7 +277,7 @@ $hours = range(8, 20);
                                             $classroom['classroom_ID'],
                                             $hour,
                                             htmlspecialchars($classroom['classroom_name']),
-                                            htmlspecialchars($classroom['building'] . ' ' . $classroom['room'])
+                                            htmlspecialchars(($classroom['area'] ?? '') . ' ' . ($classroom['classroom_code'] ?? ''))
                                         );
                                         
                                         // 預約信息屬性

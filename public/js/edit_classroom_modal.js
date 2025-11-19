@@ -32,10 +32,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
           // 獲取資料
           const classroomId = this.getAttribute('data-id');
-          const roles = this.getAttribute('data-roles').split(',');
+          const roles = (this.getAttribute('data-roles') || '').split(',');
           const name = this.getAttribute('data-name');
-          const building = this.getAttribute('data-building');
-          const room = this.getAttribute('data-room');
+          const area = this.getAttribute('data-area') || '';
+          const code = this.getAttribute('data-code') || '';
 
           // 已取得教室資料
 
@@ -43,15 +43,37 @@ document.addEventListener('DOMContentLoaded', function () {
             // 設置表單值
             document.getElementById('edit_classroom_id').value = classroomId;
             document.getElementById('edit_classroom_name').value = name;
-            document.getElementById('edit_building').value = building;
-            document.getElementById('edit_room').value = room;
+            document.getElementById('edit_area').value = area;
+            document.getElementById('edit_classroom_code').value = code;
 
-            // 設置學生權限開關
+            // capacity / features / recording_system (may be undefined)
+            if (document.getElementById('edit_capacity')) {
+              document.getElementById('edit_capacity').value =
+                this.getAttribute('data-capacity') || '';
+            }
+            if (document.getElementById('edit_features')) {
+              document.getElementById('edit_features').value =
+                this.getAttribute('data-features') || '';
+            }
+            if (document.getElementById('edit_recording_system')) {
+              document.getElementById('edit_recording_system').checked =
+                this.getAttribute('data-recording') === '1' ||
+                this.getAttribute('data-recording') === 'true';
+            }
+
+            // 設置權限多選
             const studentAllowed = roles.includes('student');
-            document.getElementById('edit_perm_student').checked =
-              studentAllowed;
-            document.getElementById('student_status').textContent =
-              studentAllowed ? '開啟' : '關閉';
+            const teacherAllowed = roles.includes('teacher');
+            const deptAllowed = roles
+              .map((r) => r.trim())
+              .includes('department');
+
+            const elStudent = document.getElementById('edit_perm_student');
+            const elTeacher = document.getElementById('edit_perm_teacher');
+            const elDept = document.getElementById('edit_perm_dept');
+            if (elStudent) elStudent.checked = studentAllowed;
+            if (elTeacher) elTeacher.checked = teacherAllowed;
+            if (elDept) elDept.checked = deptAllowed;
 
             // 顯示彈窗
             if (editClassroomModal) {
@@ -126,13 +148,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const classroomName = document
           .getElementById('edit_classroom_name')
           .value.trim();
-        const building = document.getElementById('edit_building').value.trim();
+        const area = document.getElementById('edit_area').value.trim();
+        const code = document
+          .getElementById('edit_classroom_code')
+          .value.trim();
 
         if (classroomName === '') {
           notificationSystem.showError('教室名稱為必填欄位', '表單驗證失敗');
           return;
-        } else if (building === '') {
-          notificationSystem.showError('樓宇為必填欄位', '表單驗證失敗');
+        } else if (area === '' || code === '') {
+          notificationSystem.showError(
+            '區域與教室代碼為必填欄位',
+            '表單驗證失敗'
+          );
           return;
         }
 

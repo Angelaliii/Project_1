@@ -10,7 +10,6 @@ $rootPath = isset($rootPath) ? $rootPath : '../../';
     </div>
 </footer>
 
-<!-- Bootstrap JS 由各頁面自行引入 -->
 
 </body>
 </html>

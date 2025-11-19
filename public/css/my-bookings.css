@@ -1,3 +1,5 @@
+@import url("main.css");
+
 /* my-bookings.css */
 
 /* ===== 預約篩選器 ===== */
@@ -55,7 +57,7 @@
   padding: 0 8px;
   font-size: 11px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-white);
   background-color: var(--color-primary);
   border-radius: 10px;
   margin-left: 4px;
@@ -72,7 +74,7 @@
 .btn-filter.active .badge-empty {
   opacity: 0.7;
   background-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  color: var(--color-white);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -87,14 +89,14 @@
 .btn-filter.active {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   box-shadow: var(--shadow-md);
   font-weight: 600;
 }
 
 .btn-filter.active .badge {
   color: var(--color-primary);
-  background-color: #fff;
+  background-color: var(--color-white);
 }
 
 /* 自定義日期選擇器樣式 */
@@ -257,7 +259,7 @@
   flex-grow: 1;
   min-width: 160px;
   box-shadow: var(--shadow-sm);
-  background: #fff
+  background: var(--color-white)
     url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
     no-repeat right 8px center;
 }
@@ -274,7 +276,7 @@
 
 .booking-group-title {
   margin: 18px 4px 8px;
-  color: #475569;
+  color: var(--color-text-secondary);
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.2px;
@@ -384,7 +386,11 @@
   align-items: center;
   padding: var(--spacing-sm) var(--spacing-md) var(--spacing-xs)
     var(--spacing-md); /* 減少上下內距 */
-  background: linear-gradient(180deg, #fafbff 0%, var(--color-card) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-soft-blue) 0%,
+    var(--color-card) 100%
+  );
   border-bottom: 1px dashed var(--color-border);
   position: relative;
 }
@@ -406,7 +412,7 @@
 }
 
 .booking-title .separator {
-  color: #94a3b8;
+  color: var(--color-text-tertiary);
   margin: 0 4px;
 }
 
@@ -428,8 +434,8 @@
 /* 各狀態樣式 - 修改後的顏色和圖示 */
 .status-booked,
 .booking-card[data-status="booked"] .booking-status {
-  background: #e6f7ff; /* 藍色背景 */
-  color: #1890ff; /* 藍色文字 */
+  background: var(--color-info-bg); /* 藍色背景 */
+  color: var(--color-info); /* 藍色文字 */
   border-color: rgba(24, 144, 255, 0.28);
 }
 .status-booked::before,
@@ -442,8 +448,8 @@
 
 .status-in_use,
 .booking-card[data-status="in_use"] .booking-status {
-  background: #fff7e6; /* 橘色背景 */
-  color: #fa8c16; /* 橘色文字 */
+  background: var(--color-warning-bg); /* 橘色背景 */
+  color: var(--color-warning); /* 橘色文字 */
   border-color: rgba(250, 140, 22, 0.35);
 }
 .status-in_use::before,
@@ -456,8 +462,8 @@
 
 .status-completed,
 .booking-card[data-status="completed"] .booking-status {
-  background: #f6ffed; /* 綠色背景 */
-  color: #52c41a; /* 綠色文字 */
+  background: var(--color-success-bg); /* 綠色背景 */
+  color: var(--color-success); /* 綠色文字 */
   border-color: rgba(82, 196, 26, 0.35);
 }
 .status-completed::before,
@@ -470,8 +476,8 @@
 
 .status-cancelled,
 .booking-card[data-status="cancelled"] .booking-status {
-  background: #fff1f0; /* 紅色背景 */
-  color: #f5222d; /* 紅色文字 */
+  background: var(--color-danger-bg); /* 紅色背景 */
+  color: var(--color-danger); /* 紅色文字 */
   border-color: rgba(245, 34, 45, 0.35);
 }
 .status-cancelled::before,
@@ -570,7 +576,7 @@
 
 /* 取消按鈕 */
 .cancel-btn {
-  background: #fff;
+  background: var(--color-white);
   color: var(--color-danger);
   border-color: rgba(245, 34, 45, 0.45);
   bottom: 0;
@@ -580,7 +586,7 @@
 
 .cancel-btn:hover {
   background: rgba(245, 34, 45, 0.06);
-  color: #d32f2f;
+  color: var(--color-danger);
   border-color: rgba(245, 34, 45, 0.7);
   box-shadow: var(--shadow-md);
 }

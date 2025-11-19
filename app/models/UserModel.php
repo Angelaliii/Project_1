@@ -170,8 +170,8 @@ class UserModel {
      */
     public function getUserBookings($userId, $filter = 'all') {
         try {
-            $sql = "SELECT b.booking_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, 
-                    c.classroom_name, c.building, c.room,
+                $sql = "SELECT b.booking_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, 
+                    c.classroom_name, c.area, c.classroom_code,
                     CURRENT_TIMESTAMP AS server_time
                     FROM bookings b
                     INNER JOIN classrooms c ON b.classroom_ID = c.classroom_ID

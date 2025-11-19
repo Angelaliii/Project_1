@@ -14,23 +14,40 @@ require_once __DIR__ . '/../../helpers/security.php';
                 <form method="post" id="add-classroom-form" enctype="multipart/form-data">
                     <?= csrf_field() ?>
                     <div class="mb-3">
-                        <label for="classroom_name" class="form-label">教室名稱 <span class="text-danger">*</span></label>
-                        <input type="text" id="classroom_name" name="classroom_name" class="form-control" required>
+                    <div class="mb-3">
+                        <label for="area" class="form-label">區域 / 樓宇 <span class="text-danger">*</span></label>
+                        <input type="text" id="area" name="area" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="building" class="form-label">樓宇 <span class="text-danger">*</span></label>
-                        <input type="text" id="building" name="building" class="form-control" required>
+                        <label for="classroom_code" class="form-label">教室代碼 <span class="text-danger">*</span></label>
+                        <input type="text" id="classroom_code" name="classroom_code" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="room" class="form-label">房間號碼</label>
-                        <input type="text" id="room" name="room" class="form-control">
+                        <label for="capacity" class="form-label">容納人數</label>
+                        <input type="number" id="capacity" name="capacity" class="form-control" min="0">
                     </div>
                     <div class="mb-3">
-                        <p class="form-label mb-2">租借權限設置</p>
-                        <div class="d-flex align-items-center mb-2">
-                            <span class="me-3">學生租借權限：</span>
-                            <div class="form-check form-switch d-flex align-items-center">
-                                <input class="form-check-input me-2" type="checkbox" name="allowed_roles[]" value="student" checked id="role-student" style="width: 3em; height: 1.5em;">
+                        <label for="features" class="form-label">設備 / 特性</label>
+                        <input type="text" id="features" name="features" class="form-control" placeholder="例如：投影、錄影系統、電腦">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="recording_system" name="recording_system" value="1">
+                        <label class="form-check-label" for="recording_system">具備錄影/錄音系統</label>
+                    </div>
+                    <div class="mb-3">
+                        <p class="form-label mb-2">租借權限設置（多選）</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allowed_roles[]" value="student" checked id="role-student">
+                            <label class="form-check-label" for="role-student">學生</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allowed_roles[]" value="teacher" id="role-teacher">
+                            <label class="form-check-label" for="role-teacher">教師</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="allowed_roles[]" value="department" id="role-dept">
+                            <label class="form-check-label" for="role-dept">系所 / 單位</label>
+                        </div>
                                 <label class="form-check-label" for="role-student">開啟</label>
                             </div>
                         </div>

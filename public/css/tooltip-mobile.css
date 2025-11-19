@@ -1,13 +1,15 @@
+@import url("main.css");
+
 /* tooltip-mobile.css - 自定義 Tooltip 樣式 (不依賴 Bootstrap) */
 
 /* 自訂 Tooltip 樣式 */
 .tooltip-container {
   position: fixed;
   z-index: 9999;
-  background-color: #fff;
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+  background-color: var(--color-card);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   opacity: 0;
   transition: opacity 0.2s ease-out;
   pointer-events: none;
@@ -30,12 +32,12 @@
 
 /* Tooltip 標題 */
 .tooltip-header {
-  background-color: #1e88e5;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-white);
   padding: 8px 12px;
   font-weight: 600;
   font-size: 13px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 @media (max-width: 767px) {
@@ -48,7 +50,7 @@
 /* Tooltip 內容樣式 */
 .tooltip-content {
   padding: 8px 10px;
-  color: #333;
+  color: var(--color-text);
   font-size: 11px;
 }
 
@@ -64,7 +66,7 @@
   padding: 4px 0;
   display: flex;
   align-items: flex-start;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--color-border);
   font-size: 11px;
   text-align: left;
 }
@@ -109,7 +111,7 @@
   min-width: 70px;
   width: 70px;
   font-weight: 600;
-  color: #555;
+  color: var(--color-text-secondary);
   margin-right: 5px;
   font-size: 11px;
   display: block;
@@ -143,18 +145,18 @@
 /* 確保已預約格子樣式突出 */
 .time-slot-booked,
 .time-cell.booked {
-  background-color: #f8d7da !important;
-  cursor: help !important;
+  background-color: var(--color-danger-bg);
+  cursor: help;
   position: relative;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .time-slot-booked:hover,
 .time-cell.booked:hover {
-  background-color: #f5c6cb !important;
+  background-color: rgba(245, 34, 45, 0.08);
   transform: scale(1.02);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   z-index: 20;
 }
 
@@ -172,15 +174,15 @@
   }
 
   .mobile-tooltip {
-    width: 80% !important;
-    max-width: 240px !important;
-    pointer-events: auto !important;
-    z-index: 9999 !important;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    opacity: 1 !important;
-    display: block !important;
+    width: 80%;
+    max-width: 240px;
+    pointer-events: auto;
+    z-index: 9999;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    display: block;
   }
 
   /* 行動版特有的關閉按鈕 */
@@ -201,7 +203,7 @@
     position: absolute;
     width: 12px;
     height: 12px;
-    background: white;
+    background: var(--color-card);
     transform: rotate(45deg);
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);

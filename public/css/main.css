@@ -1,27 +1,17 @@
-/* 
- * main.css - 教室租借系統主樣式表
- * 整合所有通用樣式，避免重複定義
+/*
+ * main.css - 系統統一設計變數與基礎樣式
+ * - 定義設計系統變數（色彩、間距、半徑、陰影）
+ * - 提供通用元件基底（按鈕、表單、卡片等）
+ * 所有其他頁面 CSS 檔應以 `@import url('main.css');` 引入
  */
 
-/* ===== 全域基礎樣式 ===== */
+/* ===== 全域設計變數 ===== */
 :root {
-  /* 主要顏色 */
-  --color-primary: #0056b3;
-  /* Bootstrap 相容的容器樣式 */
-  .container {
-    margin-top: 0; /* 移除上邊距，由Flexbox控制垤直居中 */
-    margin-left: auto;
-    margin-right: auto;
-    background-color: var(--color-card);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    width: auto; /* 確保寬度自動適應內容 */
-    max-width: 100%; /* 確保不超過父元素寬度 */
-  }
-  -primary-dark: #004494;
-  --color-primary-light: #e3f2fd;
+  /* 色票 */
+  --color-primary: #1e90ff; /* 主色（互動色） */
+  --color-primary-dark: #0056b3;
+  --color-primary-light: #e6f7ff;
 
-  /* 狀態顏色 */
   --color-success: #52c41a;
   --color-success-bg: #f6ffed;
   --color-danger: #f5222d;
@@ -31,43 +21,67 @@
   --color-info: #1890ff;
   --color-info-bg: #e6f7ff;
 
-  /* 中性顏色 */
-  --color-text: #333333;
-  --color-text-secondary: #666666;
-  --color-text-tertiary: #999999;
-  --color-border: #e0e0e0;
-  --color-background: #f5f7fa;
-  --color-card: #ffffff;
+  /* 中性色與表面 */
+  --color-text: #222222;
+  --color-text-secondary: #4b5563;
+  --color-text-tertiary: #9aa3ad;
+  --color-border: #e6e9ee;
+  --color-background: #f5f7fa; /* page background */
+  --color-card: #ffffff; /* surface / card background */
+  --color-surface: #f8f9fa; /* 淺色表面（list、表頭） */
+  --color-muted: #f1f3f5;
+  --color-past-bg: #e0e0e0;
+
+  /* Footer 變數 */
+  --color-footer-bg: #222222;
+  --color-footer-text: #f8f9fa;
+
+  /* 狀態線顏色（對應 booking） */
+  --status-booked: var(--color-info);
+  --status-inuse: var(--color-warning);
+  --status-completed: var(--color-success);
+  --status-cancelled: var(--color-danger);
+  --status-rejected: #fa541c;
 
   /* 陰影 */
-  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 15px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.12);
 
-  /* 邊框圓角 */
+  /* 圓角 */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
 
   /* 間距 */
-  --spacing-xs: 5px;
+  --spacing-xs: 6px;
   --spacing-sm: 10px;
-  --spacing-md: 15px;
-  --spacing-lg: 20px;
-  --spacing-xl: 30px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
-  /* 頁面最大寬度 */
   --container-max: 1200px;
-
-  /* 狀態顏色 */
-  --status-booked: #1890ff;
-  --status-inuse: #faad14;
-  --status-completed: #52c41a;
-  --status-cancelled: #f5222d;
-  --status-rejected: #fa541c;
+  /* 額外輔助色彩變數 (灰階與白色，用於替換現有硬編碼) */
+  --color-white: #ffffff;
+  --gray-900: #333333;
+  --gray-800: #444444;
+  --gray-700: #555555;
+  --gray-600: #666666;
+  --gray-500: #777777;
+  --gray-400: #999999;
+  --gray-300: #cccccc;
+  --gray-200: #e0e0e0;
+  --gray-100: #f0f0f0;
+  --color-link: #4285f4;
+  --color-primary-variant: #4e73df;
+  --color-soft-blue: #f0f4ff;
 }
 
-/* 基本重設 */
+/* ===== Reset 與基礎版面配置 ===== */
+* {
+  box-sizing: border-box;
+}
+
 html,
 body {
   height: 100%;
@@ -75,560 +89,124 @@ body {
   padding: 0;
 }
 
-body {
-  background: url("../img/background.svg") no-repeat center center fixed;
-  background-size: cover;
-  background-color: var(--color-background);
+/* ===== Namespaced styles (avoid overriding Bootstrap) ===== */
+.app-root {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  color: var(--color-text);
 }
 
-/* ===== 頁面佈局結構 ===== */
-.page-wrapper {
+.app-root .page-wrapper {
   display: flex;
   flex-direction: column;
   flex: 1;
-  box-sizing: border-box;
 }
 
-.content-container {
-  flex: 1 0 auto;
+.app-root .content-container {
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
-  box-sizing: border-box;
-}
-
-/* 專為登入/註冊頁面的垂直居中 */
-.content-container.d-flex.align-items-center {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* ===== 標題與內容樣式 ===== */
-.content-header {
-  margin-bottom: var(--spacing-xl);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.content-header h1 {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0 0 var(--spacing-sm);
-  display: flex;
-  align-items: center;
-}
-
-.content-header h1 i {
-  margin-right: var(--spacing-sm);
-  color: var(--color-primary);
-}
-
-.content-header p {
-  color: var(--color-text-secondary);
-  margin: 0;
-  font-size: 14px;
-}
-
-/* ===== 通用容器樣式 ===== */
-.container-card {
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
   padding: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
 }
 
-/* Bootstrap 相容的容器樣式 */
-.container {
-  margin: auto; /* 改為自動邊距，垂直與水平方向都居中 */
-  background-color: var(--color-card);
+/* ===== 通用元件基底 (namespaced) ===== */
+.app-root .container-card {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+}
+.app-root .container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.app-root .btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  border: 0;
+  font-weight: 600;
+}
+.app-root .btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  border: 1px solid var(--color-primary);
+}
+.app-root .btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+.app-root .btn-danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+.app-root .btn-sm {
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.app-root .card {
+  background: var(--color-card);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
 }
 
-.container-body {
-  border-radius: var(--radius-md);
+/* 表單 */
+.app-root .form-group {
+  margin-bottom: var(--spacing-md);
 }
-
-/* ===== 通用按鈕樣式 ===== */
-.btn {
-  display: inline-block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: none;
-  text-align: center;
-}
-
-/* 主要按鈕 */
-.btn-primary {
-  background-color: var(--color-primary);
-  color: white;
-  border: 1px solid var(--color-primary);
-}
-
-/* .btn-primary:hover {
-  background-color: var(--color-primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-} */
-
-/* 輪廓按鈕 */
-.btn-outline {
-  border: 1px solid var(--color-primary);
-  color: var(--color-primary);
-  background: transparent;
-}
-
-.btn-outline:hover {
-  background-color: var(--color-primary);
-  color: white;
-}
-
-/* 危險按鈕 */
-.btn-danger {
-  background-color: var(--color-danger);
-  color: white;
-  border: 1px solid var(--color-danger);
-}
-
-.btn-danger:hover {
-  background-color: #d32f2f;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-
-/* 按鈕尺寸 */
-.btn-sm {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 12px;
-}
-
-.btn-lg {
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 16px;
-}
-
-/* 按鈕間距 */
-.btn + .btn {
-  margin-left: var(--spacing-sm);
-}
-
-/* ===== 通用表單樣式 ===== */
-.form-group {
-  margin-bottom: var(--spacing-lg);
-}
-
-.form-group label {
+.app-root .form-group label {
   display: block;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 6px;
   font-weight: 600;
-  color: var(--color-text);
 }
-
-.form-group input,
-.form-group select,
-.form-group textarea {
+.app-root .form-control {
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  font-size: 16px;
-  transition: all 0.3s;
 }
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus,
-.form-control:focus {
-  border-color: var(--color-primary);
+.app-root .form-control:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.08);
+  border-color: var(--color-primary);
 }
 
-.form-group input[readonly],
-.form-group select[disabled] {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-}
-
-/* ===== 通用連結樣式 ===== */
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-a:hover {
-  color: var(--color-primary-dark);
-}
-
-/* ===== 通用Logo樣式 ===== */
-.logo {
-  align-items: center;
-  transition: transform 0.3s ease;
-}
-
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.logo:hover {
-  transform: scale(1.05);
-}
-
-.logo img {
-  height: 35px;
-  width: auto;
-  margin-right: var(--spacing-sm);
-  object-fit: contain;
-}
-
-.logo span {
-  font-size: 1.25rem;
-  font-weight: bold;
-  color: var(--color-text);
-}
-
-/* ===== 通用卡片樣式 ===== */
-.card {
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ===== 通用空白狀態樣式 ===== */
-.empty-state {
-  text-align: center;
-  padding: var(--spacing-xl) var(--spacing-lg);
-  background-color: var(--color-card);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  color: var(--color-text-tertiary);
-}
-
-.empty-state i {
-  font-size: 48px;
-  color: #ccc;
-  margin-bottom: var(--spacing-md);
-  display: block;
-}
-
-.empty-state h2,
-.empty-state h3,
-.empty-state h4 {
-  margin-bottom: var(--spacing-sm);
-  color: var(--color-text);
-  font-weight: 500;
-}
-
-.empty-state p {
-  color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-lg);
-}
-
-/* ===== 通用狀態標籤樣式 ===== */
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.booking-status {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 50px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-/* 狀態顏色 */
-.status-booked {
-  background-color: var(--color-info-bg);
-  color: var(--color-info);
-}
-
-.status-in_use {
-  background-color: var(--color-warning-bg);
-  color: var(--color-warning);
-}
-
-.status-completed {
-  background-color: var(--color-success-bg);
-  color: var(--color-success);
-}
-
-.status-cancelled {
-  background-color: var(--color-danger-bg);
-  color: var(--color-danger);
-}
-
-.status-rejected {
-  background-color: #fff2e8;
-  color: var(--status-rejected);
-}
-
-/* 預約卡片狀態邊框樣式 */
-.booking-card[data-status="booked"] {
-  border-left: 8px solid var(--status-booked);
-}
-
-.booking-card[data-status="in_use"] {
-  border-left: 8px solid var(--status-inuse);
-}
-
-.booking-card[data-status="completed"] {
-  border-left: 8px solid var(--status-completed);
-}
-
-.booking-card[data-status="cancelled"] {
-  border-left: 8px solid var(--status-cancelled);
-}
-
-.booking-card[data-status="rejected"] {
-  border-left: 8px solid var(--status-rejected);
-}
-
-/* ===== 通用提示框樣式 ===== */
-.alert {
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--spacing-lg);
-}
-
-.alert-success {
-  background-color: var(--color-success-bg);
-  border: 1px solid #b7eb8f;
-  color: var(--color-success);
-}
-
-.alert-danger,
-.alert-error {
-  background-color: var(--color-danger-bg);
-  border: 1px solid #ffa39e;
-  color: var(--color-danger);
-}
-
-.alert-warning {
-  background-color: var(--color-warning-bg);
-  border: 1px solid #ffe58f;
-  color: var(--color-warning);
-}
-
-.alert-info {
-  background-color: var(--color-info-bg);
-  border: 1px solid #91d5ff;
-  color: var(--color-info);
-}
-
-/* ===== 通知樣式 ===== */
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  max-width: 400px;
-  background-color: var(--color-card);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  z-index: 1050;
-  display: flex;
-  align-items: center;
-  padding: var(--spacing-md);
-  transition: all 0.3s ease;
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-}
-
-.notification.show {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.notification-success {
-  border-left: 4px solid var(--color-success);
-}
-
-.notification-error {
-  border-left: 4px solid var(--color-danger);
-}
-
-.notification-warning {
-  border-left: 4px solid var(--color-warning);
-}
-
-.notification-info {
-  border-left: 4px solid var(--color-info);
-}
-
-.notification-icon {
-  margin-right: var(--spacing-sm);
-  font-size: 20px;
-}
-
-.notification-success .notification-icon {
-  color: var(--color-success);
-}
-
-.notification-error .notification-icon {
-  color: var(--color-danger);
-}
-
-.notification-warning .notification-icon {
-  color: var(--color-warning);
-}
-
-.notification-info .notification-icon {
-  color: var(--color-info);
-}
-
-.notification-content {
-  flex: 1;
-}
-
-.notification-title {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.notification-message {
-  color: var(--color-text-secondary);
-}
-
-.notification-close {
-  color: var(--color-text-tertiary);
-  cursor: pointer;
-  margin-left: var(--spacing-sm);
-  transition: color 0.3s;
-}
-
-.notification-close:hover {
-  color: var(--color-text);
-}
-
-/* ===== 表格樣式 ===== */
-.table-container {
-  overflow-x: auto;
-  margin-bottom: var(--spacing-lg);
-}
-
-.table {
+/* 通用表格 */
+.app-root .table {
   width: 100%;
   border-collapse: collapse;
 }
-
-.table th,
-.table td {
-  padding: var(--spacing-sm);
+.app-root .table th,
+.app-root .table td {
+  padding: 10px;
   border: 1px solid var(--color-border);
-  text-align: left;
 }
-
-.table th {
-  background-color: #f8f9fa;
+.app-root .table th {
+  background: var(--color-surface);
   font-weight: 600;
 }
 
-.table tr:hover {
-  background-color: #f8f9fa;
-}
-
-/* ===== 分頁樣式 ===== */
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-}
-
-.pagination .page-item {
-  margin: 0 2px;
-}
-
-.pagination .page-link {
+/* 狀態標籤 */
+.app-root .status-badge {
   display: inline-block;
-  padding: var(--spacing-sm);
-  min-width: 32px;
-  height: 32px;
-  text-align: center;
-  line-height: 1;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text);
-  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 12px;
 }
 
-.pagination .page-link:hover {
-  background-color: #f8f9fa;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.pagination .active .page-link {
-  background-color: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
-}
-
-/* ===== 響應式設計 ===== */
-@media (max-width: 992px) {
-  .content-container {
-    padding: var(--spacing-lg) var(--spacing-sm);
-    width: 100%;
-  }
-}
-
+/* 響應式常用 */
 @media (max-width: 768px) {
-  .container {
-    margin-top: 0;
-    width: 95%; /* 在手機上使用更大的寬度比例 */
-    max-width: none; /* 覆蓋原本的限制 */
-  }
-
-  .form-group input {
-    font-size: 14px;
-  }
-
-  .content-header h1 {
-    font-size: 20px;
+  .app-root .content-container {
+    padding: var(--spacing-md);
   }
 }
 
-@media (max-width: 576px) {
-  .content-header {
-    margin-bottom: var(--spacing-md);
-  }
-
-  .btn {
-    width: 100%;
-    margin-bottom: var(--spacing-sm);
-  }
-
-  .btn + .btn {
-    margin-left: 0;
-  }
-}
+/* 可被其他 css 檔覆蓋的樣式就到此為止 */

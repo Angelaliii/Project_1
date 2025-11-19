@@ -49,7 +49,8 @@ class ClassroomModel {
             $offset = ($page - 1) * $perPage;
             
             if (!empty($search)) {
-                $searchCondition = "WHERE (c.classroom_name LIKE ? OR c.building LIKE ? OR c.room LIKE ?)";
+                // 搜尋時改為比對 area 與 classroom_code（schema 已改）
+                $searchCondition = "WHERE (c.classroom_name LIKE ? OR c.area LIKE ? OR c.classroom_code LIKE ?)";
                 $searchTerm = "%$search%";
                 $searchParams = [$searchTerm, $searchTerm, $searchTerm];
             }
@@ -109,19 +110,22 @@ class ClassroomModel {
             // 輸出接收到的數據，以供調試
             error_log("接收到的教室數據: " . print_r($data, true));
             
-            // 準備 SQL 語句插入教室 - 只使用存在的欄位
-            $sql = "INSERT INTO classrooms (classroom_name, building, room, classroom_type) VALUES (?, ?, ?, 'standard')";
+            // 準備 SQL 語句插入教室 - 使用新 schema 欄位
+            $sql = "INSERT INTO classrooms (classroom_name, area, classroom_code, capacity, recording_system, features, classroom_type) VALUES (?, ?, ?, ?, ?, ?, 'standard')";
             $stmt = $this->db->prepare($sql);
-            
+
             // 綁定參數並執行
             $stmt->bindParam(1, $data['classroom_name']);
-            $stmt->bindParam(2, $data['building']);
-            $stmt->bindParam(3, $data['room']);
+            $stmt->bindParam(2, $data['area']);
+            $stmt->bindParam(3, $data['classroom_code']);
+            $stmt->bindParam(4, $data['capacity']);
+            $stmt->bindParam(5, $data['recording_system']);
+            $stmt->bindParam(6, $data['features']);
             
             error_log("執行 SQL: $sql");
-            error_log("參數: " . $data['classroom_name'] . ", " . $data['building'] . ", " . $data['room']);
+            error_log("參數: " . $data['classroom_name'] . ", " . ($data['area'] ?? '') . ", " . ($data['classroom_code'] ?? ''));
             
-            if ($stmt->execute()) {
+                if ($stmt->execute()) {
                 // 獲取新插入的教室 ID
                 $classroom_id = $this->db->lastInsertId();
                 error_log("新教室 ID: $classroom_id");
@@ -189,12 +193,15 @@ class ClassroomModel {
             $this->db->beginTransaction();
 
             // 更新教室信息 - 只更新存在的欄位
-            $updateClassroomSql = "UPDATE classrooms SET classroom_name = ?, building = ?, room = ? WHERE classroom_ID = ?";
+            $updateClassroomSql = "UPDATE classrooms SET classroom_name = ?, area = ?, classroom_code = ?, capacity = ?, recording_system = ?, features = ? WHERE classroom_ID = ?";
             $updateClassroomStmt = $this->db->prepare($updateClassroomSql);
             $updateResult = $updateClassroomStmt->execute([
-                $data['classroom_name'], 
-                $data['building'], 
-                $data['room'], 
+                $data['classroom_name'],
+                $data['area'],
+                $data['classroom_code'],
+                $data['capacity'],
+                $data['recording_system'],
+                $data['features'],
                 $id
             ]);
 

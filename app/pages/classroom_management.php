@@ -1,7 +1,7 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+// 確認是否已登入
+if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit;
 }
@@ -12,59 +12,78 @@ require_once '../helpers/security.php';
 
 $classroomModel = new ClassroomModel();
 
-// 處理新增教室表單提交
+// 處理新增教室表單提交（僅限 Admin）
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_classroom'])) {
-    // 驗證 CSRF Token
-    if (!isset($_POST['csrf_token']) || !verify_csrf($_POST['csrf_token'])) {
-        $message = '安全驗證失敗，請重新操作';
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        $message = '您沒有新增教室的權限';
     } else {
-        $classroom_name = $_POST['classroom_name'] ?? '';
-        $building = $_POST['building'] ?? '';
-        $room = $_POST['room'] ?? '';
-        $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['student', 'teacher'];
-        
-        // 教師永遠有權限
-        if (!in_array('teacher', $allowed_roles)) {
-            $allowed_roles[] = 'teacher';
-        }
-        
-        // 檢查必填欄位
-        if (empty($classroom_name)) {
-            $message = '教室名稱為必填欄位';
+        // 驗證 CSRF Token
+        if (!isset($_POST['csrf_token']) || !verify_csrf($_POST['csrf_token'])) {
+            $message = '安全驗證失敗，請重新操作';
         } else {
-            try {
-            // 創建新教室數據
-            $classroomData = [
-                'classroom_name' => $classroom_name,
-                'building' => $building,
-                'room' => $room,
-                'allowed_roles' => $allowed_roles
-            ];
-            
-            $classroomId = $classroomModel->create($classroomData);
-            
-            if ($classroomId) {
-                $message = '教室新增成功';
-                // 移除重定向，讓通知系統有機會顯示訊息
-                // header('Location: ' . $_SERVER['PHP_SELF']);
-                // exit;
-            } else {
-                $message = '教室新增失敗';
+            $classroom_name = $_POST['classroom_name'] ?? '';
+            $area = $_POST['area'] ?? '';
+            $classroom_code = $_POST['classroom_code'] ?? '';
+            $capacity = $_POST['capacity'] !== '' ? (int)$_POST['capacity'] : null;
+            $recording_system = isset($_POST['recording_system']) ? 1 : 0;
+            $features = $_POST['features'] ?? null;
+            $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['teacher', 'department'];
+
+
+            // 教師永遠有權限
+            if (!in_array('teacher', $allowed_roles)) {
+                $allowed_roles[] = 'teacher';
             }
-        } catch (Exception $e) {
-            $message = '數據庫錯誤：' . $e->getMessage();
+
+            // 檢查必填欄位
+            if (empty($classroom_name) || empty($area) || empty($classroom_code)) {
+                $message = '教室名稱、樓層/區域與教室代碼為必填欄位';
+            } else {
+                try {
+                    // 創建新教室數據（Model 會處理現有欄位）
+                    $classroomData = [
+                        'classroom_name' => $classroom_name,
+                        'area' => $area,
+                        'classroom_code' => $classroom_code,
+                        'capacity' => $capacity,
+                        'recording_system' => $recording_system,
+                        'features' => $features,
+                        'allowed_roles' => $allowed_roles
+                    ];
+
+                    $classroomId = $classroomModel->create($classroomData);
+
+                    if ($classroomId) {
+                        $message = '教室新增成功';
+                    } else {
+                        $message = '教室新增失敗';
+                    }
+                } catch (Exception $e) {
+                    $message = '數據庫錯誤：' . $e->getMessage();
+                }
+            }
         }
-        }
+
+    // 關閉 update_classroom 的外層 if
+
     }
-}
+
+
 
 // 處理教室信息和權限更新
+// 更新教室資訊（僅限 Admin）
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_classroom'])) {
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        $message = '您沒有編輯教室的權限';
+    } else {
     $classroom_id = $_POST['classroom_id'] ?? 0;
     $classroom_name = $_POST['classroom_name'] ?? '';
-    $building = $_POST['building'] ?? '';
-    $room = $_POST['room'] ?? '';
+    $area = $_POST['area'] ?? '';
+    $classroom_code = $_POST['classroom_code'] ?? '';
+    $capacity = $_POST['capacity'] !== '' ? (int)$_POST['capacity'] : null;
+    $recording_system = isset($_POST['recording_system']) ? 1 : 0;
+    $features = $_POST['features'] ?? null;
     $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : [];
     
     // 教師永遠有權限
@@ -81,8 +100,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_classroom'])) {
             // 更新教室數據
             $classroomData = [
                 'classroom_name' => $classroom_name,
-                'building' => $building,
-                'room' => $room,
+                'area' => $area,
+                'classroom_code' => $classroom_code,
+                'capacity' => $capacity,
+                'recording_system' => $recording_system,
+                'features' => $features,
                 'allowed_roles' => $allowed_roles
             ];
             
@@ -98,22 +120,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_classroom'])) {
     }
 }
 
-// 處理刪除教室
+// 關閉 update_classroom 的外層 if
+
+// 處理刪除教室（僅限 Admin）
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_classroom'])) {
-    $classroom_id = $_POST['classroom_id'] ?? 0;
-    
-    if (empty($classroom_id)) {
-        $message = '教室 ID 不能為空';
+    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+        $message = '您沒有刪除教室的權限';
     } else {
-        try {
-            // 使用模型刪除教室
-            if ($classroomModel->delete($classroom_id)) {
-                $message = '教室及其相關預約已成功刪除';
-            } else {
-                $message = '刪除教室失敗';
+        $classroom_id = $_POST['classroom_id'] ?? 0;
+        if (empty($classroom_id)) {
+            $message = '教室 ID 不能為空';
+        } else {
+            try {
+                if ($classroomModel->delete($classroom_id)) {
+                    $message = '教室及其相關預約已成功刪除';
+                } else {
+                    $message = '刪除教室失敗';
+                }
+            } catch (Exception $e) {
+                $message = '數據庫錯誤：' . $e->getMessage();
             }
-        } catch (Exception $e) {
-            $message = '數據庫錯誤：' . $e->getMessage();
         }
     }
 }
@@ -140,10 +166,14 @@ try {
 
 // 獲取用戶數據
 $username = $_SESSION['username'];
-$userRole = '學生';
-if ($_SESSION['role'] == 'teacher') {
-    $userRole = '教師';
-}
+$roleMap = [
+    'student' => '學生',
+    'teacher' => '教師',
+    'admin' => '管理者',
+    'department' => '系所'
+];
+
+$userRole = $roleMap[$_SESSION['role']] ?? ucfirst($_SESSION['role']);
 
 // 設定頁面標題和樣式
 $pageTitle = '教室管理';
@@ -184,8 +214,8 @@ if (!empty($message) && !headers_sent()) {
         <!-- 搜尋表單與新增按鈕 -->
         <div class="search-container d-flex align-items-center mb-3">
             <form action="" method="get" class="flex-grow-1 me-2">
-                <div class="input-group">
-                    <input type="text" name="search" placeholder="搜尋教室名稱、樓宇或房間號碼" value="<?= htmlspecialchars($search) ?>" class="form-control" id="auto-search-input">
+                    <div class="input-group">
+                    <input type="text" name="search" placeholder="搜尋教室名稱、區域或教室代碼" value="<?= htmlspecialchars($search ?? '') ?>" class="form-control" id="auto-search-input">
                     <?php if (!empty($search)): ?>
                     <button type="button" class="search-clear-btn" aria-label="清除搜尋">
                         <i class="fas fa-times" aria-hidden="true"></i>
@@ -194,9 +224,11 @@ if (!empty($message) && !headers_sent()) {
                     <?php endif; ?>
                 </div>
             </form>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
             <button class="btn btn-success" id="openAddClassroomBtn">
                 <i class="fas fa-plus"></i> 新增教室
             </button>
+            <?php endif; ?>
         </div>
         
         <script>
@@ -221,25 +253,26 @@ if (!empty($message) && !headers_sent()) {
                     <tr>
                         <th>教室ID</th>
                         <th>教室名稱</th>
-                        <th>樓宇</th>
-                        <th>房間</th>
+                            <th>區域</th>
+                            <th>代碼</th>
                         <th>租借權限</th>
                         <th>操作</th>
                     </tr>
                 </thead>
             <tbody>
-                <?php foreach ($classrooms as $room): ?>
-                    <?php $allowed_roles = explode(',', $room['allowed_roles']); ?>
-                    <tr data-id="<?= $room['classroom_ID'] ?>" data-roles="<?= htmlspecialchars($room['allowed_roles']) ?>">
-                        <td><?= htmlspecialchars($room['classroom_ID']) ?></td>
-                        <td><?= htmlspecialchars($room['classroom_name']) ?></td>
-                        <td><?= htmlspecialchars($room['building']) ?></td>
-                        <td><?= htmlspecialchars($room['room']) ?></td>
+                <?php foreach ((array)$classrooms as $room): ?>
+                    <?php $allowed_roles = !empty($room['allowed_roles']) ? explode(',', $room['allowed_roles']) : []; ?>
+                    <tr data-id="<?= htmlspecialchars($room['classroom_ID'] ?? '') ?>" data-roles="<?= htmlspecialchars($room['allowed_roles'] ?? '') ?>">
+                        <td><?= htmlspecialchars($room['classroom_ID'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($room['classroom_name'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($room['area'] ?? $room['classroom_code'] ?? $room['building'] ?? $room['room'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($room['classroom_code'] ?? $room['area'] ?? $room['room'] ?? '') ?></td>
                         <td>
                             <?php 
                             $roleLabels = [
                                 'student' => '學生', 
-                                'teacher' => '教師'
+                                'teacher' => '教師',
+                                'department' => '系所'
                             ];
                             $displayRoles = [];
                             foreach ($allowed_roles as $role) {
@@ -251,14 +284,22 @@ if (!empty($message) && !headers_sent()) {
                             ?>
                         </td>
                         <td>
+                            <a href="classroom_detail.php?id=<?= htmlspecialchars($room['classroom_ID'] ?? '') ?>" class="btn btn-sm btn-outline-info me-1">
+                                <i class="fas fa-eye"></i> 查看
+                            </a>
+                            <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                             <button class="btn btn-sm btn-outline-primary edit-classroom-btn" 
-                                data-id="<?= $room['classroom_ID'] ?>" 
-                                data-roles="<?= htmlspecialchars($room['allowed_roles']) ?>"
-                                data-name="<?= htmlspecialchars($room['classroom_name']) ?>"
-                                data-building="<?= htmlspecialchars($room['building']) ?>"
-                                data-room="<?= htmlspecialchars($room['room']) ?>">
+                                data-id="<?= htmlspecialchars($room['classroom_ID'] ?? '') ?>" 
+                                data-roles="<?= htmlspecialchars($room['allowed_roles'] ?? '') ?>"
+                                data-name="<?= htmlspecialchars($room['classroom_name'] ?? '') ?>"
+                                data-area="<?= htmlspecialchars($room['area'] ?? $room['classroom_code'] ?? $room['building'] ?? $room['room'] ?? '') ?>"
+                                data-code="<?= htmlspecialchars($room['classroom_code'] ?? $room['area'] ?? $room['room'] ?? '') ?>"
+                                data-capacity="<?= htmlspecialchars($room['capacity'] ?? '') ?>"
+                                data-features="<?= htmlspecialchars($room['features'] ?? '') ?>"
+                                data-recording="<?= htmlspecialchars(!empty($room['recording_system']) ? '1' : '0') ?>">
                                 <i class="fas fa-edit"></i> 編輯教室
                             </button>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -335,4 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="../../public/js/add_classroom_modal.js"></script>
 <script src="../../public/js/edit_classroom_modal.js"></script>
 
+<?php
+    }
+    }
+?>
 <?php include_once '../components/footer.php'; ?>

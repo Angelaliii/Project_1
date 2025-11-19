@@ -1,5 +1,4 @@
 <?php
-// 如未設置頁面標題，預設為「教室租借系統」
 if (!isset($pageTitle)) {
     $pageTitle = '教室租借系統';
 }
@@ -13,7 +12,6 @@ if (!isset($rootPath)) {
 
 
 $isLoggedIn = isset($_SESSION['user_id']);
-// Include security helper (safe to include; it ensures session exists)
 require_once __DIR__ . '/../helpers/security.php';
 ?>
 <!DOCTYPE html>
@@ -86,7 +84,7 @@ require_once __DIR__ . '/../helpers/security.php';
         });
     </script>
 </head>
-<body>
+<body class="app-root">
 <div class="page-wrapper">
 
 <?php
