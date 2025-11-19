@@ -112,17 +112,21 @@ if ($current_page != 'login.php' && $current_page != 'register.php') {
                     <li><a href="<?php echo $rootPath; ?>app/pages/booking.php" class="<?php echo ($current_page == 'booking.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-plus"></i> 教室預約
                     </a></li>
+                    <li><a href="<?php echo $rootPath; ?>app/pages/classroom_list.php" class="<?php echo ($current_page == 'classroom_list.php') ? 'active' : ''; ?>">
+                        <i class="fas fa-door-open"></i> 教室資訊
+                    </a></li>
                     <li><a href="<?php echo $rootPath; ?>app/pages/my_bookings_new.php" class="<?php echo ($current_page == 'my_bookings_new.php') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i> 我的預約
                     </a></li>
-                    <?php if ($_SESSION['role'] == 'teacher'): ?>
-                    <li><a href="<?php echo $rootPath; ?>app/pages/classroom_management.php" class="<?php echo ($current_page == 'classroom_management.php') ? 'active' : ''; ?>">
-                        <i class="fas fa-cogs"></i> 教室管理
-                    </a></li>
+                    <?php if (is_teacher()): ?>
+                    <!-- 教室管理頁已整合至教室資訊頁，舊連結已移除 -->
                     <?php endif; ?>
                 <?php else: ?>
                     <li><a href="<?php echo $rootPath; ?>index.php">
                         <i class="fas fa-home"></i> 首頁
+                    </a></li>
+                    <li><a href="<?php echo $rootPath; ?>app/pages/classroom_list.php">
+                        <i class="fas fa-door-open"></i> 教室資訊
                     </a></li>
                 <?php endif; ?>
             </ul>

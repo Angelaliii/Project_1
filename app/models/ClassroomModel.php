@@ -42,49 +42,58 @@ class ClassroomModel {
      * @param int $perPage 每頁數量
      * @return array 包含教室列表和總數的陣列 ['classrooms' => [], 'total' => 0]
      */
-    public function getClassrooms($search = '', $page = 1, $perPage = 10) {
+    public function getClassrooms($search = '', $page = 1, $perPage = 10, array $filters = []) {
         try {
-            $searchCondition = '';
-            $searchParams = [];
+            $whereParts = [];
+            $params = [];
             $offset = ($page - 1) * $perPage;
             
             if (!empty($search)) {
-                // 搜尋時改為比對 area 與 classroom_code（schema 已改）
-                $searchCondition = "WHERE (c.classroom_name LIKE ? OR c.area LIKE ? OR c.classroom_code LIKE ?)";
+                // 搜尋時比對 area 與 classroom_code
+                $whereParts[] = "(c.area LIKE ? OR c.classroom_code LIKE ?)";
                 $searchTerm = "%$search%";
-                $searchParams = [$searchTerm, $searchTerm, $searchTerm];
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            // 處理額外過濾項目（area, classroom_type, recording_system）
+            if (!empty($filters['area']) && $filters['area'] !== 'all') {
+                $whereParts[] = 'c.area = ?';
+                $params[] = $filters['area'];
+            }
+            if (!empty($filters['classroom_type']) && $filters['classroom_type'] !== 'all') {
+                $whereParts[] = 'c.classroom_type = ?';
+                $params[] = $filters['classroom_type'];
+            }
+            if (isset($filters['recording_system']) && $filters['recording_system'] !== '' && $filters['recording_system'] !== 'all') {
+                // recording_system 可為 '1' 或 '0'
+                $whereParts[] = 'c.recording_system = ?';
+                $params[] = (int)$filters['recording_system'];
             }
             
-            // 獲取記錄總數
-            $countSql = "
-                SELECT COUNT(*) AS total 
-                FROM classrooms c 
-                $searchCondition
-            ";
-            $countStmt = $this->db->prepare($countSql);
-            if (!empty($searchParams)) {
-                $countStmt->execute($searchParams);
-            } else {
-                $countStmt->execute();
+            // 組合 WHERE
+            $whereSql = '';
+            if (!empty($whereParts)) {
+                $whereSql = 'WHERE ' . implode(' AND ', $whereParts);
             }
+
+            // 獲取記錄總數
+            $countSql = "SELECT COUNT(*) AS total FROM classrooms c $whereSql";
+            $countStmt = $this->db->prepare($countSql);
+            $countStmt->execute($params);
             $totalCount = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
             
             // 獲取當前頁教室資料（包含權限信息）
-            $sql = "
-                SELECT c.*, 
-                       COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles 
-                FROM classrooms c
-                LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id
-                $searchCondition
-                ORDER BY c.classroom_ID
-                LIMIT $perPage OFFSET $offset
-            ";
+            $sql = "SELECT c.*, COALESCE(cp.allowed_roles, 'student,teacher') AS allowed_roles 
+                    FROM classrooms c
+                    LEFT JOIN classroom_permissions cp ON c.classroom_ID = cp.classroom_id
+                    $whereSql
+                    ORDER BY c.classroom_ID
+                    LIMIT $perPage OFFSET $offset";
             $stmt = $this->db->prepare($sql);
-            if (!empty($searchParams)) {
-                $stmt->execute($searchParams);
-            } else {
-                $stmt->execute();
-            }
+            // 合併參數（$params already contains search + filters）
+            $execParams = $params;
+            $stmt->execute($execParams);
             $classrooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             return [
@@ -110,17 +119,17 @@ class ClassroomModel {
             // 輸出接收到的數據，以供調試
             error_log("接收到的教室數據: " . print_r($data, true));
             
-            // 準備 SQL 語句插入教室 - 使用新 schema 欄位
-            $sql = "INSERT INTO classrooms (classroom_name, area, classroom_code, capacity, recording_system, features, classroom_type) VALUES (?, ?, ?, ?, ?, ?, 'standard')";
+            // 準備 SQL 語句插入教室 - 不使用 classroom_name，使用 area + classroom_code
+            $sql = "INSERT INTO classrooms (area, classroom_code, capacity, recording_system, features, classroom_type) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
 
             // 綁定參數並執行
-            $stmt->bindParam(1, $data['classroom_name']);
-            $stmt->bindParam(2, $data['area']);
-            $stmt->bindParam(3, $data['classroom_code']);
-            $stmt->bindParam(4, $data['capacity']);
-            $stmt->bindParam(5, $data['recording_system']);
-            $stmt->bindParam(6, $data['features']);
+            $stmt->bindParam(1, $data['area']);
+            $stmt->bindParam(2, $data['classroom_code']);
+            $stmt->bindParam(3, $data['capacity']);
+            $stmt->bindParam(4, $data['recording_system']);
+            $stmt->bindParam(5, $data['features']);
+            $stmt->bindParam(6, $data['classroom_type']);
             
             error_log("執行 SQL: $sql");
             error_log("參數: " . $data['classroom_name'] . ", " . ($data['area'] ?? '') . ", " . ($data['classroom_code'] ?? ''));
@@ -193,15 +202,17 @@ class ClassroomModel {
             $this->db->beginTransaction();
 
             // 更新教室信息 - 只更新存在的欄位
-            $updateClassroomSql = "UPDATE classrooms SET classroom_name = ?, area = ?, classroom_code = ?, capacity = ?, recording_system = ?, features = ? WHERE classroom_ID = ?";
+            $updateClassroomSql = "UPDATE classrooms SET area = ?, classroom_code = ?, classroom_type = ?, capacity = ?, recording_system = ?, features = ?, available_equipment = ?, available_times = ? WHERE classroom_ID = ?";
             $updateClassroomStmt = $this->db->prepare($updateClassroomSql);
             $updateResult = $updateClassroomStmt->execute([
-                $data['classroom_name'],
-                $data['area'],
-                $data['classroom_code'],
-                $data['capacity'],
-                $data['recording_system'],
-                $data['features'],
+                $data['area'] ?? null,
+                $data['classroom_code'] ?? null,
+                $data['classroom_type'] ?? null,
+                $data['capacity'] ?? null,
+                $data['recording_system'] ?? 0,
+                $data['features'] ?? null,
+                $data['available_equipment'] ?? null,
+                $data['available_times'] ?? null,
                 $id
             ]);
 
@@ -252,6 +263,35 @@ class ClassroomModel {
                 $this->db->rollBack();
             }
             throw new Exception("更新教室時出錯: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * 為教室新增圖片（會將檔名附加到 classroom_photo 欄位，逗號分隔）
+     *
+     * @param int $id 教室ID
+     * @param string $filename 已儲存於 public/img/classrooms 的檔名
+     * @return bool
+     */
+    public function addPhoto($id, $filename) {
+        try {
+            $sql = "SELECT classroom_photo FROM classrooms WHERE classroom_ID = ? LIMIT 1";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $existing = $row && !empty($row['classroom_photo']) ? $row['classroom_photo'] : '';
+
+            if (!empty($existing)) {
+                $new = $existing . ',' . $filename;
+            } else {
+                $new = $filename;
+            }
+
+            $updateSql = "UPDATE classrooms SET classroom_photo = ? WHERE classroom_ID = ?";
+            $updateStmt = $this->db->prepare($updateSql);
+            return $updateStmt->execute([$new, $id]);
+        } catch (PDOException $e) {
+            throw new Exception("新增教室圖片時出錯: " . $e->getMessage());
         }
     }
     
@@ -343,7 +383,7 @@ class ClassroomModel {
      */
     public function getClassroomBookings($classroomId, $filter = 'all') {
         try {
-            $sql = "SELECT b.booking_ID, b.user_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, 
+                $sql = "SELECT b.booking_ID, b.user_ID, b.status, b.start_datetime, b.end_datetime, b.purpose, b.requires_recording, b.requested_equipment,
                     u.user_name, u.mail, u.role
                     FROM bookings b
                     INNER JOIN users u ON b.user_ID = u.user_id

@@ -34,4 +34,20 @@ function verify_csrf(?string $token): bool {
     return hash_equals($_SESSION['csrf_token'], $token);
 }
 
+/**
+ * Check whether current session role matches given role (case-insensitive).
+ */
+function is_role(string $role): bool {
+    if (!isset($_SESSION['role'])) return false;
+    return strtolower((string)$_SESSION['role']) === strtolower($role);
+}
+
+function is_admin(): bool {
+    return is_role('admin');
+}
+
+function is_teacher(): bool {
+    return is_role('teacher');
+}
+
 ?>

@@ -26,9 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
           searchInput.focus();
         }
 
-        // 短暫延遲後跳轉，讓使用者能看到動畫效果
+        // 短暫延遲後跳轉到教室清單
         setTimeout(() => {
-          window.location.href = 'classroom_management.php';
+          window.location.href = 'classroom_list.php';
         }, 150);
       });
     }

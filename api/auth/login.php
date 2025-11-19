@@ -49,7 +49,8 @@ try {
         $_SESSION['user_id'] = $user['user_id'];
         $_SESSION['username'] = $user['user_name'];
         $_SESSION['email'] = $user['mail'];
-        $_SESSION['role'] = $user['role'];
+        // Normalize role to lowercase to avoid case-sensitivity issues in checks
+        $_SESSION['role'] = isset($user['role']) ? strtolower((string)$user['role']) : '';
         
         // 不論角色，所有用戶都導向到教室租借頁面
         header("Location: ../../app/pages/booking.php");

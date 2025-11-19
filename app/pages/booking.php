@@ -242,7 +242,7 @@ $hours = range(8, 20);
                                 <th>
                                     <div class="classroom-info">
                                         <span class="classroom-name">
-                                            <?= htmlspecialchars($classroom['classroom_name']) ?>
+                                            <?= htmlspecialchars($classroom['classroom_code']) ?>
                                         </span>
                                         <span class="classroom-location">
                                             <?= htmlspecialchars($classroom['classroom_type']) ?>
@@ -276,7 +276,7 @@ $hours = range(8, 20);
                                             'data-classroom-id="%d" data-hour="%d" data-classroom-name="%s" data-classroom-location="%s"',
                                             $classroom['classroom_ID'],
                                             $hour,
-                                            htmlspecialchars($classroom['classroom_name']),
+                                            htmlspecialchars($classroom['classroom_code']),
                                             htmlspecialchars(($classroom['area'] ?? '') . ' ' . ($classroom['classroom_code'] ?? ''))
                                         );
                                         
@@ -330,6 +330,37 @@ $hours = range(8, 20);
                     <label for="booking-notes">備註 (選填)</label>
                     <textarea class="form-control" id="booking-notes" name="notes" 
                               placeholder="其他需求或說明"></textarea>
+                </div>
+                <div class="form-group mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="requires-recording" name="requires_recording" value="1">
+                    <label class="form-check-label" for="requires-recording">需要錄播服務 / 錄影需求</label>
+                    <div class="form-text">若選擇，系統會在審核時標示並通知相關技術人員。</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">所需設備（可多選）</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="equipment[]" value="projector" id="eq-projector">
+                            <label class="form-check-label" for="eq-projector">投影機</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="equipment[]" value="laptop" id="eq-laptop">
+                            <label class="form-check-label" for="eq-laptop">筆記型電腦</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="equipment[]" value="microphone" id="eq-microphone">
+                            <label class="form-check-label" for="eq-microphone">麥克風</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="equipment[]" value="speaker" id="eq-speaker">
+                            <label class="form-check-label" for="eq-speaker">喇叭/音響</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="equipment[]" value="camera" id="eq-camera">
+                            <label class="form-check-label" for="eq-camera">攝影機</label>
+                        </div>
+                    </div>
+                    <div class="form-text">系統會在審核時顯示設備請求，管理端可分配設備或拒絕含設備的申請。</div>
                 </div>
                 
                 <div class="form-actions">

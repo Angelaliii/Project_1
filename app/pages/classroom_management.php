@@ -3,21 +3,11 @@ session_start();
 // 確認是否已登入
 if (!isset($_SESSION['username'])) {
     header('Location: login.php');
+    <?php
+    // classroom_management.php 已被移除，請使用教室資訊頁面 (classroom_list.php / classroom_detail.php) 進行管理。
+    header('Location: ../pages/classroom_list.php');
     exit;
-}
-
-require_once '../config/database.php';
-require_once '../models/ClassroomModel.php';
-require_once '../helpers/security.php';
-
-$classroomModel = new ClassroomModel();
-
-// 處理新增教室表單提交（僅限 Admin）
-$message = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_classroom'])) {
-    if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-        $message = '您沒有新增教室的權限';
-    } else {
+    ?>
         // 驗證 CSRF Token
         if (!isset($_POST['csrf_token']) || !verify_csrf($_POST['csrf_token'])) {
             $message = '安全驗證失敗，請重新操作';

@@ -252,12 +252,27 @@ try {
                 redirect_with_errors($bookingDate, ['超出營運時段（最晚至 21:00）']);
             }
 
-            // 建立 bookings
-            $stmt = $pdo->prepare("
-                INSERT INTO bookings (classroom_ID, user_ID, status, start_datetime, end_datetime, purpose)
-                VALUES (?, ?, 'booked', ?, ?, ?)
+            // 處理是否要求錄播（來自表單，會影響 bookings.requires_recording）
+            $requiresRecording = isset($_POST['requires_recording']) && ($_POST['requires_recording'] == '1' || $_POST['requires_recording'] === 1) ? 1 : 0;
+
+            // 處理要求設備（可為多選）
+            $requestedEquipment = '';
+            if (isset($_POST['equipment']) && is_array($_POST['equipment'])) {
+                $allowedEquipment = array_map('strval', $_POST['equipment']);
+                // 過濾掉可能的惡意字元並使用逗號分隔儲存
+                $clean = array_map(function($v) { return preg_replace('/[^a-zA-Z0-9_\- ]/', '', trim($v)); }, $allowedEquipment);
+                $clean = array_filter($clean, fn($x) => $x !== '');
+                if (!empty($clean)) {
+                    $requestedEquipment = implode(',', $clean);
+                }
+            }
+
+            // 建立 bookings（包含 requires_recording 與 requested_equipment 欄位）
+            $stmt = $pdo->prepare("\
+                INSERT INTO bookings (classroom_ID, user_ID, status, start_datetime, end_datetime, purpose, requires_recording, requested_equipment)\
+                VALUES (?, ?, 'booked', ?, ?, ?, ?, ?)\
             ");
-            $stmt->execute([$classroomId, $_SESSION['user_id'], $startDt, $endDt, $purpose]);
+            $stmt->execute([$classroomId, $_SESSION['user_id'], $startDt, $endDt, $purpose, $requiresRecording, $requestedEquipment]);
             $bookingId = $pdo->lastInsertId();
 
             // 建立每小時 slots
